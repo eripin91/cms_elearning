@@ -126,7 +126,7 @@ exports.insertGuru = (req, res) => {
         if (_.isEmpty(resultCheck) || errCheck) {
           cb(errCheck)
         } else {
-          return MiscHelper.errorCustomStatus(res, {message: 'Already there'})
+          return MiscHelper.errorCustomStatus(res, { message: 'Already there' })
         }
       })
     },
@@ -137,7 +137,7 @@ exports.insertGuru = (req, res) => {
         description: description,
         status: 1,
         created_at: new Date(),
-        updated_at: new Date(),
+        updated_at: new Date()
       }
       const key = `get-guru`
 
@@ -152,7 +152,7 @@ exports.insertGuru = (req, res) => {
     } else {
       return MiscHelper.errorCustomStatus(res, errInsert, 400)
     }
-  })  
+  })
 }
 
 /*
@@ -162,7 +162,7 @@ exports.insertGuru = (req, res) => {
  *
  * @param  {object} req - Parameters for request
  * @param  {objectId} req.params.guruId - Id guru master
- * 
+ *
  * @body  {object} req - body for request
  * @body  {objectId} req.body.fullname - Guru fullname
  * @body  {objectId} req.body.profile_picture - Guru picture
@@ -182,7 +182,7 @@ exports.updateGuru = (req, res) => {
     (cb) => {
       guruModel.checkDetailGuru(req, req.params.guruId, (errCheck, resultCheck) => {
         if (_.isEmpty(resultCheck) || errCheck) {
-          return MiscHelper.errorCustomStatus(res, {message: 'Guru isn\'t Exist'})  
+          return MiscHelper.errorCustomStatus(res, { message: 'Guru isn\'t Exist' })
         } else {
           cb(null)
         }
@@ -190,7 +190,7 @@ exports.updateGuru = (req, res) => {
     },
     (cb) => {
       let data = {
-        updated_at: new Date(),
+        updated_at: new Date()
       }
 
       for (let key in req.body) {

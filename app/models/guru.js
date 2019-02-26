@@ -46,7 +46,7 @@ module.exports = {
       if (errConnection) console.error(errConnection)
 
       connection.query(`UPDATE guru_tab SET ? WHERE guruid = ?`, [data, guruId], (err, rows) => {
-        callback(err, rows.affectedRows > 0 ? _.merge(data, {guruid: guruId}) : [])
+        callback(err, rows.affectedRows > 0 ? _.merge(data, { guruid: guruId }) : [])
       })
     })
   },
@@ -55,7 +55,7 @@ module.exports = {
       if (errConnection) console.error(errConnection)
 
       connection.query(`DELETE FROM guru_tab WHERE guruid = ?`, guruId, (err) => {
-        callback(err, {message: 'Data deleted'})
+        callback(err, { message: 'Data deleted' })
       })
     })
   }
