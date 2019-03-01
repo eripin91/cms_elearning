@@ -54,7 +54,7 @@ module.exports = {
     conn.getConnection((errConnection, connection) => {
       if (errConnection) console.error(errConnection)
 
-      connection.query(`DELETE FROM guru_tab WHERE guruid = ?`, guruId, (err) => {
+      connection.query(`UPDATE guru_tab SET status = 0 WHERE guruid = ?`, guruId, (err) => {
         callback(err, { message: 'Data deleted' })
       })
     })
