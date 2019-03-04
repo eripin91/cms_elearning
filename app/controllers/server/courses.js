@@ -5,6 +5,275 @@
 const async = require('async')
 const coursesModel = require('../../models/courses')
 const redisCache = require('../../libs/RedisCache')
+
+/*
+ * GET : '/courses/:classId
+ *
+ * @desc Get All Course
+ *
+ * @param {object} req - Paramater for Request
+ * @param {integer} req.params.classId - classId For Chapter
+ *
+ * @return {object} Request object
+ */
+exports.getCourse = (req, res) => {
+  req.checkParams('classId', 'classId is required').notEmpty().isInt()
+
+  if (req.validationErrors()) {
+    return MiscHelper.errorCustomStatus(res, req.validationErrors(true))
+  }
+
+  const classId = req.params.classId
+  const key = `courses-:${classId}`
+
+  async.waterfall([
+    (cb) => {
+      redisCache.get(key, courses => {
+        if (courses) {
+          return MiscHelper.responses(res, courses)
+        } else {
+          cb(null)
+        }
+      })
+    },
+    (cb) => {
+      coursesModel.getCourse(req, classId, (errCourse, resultCourse) => {
+        if (_.isEmpty(resultCourse)) {
+          return MiscHelper.errorCustomStatus(res, { message: 'Tidak ada Course di class ini' })
+        } else {
+          cb(errCourse, resultCourse)
+        }
+      })
+    },
+    (dataCourse, cb) => {
+      redisCache.setex(key, 600, dataCourse)
+      console.log('data cached')
+      cb(null, dataCourse)
+    }
+  ], (errCourse, resultCourse) => {
+    if (!errCourse) {
+      return MiscHelper.responses(res, resultCourse)
+    } else {
+      return MiscHelper.errorCustomStatus(res, errCourse, 400)
+    }
+  })
+}
+
+/*
+ * GET : '/courses/:classId/:courseId
+ *
+ * @desc Get detail course
+ *
+ * @param {object} req - Paramater for Request
+ * @param {integer} req.params.classId - classId For Chapter
+ *
+ * @return {object} Request object
+ */
+exports.getCourseDetail = (req, res) => {
+  req.checkParams('classId', 'classId is required').notEmpty().isInt()
+  req.checkParams('courseId', 'classId is required').notEmpty().isInt()
+
+  if (req.validationErrors()) {
+    return MiscHelper.errorCustomStatus(res, req.validationErrors(true))
+  }
+
+  const courseId = req.params.courseId
+  const key = `get-course-detail:${courseId}`
+
+  async.waterfall([
+    (cb) => {
+      redisCache.get(key, courses => {
+        if (courses) {
+          return MiscHelper.responses(res, courses)
+        } else {
+          cb(null)
+        }
+      })
+    },
+    (cb) => {
+      coursesModel.getCourseDetail(req, courseId, (errCourse, resultCourse) => {
+        if (_.isEmpty(resultCourse)) {
+          return MiscHelper.errorCustomStatus(res, { message: 'Course ini tidak tersedia' })
+        } else {
+          cb(errCourse, resultCourse)
+        }
+      })
+    },
+    (dataCourse, cb) => {
+      redisCache.setex(key, 600, dataCourse)
+      console.log('data cached')
+      cb(null, dataCourse)
+    }
+  ], (errCourse, resultCourse) => {
+    if (!errCourse) {
+      return MiscHelper.responses(res, resultCourse)
+    } else {
+      return MiscHelper.errorCustomStatus(res, errCourse, 400)
+    }
+  })
+}
+
+/*
+ * INSERT : '/courses/:classId/
+ *
+ * @desc Insert Course
+ *
+ * @param {object} req - Paramater for Request
+ * @param {integer} req.params.classId - classId For course
+ * @param {string} req.params.name - name for course
+ * @param {integer} req.params.preassessmentid - preassessmentid for course
+ * @param {integer} req.params.finalassessmentid - finalassessmentid for course
+ *
+ *
+ * @return {object} Request object
+ */
+exports.insertCourse = (req, res) => {
+  req.checkParams('classId', 'classId is required').notEmpty().isInt()
+  req.checkBody('name', 'name is required').notEmpty()
+  req.checkBody('preassessmentid', 'preassessmentid is required').notEmpty().isInt()
+  req.checkBody('finalassessmentid', 'finalassessment is required').notEmpty().isInt()
+
+  if (req.validationErrors()) {
+    return MiscHelper.errorCustomStatus(res, req.validationErrors(true))
+  }
+
+  const classId = req.params.classId
+
+  async.waterfall([
+    (cb) => {
+      const data = {
+        classid: classId,
+        name: req.body.name,
+        preassessmentid: req.body.preassessmentid,
+        finalassessmentid: req.body.finalassessmentid,
+        status: 1,
+        created_at: new Date(),
+        updated_at: new Date()
+      }
+      coursesModel.insertCourse(req, data, (errCourse, resultCourse) => {
+        const key = `courses-:${classId}`
+        redisCache.del(key)
+        cb(errCourse, resultCourse)
+      })
+    }
+  ], (errCourse, resultCourse) => {
+    if (!errCourse) {
+      return MiscHelper.responses(res, resultCourse)
+    } else {
+      return MiscHelper.errorCustomStatus(res, errCourse, 400)
+    }
+  })
+}
+
+/*
+ * Patch : '/courses/:classId/:courseId
+ *
+ * @desc Get All Chapter
+ *
+ * @param {object} req - Paramater for Request
+ * @param {integer} req.params.classId - classId For Chapter
+ * @param {integer} req.params.courseId - courseId For Chapter
+ *
+ * @return {object} Request object
+ */
+exports.updateCourse = (req, res) => {
+  req.checkParams('classId', 'classId is required').notEmpty().isInt()
+  req.checkParams('courseId', 'courseId is required').notEmpty().isInt()
+
+  if (req.validationErrors()) {
+    return MiscHelper.errorCustomStatus(res, req.validationErrors(true))
+  }
+
+  const classId = req.params.classId
+  const courseId = req.params.courseId
+
+  async.waterfall([
+    (cb) => {
+      coursesModel.getCourseDetail(req, courseId, (errCourse, resultCourse) => {
+        if (errCourse) console.error(errCourse)
+
+        if (_.isEmpty(resultCourse)) {
+          return MiscHelper.errorCustomStatus(res, { message: 'Course Tidak ada' })
+        } else {
+          cb(null)
+        }
+      })
+    },
+    (cb) => {
+      let data = {
+        updated_at: new Date()
+      }
+      for (let key in req.body) {
+        data[key] = req.body[key]
+      }
+
+      coursesModel.updateDetail(req, data, courseId, (errUpdateCourse, resultUpdateCourse) => {
+        redisCache.del(`courses-:${classId}`)
+        cb(errUpdateCourse, resultUpdateCourse)
+      })
+    }
+  ], (errUpdateCourse, resultUpdateCourse) => {
+    if (!errUpdateCourse) {
+      return MiscHelper.responses(res, resultUpdateCourse)
+    } else {
+      return MiscHelper.errorCustomStatus(res, errUpdateCourse, 400)
+    }
+  })
+}
+
+/*
+ * Patch : '/courses/:classId/:courseId
+ *
+ * @desc Get All Chapter
+ *
+ * @param {object} req - Paramater for Request
+ * @param {integer} req.params.classId - classId For Chapter
+ *
+ * @return {object} Request object
+ */
+exports.deleteDetail = (req, res) => {
+  req.checkParams('classId', 'classId is required').notEmpty().isInt()
+  req.checkParams('courseId', 'courseId is required').notEmpty().isInt()
+
+  if (req.validationErrors()) {
+    return MiscHelper.errorCustomStatus(res, req.validationErrors(true))
+  }
+
+  const classId = req.params.classId
+  const courseId = req.params.courseId
+
+  async.waterfall([
+    (cb) => {
+      coursesModel.getCourseDetail(req, courseId, (errCourse, resultCourse) => {
+        if (errCourse) console.error(errCourse)
+
+        if (_.isEmpty(resultCourse)) {
+          return MiscHelper.errorCustomStatus(res, { message: 'Course Tidak ada' })
+        } else {
+          cb(null)
+        }
+      })
+    },
+    (cb) => {
+      let data = {
+        status: 0,
+        updated_at: new Date()
+      }
+
+      coursesModel.updateDetail(req, data, courseId, (errUpdateCourse, resultUpdateCourse) => {
+        redisCache.del(`courses-:${classId}`)
+        cb(errUpdateCourse, resultUpdateCourse)
+      })
+    }
+  ], (errUpdateCourse, resultUpdateCourse) => {
+    if (!errUpdateCourse) {
+      return MiscHelper.responses(res, resultUpdateCourse)
+    } else {
+      return MiscHelper.errorCustomStatus(res, errUpdateCourse, 400)
+    }
+  })
+}
+
 /*
  * GET : '/courses/chapter/:classId
  *
@@ -17,7 +286,7 @@ const redisCache = require('../../libs/RedisCache')
  */
 
 exports.getDetail = (req, res) => {
-  req.checkParams('classId', 'classId is required').notEmpty()
+  req.checkParams('classId', 'classId is required').notEmpty().isInt()
 
   if (req.validationErrors()) {
     return MiscHelper.errorCustomStatus(res, req.validationErrors(true))
@@ -63,7 +332,7 @@ exports.getDetail = (req, res) => {
 /*
  * POST : '/courses/chapter/:classId'
  *
- * @desc Insert Chapter to Class
+ * @desc Get Chapter Detail
  *
  * @param {object} req - Parameters for request
  * @param {integer} req.params.classId - courseid for chapter
@@ -72,9 +341,9 @@ exports.getDetail = (req, res) => {
  * @return {object} Request Object
  */
 exports.insertDetail = (req, res) => {
-  req.checkParams('classId', 'classId is required').notEmpty()
+  req.checkParams('classId', 'classId is required').notEmpty().isInt()
   req.checkBody('name', 'name is required').notEmpty()
-  req.checkBody('assessmentid', 'assessmentid is required').notEmpty()
+  req.checkBody('assessmentid', 'assessmentid is required').notEmpty().isInt()
 
   if (req.validationErrors()) {
     return MiscHelper.errorCustomStatus(res, req.validationErrors(true))
@@ -122,7 +391,7 @@ exports.insertDetail = (req, res) => {
 /*
  * PATCH : '/courses/chapter/:classId/:detailId'
  *
- * @desc Insert Chapter to Class
+ * @desc Update Chapter
  *
  * @param {object} req - Parameters for request
  * @param {integer} req.params.classId - courseid for chapter
@@ -132,8 +401,8 @@ exports.insertDetail = (req, res) => {
  */
 
 exports.updateDetail = (req, res) => {
-  req.checkParams('detailId', 'detailId is required').notEmpty()
-  req.checkParams('classId', 'classId is required').notEmpty()
+  req.checkParams('detailId', 'detailId is required').notEmpty().isInt()
+  req.checkParams('classId', 'classId is required').notEmpty().isInt()
 
   if (req.validationErrors()) {
     return MiscHelper.errorCustomStatus(res, req.validationErrors(true))
@@ -176,7 +445,7 @@ exports.updateDetail = (req, res) => {
 /*
  * DELETE : '/courses/chapter/:classId/:detailId'
  *
- * @desc Insert Chapter to Class
+ * @desc Delete Chapter
  *
  * @param {object} req - Parameters for request
  * @param {integer} req.params.classId - courseid for chapter
@@ -186,9 +455,9 @@ exports.updateDetail = (req, res) => {
  */
 
 exports.deleteDetail = (req, res) => {
-  req.checkParams('detailId', 'detailId is required').notEmpty()
-  req.checkParams('classId', 'classId is required').notEmpty()
-  req.checkBody('status', 'status is required').notEmpty()
+  req.checkParams('detailId', 'detailId is required').notEmpty().isInt()
+  req.checkParams('classId', 'classId is required').notEmpty().isInt()
+  req.checkBody('status', 'status is required').notEmpty().isInt()
 
   if (req.validationErrors()) {
     return MiscHelper.errorCustomStatus(res, req.validationErrors(true))
@@ -226,9 +495,9 @@ exports.deleteDetail = (req, res) => {
 }
 
 /*
- * Get : '/courses/chapter/:chapterid/lecture'
+ * Get : '/courses/chapter/:detailId/material'
  *
- * @desc Insert Chapter to Class
+ * @desc Get Material List
  *
  * @param {object} req - Parameters for request
  * @param {integer} req.params.detailId - detailId for lecture
@@ -236,7 +505,7 @@ exports.deleteDetail = (req, res) => {
  * @return {object} Request Object
  */
 exports.getMaterialList = (req, res) => {
-  req.checkParams('detailId', 'detailId is required').notEmpty()
+  req.checkParams('detailId', 'detailId is required').notEmpty().isInt()
 
   if (req.validationErrors()) {
     return MiscHelper.errorCustomStatus(res, req.validationErrors(true))
@@ -277,9 +546,9 @@ exports.getMaterialList = (req, res) => {
 }
 
 /*
- * Get : '/courses/chapter/:chapterid/lecture/:lectureid'
+ * Get : '/courses/chapter/:chapterid/material/:lectureid'
  *
- * @desc Insert Chapter to Class
+ * @desc Get Material Detail
  *
  * @param {object} req - Parameters for request
  * @param {integer} req.params.chapterId - chapterId for chapter
@@ -289,7 +558,7 @@ exports.getMaterialList = (req, res) => {
  * @return {object} Request Object
  */
 exports.getMaterialDetail = (req, res) => {
-  req.checkParams('materialId', 'materialId is required').notEmpty()
+  req.checkParams('materialId', 'materialId is required').notEmpty().isInt()
 
   if (req.validationErrors()) {
     return MiscHelper.errorCustomStatus(req.validationErrors(true))
@@ -331,9 +600,9 @@ exports.getMaterialDetail = (req, res) => {
 }
 
 /*
- * POST : '/courses/chapter/:chapterId/lecture'
+ * POST : '/courses/chapter/:chapterId/material'
  *
- * @desc Insert Lecture
+ * @desc Insert Material
  *
  * @param {object} req - Parameters for request
  * @param {integer} req.params.chapterId - chapterId for lecture
@@ -348,7 +617,7 @@ exports.getMaterialDetail = (req, res) => {
  */
 
 exports.insertMaterialDetail = (req, res) => {
-  req.cekParams('detailId', 'detailid is required').notEmpty()
+  req.cekParams('detailId', 'detailid is required').notEmpty().isInt()
   req.checkBody('name', 'name is required').notEmpty()
   req.checkBody('size', 'size is required').notEmpty()
   req.checkBody('description', 'description is required').notEmpty()
@@ -377,7 +646,6 @@ exports.insertMaterialDetail = (req, res) => {
         updated_at: new Date()
       }
       coursesModel.insertMaterial(req, data, (errMaterial, resultMaterial) => {
-        if (errMaterial) console.error(errMaterial)
         const key = `course-material-list:${detailId}`
         redisCache.del(key)
         cb(errMaterial, resultMaterial)
@@ -396,7 +664,7 @@ exports.insertMaterialDetail = (req, res) => {
 /*
  * PATCH : '/courses/chapter/:chapterid/lecture/:lectureid'
  *
- * @desc Up Chapter to Class
+ * @desc Update material
  *
  * @param {object} req - Parameters for request
  * @param {integer} req.params.classId - courseid for chapter
@@ -405,8 +673,8 @@ exports.insertMaterialDetail = (req, res) => {
  * @return {object} Request Object
  */
 exports.updateMaterial = (req, res) => {
-  req.checkParams('detailId', 'detailId is required').notEmpty()
-  req.checkParams('materialId', 'materialId is required').notEmpty()
+  req.checkParams('detailId', 'detailId is required').notEmpty().isInt()
+  req.checkParams('materialId', 'materialId is required').notEmpty().isInt()
 
   if (req.validationErrors()) {
     return MiscHelper.errorCustomStatus(res, req.validationErrors(true))
@@ -418,6 +686,7 @@ exports.updateMaterial = (req, res) => {
   async.waterfall([
     (cb) => {
       coursesModel.getMaterialDetail(req, materialId, (errMaterial, resultMaterial) => {
+        if (errMaterial) console.error(errMaterial)
         if (_.isEmpty(resultMaterial)) {
           return MiscHelper.errorCustomStatus(res, { message: 'Lecture tidak ada' })
         } else {
@@ -450,7 +719,7 @@ exports.updateMaterial = (req, res) => {
 /*
  * PATCH : '/courses/chapter/:chapterid/lecture/:lectureid'
  *
- * @desc Up Chapter to Class
+ * @desc Delete Material
  *
  * @param {object} req - Parameters for request
  * @param {integer} req.params.classId - courseid for chapter
@@ -459,9 +728,9 @@ exports.updateMaterial = (req, res) => {
  * @return {object} Request Object
  */
 exports.deleteMaterial = (req, res) => {
-  req.checkParams('detailId', 'detailId is required').notEmpty()
-  req.checkParams('materialId', 'materialId is required').notEmpty()
-  req.checkBody('status', 'status is required')
+  req.checkParams('detailId', 'detailId is required').notEmpty().isInt()
+  req.checkParams('materialId', 'materialId is required').notEmpty().isInt()
+  req.checkBody('status', 'status is required').isInt()
 
   if (req.validationErrors()) {
     return MiscHelper.errorCustomStatus(res, req.validationErrors(true))
