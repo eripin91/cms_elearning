@@ -5,9 +5,9 @@
 var Route = express.Router()
 
 Route
-  .all('/*'. AuthHelper.requireAuthorization)
-  .get('/courses/chapter/:classId', CoursesController.getDetail)
-  .post('/courses/chapter/:classId', CoursesController.insertDetail)
-  .patch('/courses/chapter/:classId/:detailId', CoursesController.updateDetail)
+  .all('/*', AuthHelper.requiresAuthorization)
+  .get('/chapter/:classId', CoursesControllers.getDetail)
+  .post('/chapter/:classId', CoursesControllers.insertDetail)
+  .patch('/chapter/:classId/:detailId', CoursesControllers.updateDetail)
 
-  module.exports = Route
+module.exports = Route
