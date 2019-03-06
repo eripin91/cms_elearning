@@ -8,7 +8,7 @@ const CONFIG = {
   SERVER: {
     PORT: PORT,
     BASE_DOMAIN: BASE_DOMAIN,
-    BASE_WEBHOST: `${PROTOCOL}://${BASE_DOMAIN}:${PORT}/`
+    BASE_WEBHOST: `${PROTOCOL}://${BASE_DOMAIN}/`
   }
 }
 
