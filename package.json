@@ -1,12 +1,12 @@
 {
   "name": "e-learning-backoffice",
   "version": "1.0.0",
-  "description": "E-learning backoffice telkom",
+  "description": "E-learning Backoffice Telkom",
   "main": "app.js",
   "scripts": {
     "test": "npm run standard && NODE_PATH=./config:./app/controllers NODE_ENV=testing ./node_modules/.bin/mocha --exit --reporter spec --timeout 10000 test/*.js",
     "start": "nodemon app.js",
-    "start-production": "pm2 start app.js -i 0 --name 'courses' --node-args='--max-old-space-size=2048' --max-memory-restart 1500M --log-date-format 'YYYY-MM-DD HH:mm Z' --no-pmx",
+    "start-production": "pm2 start app.js -i 0 --name 'cms-e-learning' --node-args='--max-old-space-size=2048' --max-memory-restart 1500M --log-date-format 'YYYY-MM-DD HH:mm Z' --no-pmx",
     "standard": "./node_modules/.bin/standard",
     "deploy-production": "npm test && pm2 deploy ecosystem.json production",
     "deploy-staging": "npm test && pm2 deploy ecosystem.json staging"
