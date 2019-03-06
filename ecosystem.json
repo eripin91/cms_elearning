@@ -1,0 +1,38 @@
+{
+  "apps" : [{
+    "name"      : "e-learning",
+    "script"    : "app.js",
+    "env": {
+      "COMMON_VARIABLE": "true"
+    },
+    "env_production" : {
+      "NODE_ENV": "production"
+    }
+  }],
+  "deploy" : {
+    "staging" : {
+      "user" : "sigma",
+      "host" : "13.229.103.227",
+      "ref"  : "origin/staging",
+      "repo" : "git@github.com:arkelearning/cms_e-learning.git",
+      "path" : "/home/sigma/www/cms-e-learning",
+      "pre-deploy-local" : "git checkout . && echo 'Please wait... Deploying in process...'",
+      "post-deploy" : "npm install && NODE_ENV=production pm2 reload e-learning && pm2 ls && echo 'Please wait... Checking up the app starting up....' && sleep 7s && pm2 ls",
+      "env"  : {
+        "NODE_ENV": "production"
+      }
+    },
+    "production" : {
+      "user" : "sigma",
+      "host" : "13.229.103.227",
+      "ref"  : "origin/prod",
+      "repo" : "git@github.com:arkelearning/cms_e-learning.git",
+      "path" : "/home/sigma/www/cms-e-learning",
+      "pre-deploy-local" : "git checkout . && echo 'Please wait... Deploying in process...'",
+      "post-deploy" : "npm install && NODE_ENV=production pm2 reload prod-e-learning && pm2 ls && echo 'Please wait... Checking up the app starting up....' && sleep 7s && pm2 ls",
+      "env"  : {
+        "NODE_ENV": "production"
+      }
+    }
+  }
+}

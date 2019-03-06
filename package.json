@@ -13,14 +13,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+ssh://git@github.com/gratcy/e-learning-backoffice.git"
+    "url": "git+ssh://git@github.com/arkelearning/cms_e-learning.git"
   },
   "author": "Dev Team",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/gratcy/e-learning-backoffice/issues"
+    "url": "https://github.com/arkelearning/cms_e-learning/issues"
   },
-  "homepage": "https://github.com/gratcy/e-learning-backoffice#readme",
+  "homepage": "https://github.com/arkelearning/cms_e-learning#readme",
   "pre-commit": [
     "standard",
     "test"
