@@ -3,9 +3,7 @@
 'use strict'
 
 const upload = require('../../helper/upload')
-
 const singleUpload = upload.single('file')
-
 exports.uploadAws = (req, res) => {
   singleUpload(req, res, (err) => {
     if (err) {

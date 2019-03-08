@@ -5,6 +5,8 @@
 const async = require('async')
 const coursesModel = require('../../models/courses')
 const redisCache = require('../../libs/RedisCache')
+// const upload = require('../../helper/upload')
+// const singleUpload = upload.single('file')
 
 /*
  * GET : '/courses/:classId
@@ -632,6 +634,9 @@ exports.insertMaterialDetail = (req, res) => {
   const detailId = req.params.detailId
 
   async.waterfall([
+    (cb) => {
+
+    },
     (cb) => {
       const data = {
         detailid: detailId,
