@@ -9,6 +9,7 @@ Route
   .get('/get', ClassesControllers.get)
   .get('/get/:classId', ClassesControllers.getDetail)
   .post('/add', ClassesControllers.insertClass)
+  .post('/upload', ClassesControllers.upload)
   .patch('/update/:classId', ClassesControllers.updateClass)
   .delete('/delete/:classId', ClassesControllers.deleteClass)
 
