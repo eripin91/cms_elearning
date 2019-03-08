@@ -4,6 +4,7 @@
 
 const async = require('async')
 const classesModel = require('../../models/classes')
+const uploadAws = require('../../helper/upload')
 
 exports.get = (req, res) => {
   const key = 'get-all-class'
@@ -161,6 +162,66 @@ exports.deleteClass = (req, res) => {
       return MiscHelper.responses(res, result)
     } else {
       return MiscHelper.errorCustomStatus(res, err)
+    }
+  })
+}
+
+exports.upload = (req, res) => {
+  const singleUpload = uploadAws.single('file')
+  singleUpload(req, res, (err) => {
+    if (err) {
+      return MiscHelper.errorCustomStatus(res, err)
+    } else {
+      return MiscHelper.responses(res, req.file)
+    }
+  })
+}
+
+exports.insertClassUltimate = (req, res) => {
+  req.checkBody('guruId', 'guruId is required').notEmpty().isInt()
+  req.checkBody('name', 'name is required').notEmpty()
+  req.checkBody('description', 'description is required').notEmpty()
+  req.checkBody('file', 'file is required').notEmpty()
+  req.checkBody('priority', 'priority is required').notEmpty().isInt()
+
+  if (req.validationErrors()) {
+    return MiscHelper.errorCustomStatus(res, req.validationErrors(true))
+  }
+
+  const singleUpload = uploadAws.single('file')
+
+  async.waterfall([
+    (cb) => {
+      singleUpload(req, res, (err) => {
+        if (!err) {
+          cb(null, req.file)
+        } else {
+          return MiscHelper.errorCustomStatus(res, err)
+        }
+      })
+    },
+    (dataFile, cb) => {
+      const data = {
+        guruid: req.body.guruId,
+        name: req.body.name,
+        description: req.body.description,
+        cover: dataFile.location,
+        priority: req.body.priority,
+        rating: 0,
+        status: 1,
+        created_at: new Date(),
+        updated_at: new Date()
+      }
+
+      classesModel.insertClass(req, data, (errInsert, resultInsert) => {
+        cb(errInsert, resultInsert)
+      })
+    }
+  ], (errInsert, resultInsert) => {
+    if (!errInsert) {
+      return MiscHelper.errorCustomStatus(res, errInsert)
+    } else {
+      return MiscHelper.responses(res, resultInsert)
     }
   })
 }

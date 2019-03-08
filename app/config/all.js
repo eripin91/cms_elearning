@@ -21,6 +21,11 @@ const CONFIG = {
     },
     auth_pass: process.env.REDIS_PASSWORD
   },
+  AWS: {
+    AWS_ACCESS_KEY_ID: process.env.AWS_ACCESS_KEY_ID,
+    AWS_ACCESS_KEY_SECRET: process.env.AWS_ACCESS_KEY_SECRET,
+    AWS_REGION: process.env.AWS_S3_REGION
+  },
   SESSION_SECRET: process.env.SESSION_SECRET || 'zd_TEkgW5C_$8]j.',
   REQUEST_HEADERS: {
     Authorization: 'X-COURSES-API'
