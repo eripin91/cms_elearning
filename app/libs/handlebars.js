@@ -97,6 +97,9 @@ const register = (Handlebars) => {
         return options.inverse(this)
       }
     },
+    getStatus: (status, type) => {
+      if (type === 1) { return (status === 1 ? 'Active' : 'Inactive') } else { return (status === 1 ? 'Active <input type="radio" checked="checked" name="status" value="1" /> Inactive <input type="radio" name="status" value="0" />' : 'Active <input type="radio" name="status" value="1" /> Inactive <input type="radio" checked="checked" name="status" value="0" />') }
+    },
     get_roles: (roles) => {
       return true
     }

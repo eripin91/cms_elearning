@@ -80,8 +80,12 @@ module.exports = {
     redisCache.setex(`__msg${sesId}`, 10, arr)
   },
   getActionButton: (urlPrefix, id) => {
-    let action = '<a href="' + urlPrefix + '/' + urlPrefix + '_update/' + id + '"><i class="fa fa-pencil"></i></a>'
-    action += ' <a href="' + urlPrefix + '/' + urlPrefix + '_delete/' + id + '" onclick="return confirm(\'Are you sure you want to delete this item?\');"><i class="fa fa-times"></i></a>'
+    let action = '<a href="' + urlPrefix + '/' + 'delete/' + id + '" onclick="return confirm(\'Are you sure you want to delete this item?\');"><i class="fa fa-times"></i></a>'
+    return action
+  },
+  getActionButtonFull: (urlPrefix, id) => {
+    let action = '<a href="' + urlPrefix + '/' + 'update/' + id + '"><i class="fa fa-pencil"></i></a>'
+    action += ' <a href="' + urlPrefix + '/' + 'delete/' + id + '" onclick="return confirm(\'Are you sure you want to delete this item?\');"><i class="fa fa-times"></i></a>'
     return action
   },
   getStatus: (status, type) => {

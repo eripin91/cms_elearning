@@ -24,7 +24,7 @@ exports.get = (req, res) => {
   async.waterfall([
     (cb) => {
       redisCache.get(key, users => {
-        if (users) {
+        if (_.result(users, 'data')) {
           return MiscHelper.responses(res, users.data, 200, {total: users.total})
         } else {
           cb(null)
@@ -52,6 +52,42 @@ exports.get = (req, res) => {
   ], (errUsers, resultUsers) => {
     if (!errUsers) {
       return MiscHelper.responses(res, resultUsers.data, 200, {total: resultUsers.total})
+    } else {
+      return MiscHelper.errorCustomStatus(res, errUsers, 400)
+    }
+  })
+}
+
+/*
+ * GET : '/users/delete/:userId'
+ *
+ * @desc Get user list
+ *
+ * @param  {object} req - Parameters for request
+ *
+ * @return {object} Request object
+ */
+
+exports.delete = (req, res) => {
+  req.checkParams('userId', 'userId is required').notEmpty()
+
+  if (req.validationErrors()) {
+    return MiscHelper.errorCustomStatus(res, req.validationErrors(true))
+  }
+
+  async.waterfall([
+    (cb) => {
+      usersModel.update(req, req.params.userId, { status: 0 }, (errUsers) => {
+        cb(errUsers)
+      })
+    },
+    (cb) => {
+      redisCache.delwild('get-user:*')
+      cb(null)
+    }
+  ], errUsers => {
+    if (!errUsers) {
+      return MiscHelper.responses(res, { status: true }, 200)
     } else {
       return MiscHelper.errorCustomStatus(res, errUsers, 400)
     }

@@ -783,6 +783,34 @@ function _init() {
         { "data": "fullname" },
         { "data": "phone" },
         { "data": "confirm" },
+        { "data": "created_at" },
+        { "data": "action" }
+      ]
+    });
+}(jQuery));
+
+
+// section: admin
+(function ($) {
+  'use strict';
+    var url = SITE_URL + $("#sTableAdmin").attr('src')
+    $('#sTableAdmin').DataTable({
+      "processing": true,
+      "serverSide": true,
+      "bFilter": true,
+      "ordering": false,
+      "scrollX": false,
+      "aaSorting": [],
+      "pageLength": 10,
+      "columnDefs": [],
+      "pagingType": "full_numbers",
+      "ajax": url,
+      columns: [
+        { "data": "adminid" },
+        { "data": "email" },
+        { "data": "nick" },
+        { "data": "created_at" },
+        { "data": "status" },
         { "data": "action" }
       ]
     });

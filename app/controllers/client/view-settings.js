@@ -20,8 +20,7 @@ exports.main = async (req, res) => {
   const errorMsg = await MiscHelper.get_error_msg(req.sessionID)
   API_SERVICE.get('v1/admin/get/' + sauth.adminid, { }, (err, response) => {
     if (err) console.error(err)
-
-    res.render('settings', { errorMsg: errorMsg, data: response })
+    res.render('settings', { errorMsg: errorMsg, data: response.data })
   })
 }
 
@@ -53,10 +52,10 @@ exports.update = (req, res) => {
       if (oldpass) {
         if (newpass === confpass) {
           API_SERVICE.get('v1/admin/get/' + sauth.adminid, { }, (err, dataAdmin) => {
-            if (err) console.error(err)
-            if (dataAdmin) {
+            dataAdmin = dataAdmin.data
+            if (!err) {
               if (dataAdmin.password === MiscHelper.setPassword(oldpass, dataAdmin.salt).passwordHash) {
-                API_SERVICE.post('v1/admin/update/' + sauth.adminid, { newpassword: newpass, confpassword: confpass, nick: input.nick }, (err, dataUpdate) => {
+                API_SERVICE.post('v1/admin/update/' + sauth.adminid, { status: 1, newpassword: newpass, confpassword: confpass, nick: input.nick }, (err, dataUpdate) => {
                   if (err) console.error(err)
                   MiscHelper.set_error_msg({ info: 'Profile berhasil di update.' }, req.sessionID)
                   res.redirect('/settings')
@@ -75,7 +74,7 @@ exports.update = (req, res) => {
           res.redirect('/settings')
         }
       } else {
-        API_SERVICE.post('v1/admin/update/' + sauth.adminid, { nick: input.nick }, (err, dataAdmin) => {
+        API_SERVICE.post('v1/admin/update/' + sauth.adminid, { status: 1, nick: input.nick }, (err, dataAdmin) => {
           if (err) console.error(err)
           MiscHelper.set_error_msg({ info: 'Profile berhasil di update.' }, req.sessionID)
           res.redirect('/settings')

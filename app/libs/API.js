@@ -120,7 +120,7 @@ const createClient = (config) => {
         try {
           const output = JSON.parse(body)
           if (output && output.data && typeof callback === 'function') {
-            return callback(null, output.data)
+            return callback(null, output)
           } else {
             return callback(null, output)
           }
