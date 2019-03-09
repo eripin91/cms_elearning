@@ -58,6 +58,8 @@
     "express-validator": "^5.3.1",
     "fast-json-parse": "^1.0.3",
     "fast-safe-stringify": "^2.0.6",
+    "ffmpeg": "0.0.4",
+    "fluent-ffmpeg": "^2.1.2",
     "handlebars": "^4.1.0",
     "lodash": "^4.17.11",
     "moment": "^2.24.0",
