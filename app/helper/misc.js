@@ -79,6 +79,17 @@ module.exports = {
   set_error_msg: (arr, sesId) => {
     redisCache.setex(`__msg${sesId}`, 10, arr)
   },
+  getActionButton: (urlPrefix, id) => {
+    let action = '<a href="' + urlPrefix + '/' + urlPrefix + '_update/' + id + '"><i class="fa fa-pencil"></i></a>'
+    action += ' <a href="' + urlPrefix + '/' + urlPrefix + '_delete/' + id + '" onclick="return confirm(\'Are you sure you want to delete this item?\');"><i class="fa fa-times"></i></a>'
+    return action
+  },
+  getStatus: (status, type) => {
+    if (type === 1) { return (status === 1 ? 'Active' : 'Inactive') } else { return (status === 1 ? 'Active <input type="radio" checked="checked" name="status" value="1" /> Inactive <input type="radio" name="status" value="0" />' : 'Active <input type="radio" name="status" value="1" /> Inactive <input type="radio" checked="checked" name="status" value="0" />') }
+  },
+  getConfirm: (status) => {
+    return (status === 1 ? 'Confirmed' : 'Unconfirm')
+  },
   get_error_msg: async (sesId) => {
     const data = await redisCache.v2_get(`__msg${sesId}`).catch(err => console.error(err))
     if (!data) return ''

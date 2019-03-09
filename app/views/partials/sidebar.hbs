@@ -19,18 +19,20 @@
             <i class="fa fa-dashboard"></i> <span>Dashboard</span>
           </a>
         </li>
-        <li class="treeview" rel="Users">
+        <li><a href="{{ site_url 'guru' }}"><i class="fa fa-user-md"></i> Guru</a></li>
+        <li><a href="{{ site_url 'users' }}"><i class="fa fa-users"></i> Users</a></li>
+        <li class="treeview" rel="Admin">
           <a href="#">
-            <i class="fa fa-users"></i>
-            <span>Users</span>
+            <i class="fa fa-smile-o"></i>
+            <span>Admin</span>
             <span class="pull-right-container">
               <i class="fa fa-angle-left pull-right"></i>
               <span class="label bg-yellow pull-right">2</span>
             </span>
           </a>
           <ul class="treeview-menu">
-            <li><a href="{{ site_url 'users' }}"><i class="fa fa-circle-o"></i> Users</a></li>
-            <li><a href="{{ site_url 'users_group' }}"><i class="fa fa-circle-o"></i> Users Group</a></li>
+            <li><a href="{{ site_url 'admin' }}"><i class="fa fa-circle-o"></i> Admin</a></li>
+            <li><a href="{{ site_url 'admin_group' }}"><i class="fa fa-circle-o"></i> Admin Group</a></li>
           </ul>
         </li>
         <li>

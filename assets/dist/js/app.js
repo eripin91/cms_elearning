@@ -761,3 +761,29 @@ function _init() {
     });
   };
 }(jQuery));
+
+// section: users
+(function ($) {
+  'use strict';
+    var url = SITE_URL + $("#sTableUsers").attr('src')
+    $('#sTableUsers').DataTable({
+      "processing": true,
+      "serverSide": true,
+      "bFilter": true,
+      "ordering": false,
+      "scrollX": false,
+      "aaSorting": [],
+      "pageLength": 10,
+      "columnDefs": [],
+      "pagingType": "full_numbers",
+      "ajax": url,
+      columns: [
+        { "data": "userid" },
+        { "data": "email" },
+        { "data": "fullname" },
+        { "data": "phone" },
+        { "data": "confirm" },
+        { "data": "action" }
+      ]
+    });
+}(jQuery));
