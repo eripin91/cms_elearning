@@ -68,7 +68,7 @@ const register = (Handlebars) => {
     },
     check_permission: (perm) => {
       for (let i = 0; i < _.size(sauth.perms); ++i) {
-        if (_.result(sauth.perms[i],'perm') === perm) {
+        if (_.result(sauth.perms[i], 'perm') === perm) {
           return (sauth.perms[i].access === 1)
         }
       }
