@@ -1,4 +1,4 @@
-/* global _ helpers */
+/* global _ helpers redisCache */
 
 'use strict'
 
@@ -86,7 +86,7 @@ exports.get = (req, res) => {
     (cb) => {
       redisCache.get(key, admin => {
         if (_.result(admin, 'data')) {
-          return MiscHelper.responses(res, admin.data, 200, {total: admin.total})
+          return MiscHelper.responses(res, admin.data, 200, { total: admin.total })
         } else {
           cb(null)
         }
@@ -114,7 +114,7 @@ exports.get = (req, res) => {
     }
   ], (errAdmin, resultAdmin) => {
     if (!errAdmin) {
-      return MiscHelper.responses(res, resultAdmin.data, 200, {total: resultAdmin.total})
+      return MiscHelper.responses(res, resultAdmin.data, 200, { total: resultAdmin.total })
     } else {
       return MiscHelper.errorCustomStatus(res, errAdmin, 400)
     }

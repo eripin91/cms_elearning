@@ -33,27 +33,31 @@ exports.main = async (req, res) => {
  * @return {object} Request object
  */
 exports.ajaxGet = async (req, res) => {
-  API_SERVICE.get('v1/users/get', {limit: _.result(req.query, 'length', 25), offset: _.result(req.query, 'start', 0), keyword: req.query.search['value']}, (err, response) => {
-    const dataUsers = []
-    async.eachSeries(_.result(response, 'data', {}), (item, next) => {
-      item.action = MiscHelper.getActionButton('users', item.userid)
-      item.confirm = MiscHelper.getConfirm(item.confirm)
-      item.created_at = moment(item.created_at).format('DD/MM/YYYY hh:mm')
-      dataUsers.push(item)
-      next()
-    }, err => {
-      if (!err) {
-        const data = {
-          draw: _.result(req.query, 'draw', 1),
-          recordsTotal: _.result(response, 'total', 0),
-          recordsFiltered: _.result(response, 'total', 0)
-        }
+  API_SERVICE.get('v1/users/get', { limit: _.result(req.query, 'length', 25), offset: _.result(req.query, 'start', 0), keyword: req.query.search['value'] }, (err, response) => {
+    if (!err) {
+      const dataUsers = []
+      async.eachSeries(_.result(response, 'data', {}), (item, next) => {
+        item.action = MiscHelper.getActionButton('users', item.userid)
+        item.confirm = MiscHelper.getConfirm(item.confirm)
+        item.created_at = moment(item.created_at).format('DD/MM/YYYY hh:mm')
+        dataUsers.push(item)
+        next()
+      }, err => {
+        if (!err) {
+          const data = {
+            draw: _.result(req.query, 'draw', 1),
+            recordsTotal: _.result(response, 'total', 0),
+            recordsFiltered: _.result(response, 'total', 0)
+          }
 
-        return MiscHelper.responses(res, dataUsers, 200, data)
-      } else {
-        return MiscHelper.errorCustomStatus(res, err, 400)
-      }
-    })
+          return MiscHelper.responses(res, dataUsers, 200, data)
+        } else {
+          return MiscHelper.errorCustomStatus(res, err, 400)
+        }
+      })
+    } else {
+      return MiscHelper.errorCustomStatus(res, err, _.result(err, 'status', 400))
+    }
   })
 }
 
@@ -83,4 +87,3 @@ exports.delete = async (req, res) => {
     })
   }
 }
-
