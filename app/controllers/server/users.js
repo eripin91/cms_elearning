@@ -25,7 +25,7 @@ exports.get = (req, res) => {
     (cb) => {
       redisCache.get(key, users => {
         if (_.result(users, 'data')) {
-          return MiscHelper.responses(res, users.data, 200, {total: users.total})
+          return MiscHelper.responses(res, users.data, 200, { total: users.total })
         } else {
           cb(null)
         }
@@ -51,7 +51,7 @@ exports.get = (req, res) => {
     }
   ], (errUsers, resultUsers) => {
     if (!errUsers) {
-      return MiscHelper.responses(res, resultUsers.data, 200, {total: resultUsers.total})
+      return MiscHelper.responses(res, resultUsers.data, 200, { total: resultUsers.total })
     } else {
       return MiscHelper.errorCustomStatus(res, errUsers, 400)
     }
