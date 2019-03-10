@@ -3,12 +3,12 @@
     <!-- Content Header (Page header) -->
     <section class="content-header">
       <h1>
-        Users
-        <small>Users</small>
+        Admin
+        <small>Admin</small>
       </h1>
       <ol class="breadcrumb">
         <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
-        <li class="active"><a href="#">Users</a></li>
+        <li class="active"><a href="#">Admin</a></li>
       </ol>
     </section>
 
@@ -18,23 +18,25 @@
         <div class="col-xs-12">
           <div class="box">
             <div class="box-header">
-              <h3 class="box-title">Users</h3>
+              <h3 class="box-title">Admin</h3>
             </div>
             <!-- /.box-header -->
             <div class="box-body">
             {{{ errorMsg }}}
             
             <div class="box-header">
+              <h3 class="box-title">
+                <a href="{{ site_url 'admin/add' }}" class="btn btn-default"><i class="fa fa-plus"></i> Add Admin</a>
+              </h3>
             </div>
-              <table id="sTableUsers" class="table table-bordered table-striped" src="users/ajax/get">
+              <table id="sTableAdmin" class="table table-bordered table-striped" src="admin/ajax/get">
                 <thead>
                 <tr>
-          <th>UserId</th>
+          <th>AdminId</th>
           <th>Email</th>
           <th>Full Name</th>
-          <th>Phone</th>
-          <th>Confirmation</th>
-          <th>Register Date</th>
+          <th>Created Date</th>
+          <th>Status</th>
           <th>Action</th>
                 </tr>
                 </thead>
@@ -42,12 +44,11 @@
                 </tbody>
                 <tfoot>
                 <tr>
-          <th>UserId</th>
+          <th>AdminId</th>
           <th>Email</th>
           <th>Full Name</th>
-          <th>Phone</th>
-          <th>Confirmation</th>
-          <th>Register Date</th>
+          <th>Created Date</th>
+          <th>Status</th>
           <th>Action</th>
                 </tr>
                 </tfoot>
