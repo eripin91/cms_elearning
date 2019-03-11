@@ -58,10 +58,7 @@
     "express-validator": "^5.3.1",
     "fast-json-parse": "^1.0.3",
     "fast-safe-stringify": "^2.0.6",
-<<<<<<< HEAD
-=======
     "ffmpeg": "0.0.4",
->>>>>>> 10316149026341e96c5fe55abd4d5a6d1b135f42
     "fluent-ffmpeg": "^2.1.2",
     "handlebars": "^4.1.0",
     "lodash": "^4.17.11",
