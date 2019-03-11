@@ -58,6 +58,7 @@
     "express-validator": "^5.3.1",
     "fast-json-parse": "^1.0.3",
     "fast-safe-stringify": "^2.0.6",
+    "gm": "^1.23.1",
     "handlebars": "^4.1.0",
     "lodash": "^4.17.11",
     "moment": "^2.24.0",

@@ -5,6 +5,9 @@
 const async = require('async')
 const classesModel = require('../../models/classes')
 const uploadAws = require('../../helper/upload')
+const aws = require('aws-sdk')
+const gm = require('gm').subClass({ imageMagick: true })
+const s3 = new aws.S3()
 
 exports.get = (req, res) => {
   const key = 'get-all-class'
@@ -178,15 +181,15 @@ exports.upload = (req, res) => {
 }
 
 exports.insertClassUltimate = (req, res) => {
-  req.checkBody('guruId', 'guruId is required').notEmpty().isInt()
-  req.checkBody('name', 'name is required').notEmpty()
-  req.checkBody('description', 'description is required').notEmpty()
-  req.checkBody('file', 'file is required').notEmpty()
-  req.checkBody('priority', 'priority is required').notEmpty().isInt()
+  // req.checkBody('guruId', 'guruId is required').notEmpty().isInt()
+  // req.checkBody('name', 'name is required').notEmpty()
+  // req.checkBody('description', 'description is required').notEmpty()
+  // req.checkBody('file', 'file is required').notEmpty()
+  // req.checkBody('priority', 'priority is required').notEmpty().isInt()
 
-  if (req.validationErrors()) {
-    return MiscHelper.errorCustomStatus(res, req.validationErrors(true))
-  }
+  // if (req.validationErrors()) {
+  //   return MiscHelper.errorCustomStatus(res, req.validationErrors(true))
+  // }
 
   const singleUpload = uploadAws.single('file')
 
@@ -198,6 +201,27 @@ exports.insertClassUltimate = (req, res) => {
         } else {
           return MiscHelper.errorCustomStatus(res, err)
         }
+      })
+    },
+    (dataImage, cb) => {
+      let getParams = {
+        Bucket: dataImage.bucket,
+        Key: dataImage.key
+      }
+
+      s3.getObject(getParams, (err, image) => {
+        // console.log(image)
+        // cb(null, dataImage)
+        if (err) console.error(err)
+
+        gm(image.Body)
+          .resize(120, 120)
+          .stream((err, stdout, stderr) => {
+            if (err) console.error(err)
+
+            stdout.pipe(res)
+            console.log(res)
+          })
       })
     },
     (dataFile, cb) => {
@@ -213,15 +237,15 @@ exports.insertClassUltimate = (req, res) => {
         updated_at: new Date()
       }
 
-      classesModel.insertClass(req, data, (errInsert, resultInsert) => {
-        cb(errInsert, resultInsert)
+      classesModel.insertClass(req, data, (err, result) => {
+        cb(err, result)
       })
     }
   ], (errInsert, resultInsert) => {
     if (!errInsert) {
-      return MiscHelper.errorCustomStatus(res, errInsert)
-    } else {
       return MiscHelper.responses(res, resultInsert)
+    } else {
+      return MiscHelper.errorCustomStatus(res, errInsert)
     }
   })
 }
