@@ -34,6 +34,15 @@ exports.uploadAws = (req, res) => {
       })
     },
     (dataUpload, cb) => {
+      ffmpeg(dataUpload.fileUrl)
+        .input(dataUpload.fileUrl)
+        .ffprobe((err, data) => {
+          if (err) console.error(err)
+          dataUpload.duration = parseInt(data.streams[0].duration)
+          cb(err, dataUpload)
+        })
+    },
+    (dataUpload, cb) => {
       if (_.isEmpty(dataUpload)) {
         return MiscHelper.errorCustomStatus('Tidak ada file upload')
       } else {
