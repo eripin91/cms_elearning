@@ -1,11 +1,11 @@
-/* global SettingsControllers */
+/* global ViewSettingsControllers */
 
 'use strict'
 
 var Route = express.Router()
 
 Route
-  .get('/', SettingsControllers.main)
-  .post('/update', SettingsControllers.update)
+  .get('/', ViewSettingsControllers.main)
+  .post('/update', ViewSettingsControllers.update)
 
 module.exports = Route

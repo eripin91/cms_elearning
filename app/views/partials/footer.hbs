@@ -89,46 +89,8 @@
 <!-- Sparkline -->
 <script src="{{ themes_url 'plugins/slimScroll/jquery.slimscroll.min.js' }}"></script>
 <!-- AdminLTE App -->
-<script src="{{ themes_url 'dist/js/app.min.js' }}"></script>
+<script src="{{ themes_url 'dist/js/app.js' }}"></script>
 <script src="{{ themes_url 'dist/js/demo.js' }}"></script>
 <script src="{{ themes_url 'bootstrap/js/js.js' }}"></script>
-<script>
-  $(function () {
-    $("#sTable").DataTable({"aaSorting": [], "pageLength": 25, "scrollX": true});
-	var url = '';
-	if (/\/products/.test(window.location.href) === true) {
-		url = '/products/list_datatables';
-	}
-	else if (/\/order/.test(window.location.href) === true) {
-		url = '/order/list_datatables';
-	}
-	else if (/\/opname/.test(window.location.href) === true) {
-		url = '/opname/list_datatables';
-	}
-	else if (/\/inventory/.test(window.location.href) === true) {
-		url = '/inventory/list_datatables';
-	}
-	
-	$('#sAjaxTable').DataTable( {
-		"processing": true,
-		"serverSide": true,
-		"bFilter": true,
-		"ordering": true,
-		"scrollX": true,
-		"aaSorting": [],
-		"pageLength": 25,
-		"ajax": url,
-		"columnDefs": [
-		]
-	} );
-  });
-</script>
-<script type="text/javascript">
-	if (/\/users/.test(window.location.href) === true) {
-		$('li[rel="Users"]').addClass('active');
-		$('li[rel="Users"] > ul.treeview-menu').css({'display': 'block', 'overflow': 'hidden'});
-	}
-</script>
-
 </body>
 </html>
