@@ -621,11 +621,8 @@ exports.getMaterialDetail = (req, res) => {
 exports.insertMaterialDetail = (req, res) => {
   req.cekParams('detailId', 'detailid is required').notEmpty().isInt()
   req.checkBody('name', 'name is required').notEmpty()
-  req.checkBody('size', 'size is required').notEmpty()
   req.checkBody('description', 'description is required').notEmpty()
   req.checkBody('video_url', 'video_url is required').notEmpty()
-  req.checkBody('thumbnails', 'thumbnails is required').notEmpty()
-  req.checkBody('duration', 'duration is required').notEmpty()
 
   if (req.validationErrors()) {
     return MiscHelper.errorCustomStatus(res, req.validationErrors(true))
