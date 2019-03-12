@@ -1,11 +1,11 @@
 'use strict'
 
 module.exports = {
-  getCourse: (conn, classId, callback) => {
+  getCourse: (conn, callback) => {
     conn.getConnection((errConnection, connection) => {
       if (errConnection) console.error(connection)
 
-      connection.query('SELECT * FROM courses_tab WHERE classId = ? AND status = 1', [classId], (err, rows) => {
+      connection.query('SELECT * FROM courses_tab WHERE status = 1', (err, rows) => {
         callback(err, rows)
       })
     })
@@ -32,29 +32,29 @@ module.exports = {
       })
     })
   },
-  updateCourse: (conn, id, data, callback) => {
+  updateCourse: (conn, data, id, callback) => {
+    conn.getConnection((errConnection, connection) => {
+      if (errConnection) console.error(errConnection)
+      connection.query('UPDATE courses_tab SET ? WHERE courseid = ?', [data, id], (err, rows) => {
+        console.log(rows)
+        callback(err, rows.affectedRows > 0 ? _.merge(data, { courseid: id }) : [])
+      })
+    })
+  },
+  deleteCourse: (conn, data, id, callback) => {
     conn.getConnection((errConnection, connection) => {
       if (errConnection) console.error(errConnection)
 
-      connection.query('UPDATE courses_material SET ? WHERE courseid = ?', [data, id], (err, result) => {
+      connection.query('UPDATE courses_tab SET ? WHERE courseid = ?', [data, id], (err, result) => {
         callback(err, result.affectedRows > 0 ? _.merge(data, { courseid: id }) : [])
       })
     })
   },
-  deleteCourse: (conn, id, data, callback) => {
+  getDetail: (conn, courseId, callback) => {
     conn.getConnection((errConnection, connection) => {
       if (errConnection) console.error(errConnection)
 
-      connection.query('UPDATE courses_material SET ? WHERE courseid = ?', [data, id], (err, result) => {
-        callback(err, result.affectedRows > 0 ? _.merge(data, { courseid: id }) : [])
-      })
-    })
-  },
-  getDetail: (conn, classId, callback) => {
-    conn.getConnection((errConnection, connection) => {
-      if (errConnection) console.error(errConnection)
-
-      connection.query('SELECT cd.name, at.title AS assessment_title FROM courses_detail_tab cd JOIN courses_tab c ON cd.courseid = c.courseid LEFT JOIN assessment_tab at ON at.assessmentid = cd.assesmentid WHERE c.classid = ? AND cd.status = 1', classId, (err, rows) => {
+      connection.query('SELECT cd.detailid, cd.name, at.title AS assessment_title FROM courses_detail_tab cd JOIN courses_tab c ON cd.courseid = c.courseid LEFT JOIN assessment_tab at ON at.assessmentid = cd.assesmentid WHERE c.courseid = ? AND cd.status = 1', courseId, (err, rows) => {
         callback(err, rows)
       })
     })
@@ -72,7 +72,7 @@ module.exports = {
       })
     })
   },
-  updateDetail: (conn, id, data, callback) => {
+  updateDetail: (conn, data, id, callback) => {
     conn.getConnection((errConnection, connection) => {
       if (errConnection) console.error(errConnection)
 
@@ -90,11 +90,11 @@ module.exports = {
       })
     })
   },
-  checkCourse: (conn, classId, callback) => {
+  checkCourse: (conn, courseId, callback) => {
     conn.getConnection((errConnection, connection) => {
       if (errConnection) console.error(errConnection)
 
-      connection.query('SELECT * FROM courses_tab WHERE classid = ? AND status = 1', [classId], (errCourse, resultCourse) => {
+      connection.query('SELECT * FROM courses_tab WHERE courseId = ? AND status = 1', [courseId], (errCourse, resultCourse) => {
         callback(errCourse, resultCourse)
       })
     })
