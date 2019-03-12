@@ -5,8 +5,16 @@
 const async = require('async')
 const classesModel = require('../../models/classes')
 const uploadAws = require('../../helper/upload')
+const fs = require('fs')
 const aws = require('aws-sdk')
 const gm = require('gm').subClass({ imageMagick: true })
+
+aws.config.update({
+  secretAccessKey: CONFIG.AWS.AWS_ACCESS_KEY_SECRET,
+  accessKeyId: CONFIG.AWS.AWS_ACCESS_KEY_ID,
+  region: CONFIG.AWS_S3_REGION
+})
+
 const s3 = new aws.S3()
 
 exports.get = (req, res) => {
@@ -210,26 +218,94 @@ exports.insertClassUltimate = (req, res) => {
       }
 
       s3.getObject(getParams, (err, image) => {
-        // console.log(image)
-        // cb(null, dataImage)
         if (err) console.error(err)
 
         gm(image.Body)
-          .resize(120, 120)
-          .stream((err, stdout, stderr) => {
-            if (err) console.error(err)
+          .resize(120, 120, '^')
+          .gravity('Center')
+          .crop(120, 120)
+          // .stream((err, stdout, stderr) => {
+          //   stdout.pipe(res)
+          // })
+          .write(`./assets/img/thumbnail-${getParams.Key}`, (err) => {
+            if (!err) {
+              const filePath = `./assets/img/thumbnail-${getParams.Key}`
 
-            stdout.pipe(res)
-            console.log(res)
+              fs.readFile(filePath, (err, data) => {
+                if (!err) {
+                  let base64Data = Buffer.from(data, 'binary')
+                  let params = {
+                    Bucket: dataImage.bucket,
+                    Key: `thumbnail-${dataImage.key}`,
+                    Body: base64Data,
+                    ACL: 'public-read'
+                  }
+
+                  s3.upload(params, (err, result) => {
+                    if (!err) {
+                      fs.unlinkSync(filePath)
+                      dataImage.thumbnail = result.Location
+                      cb(null, dataImage)
+                    }
+                  })
+                }
+              })
+            }
+          })
+      })
+    },
+    (dataImage, cb) => {
+      let getParams = {
+        Bucket: dataImage.bucket,
+        Key: dataImage.key
+      }
+
+      s3.getObject(getParams, (err, image) => {
+        if (err) console.error(err)
+
+        gm(image.Body)
+          .resize(500, 500, '^')
+          .gravity('Center')
+          .crop(500, 500)
+          // .stream((err, stdout, stderr) => {
+          //   stdout.pipe(res)
+          // })
+          .write(`./assets/img/medium-${getParams.Key}`, (err) => {
+            if (!err) {
+              const filePath = `./assets/img/medium-${getParams.Key}`
+
+              fs.readFile(filePath, (err, data) => {
+                if (!err) {
+                  let base64Data = Buffer.from(data, 'binary')
+                  let params = {
+                    Bucket: dataImage.bucket,
+                    Key: `medium-${dataImage.key}`,
+                    Body: base64Data,
+                    ACL: 'public-read'
+                  }
+
+                  s3.upload(params, (err, result) => {
+                    if (!err) {
+                      fs.unlinkSync(filePath)
+                      dataImage.medium = result.Location
+                      cb(null, dataImage)
+                    }
+                  })
+                }
+              })
+            }
           })
       })
     },
     (dataFile, cb) => {
+      console.log(dataFile)
       const data = {
         guruid: req.body.guruId,
         name: req.body.name,
         description: req.body.description,
         cover: dataFile.location,
+        medium: dataFile.medium,
+        thumbnail: dataFile.thumbnail,
         priority: req.body.priority,
         rating: 0,
         status: 1,
