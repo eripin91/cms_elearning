@@ -13,6 +13,7 @@ Route
   .delete('/:courseId', CoursesControllers.deleteCourse)
 
   .get('/chapter/:courseId', CoursesControllers.getDetail)
+  .get('/chapter/detail/:detailId', CoursesControllers.getDetails)
   .post('/chapter/:courseId', CoursesControllers.insertDetail)
   .patch('/chapter/:courseId/:detailId', CoursesControllers.updateDetail)
   .delete('/chapter/:courseId/:detailId', CoursesControllers.deleteDetail)

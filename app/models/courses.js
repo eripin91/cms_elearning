@@ -1,11 +1,19 @@
 'use strict'
 
 module.exports = {
-  getCourse: (conn, callback) => {
+  getCourse: (conn, limit, offset, keyword, callback) => {
     conn.getConnection((errConnection, connection) => {
       if (errConnection) console.error(connection)
 
-      connection.query('SELECT * FROM courses_tab WHERE status = 1', (err, rows) => {
+      connection.query(`SELECT * FROM courses_tab WHERE status = 1 AND name LIKE '%${keyword}%' ORDER BY courseid DESC LIMIT ${offset}, ${limit}`, (err, rows) => {
+        callback(err, rows)
+      })
+    })
+  },
+  getTotalCourse: (conn, keyword, callback) => {
+    conn.getConnection((errConnection, connection) => {
+      if (errConnection) console.error(connection)
+      connection.query(`SELECT COUNT(*) AS total FROM courses_tab WHERE status = 1 AND name LIKE '%${keyword}%'`, (err, rows) => {
         callback(err, rows)
       })
     })
@@ -50,11 +58,29 @@ module.exports = {
       })
     })
   },
-  getDetail: (conn, courseId, callback) => {
+  getDetail: (conn, courseId, limit, offset, keyword, callback) => {
     conn.getConnection((errConnection, connection) => {
       if (errConnection) console.error(errConnection)
 
-      connection.query('SELECT cd.detailid, cd.name, at.title AS assessment_title FROM courses_detail_tab cd JOIN courses_tab c ON cd.courseid = c.courseid LEFT JOIN assessment_tab at ON at.assessmentid = cd.assesmentid WHERE c.courseid = ? AND cd.status = 1', courseId, (err, rows) => {
+      connection.query(`SELECT cd.detailid, cd.name, at.title AS assessment_title FROM courses_detail_tab cd JOIN courses_tab c ON cd.courseid = c.courseid LEFT JOIN assessment_tab at ON at.assessmentid = cd.assesmentid WHERE c.courseid = ${courseId} AND cd.name LIKE '%${keyword}%' AND cd.status = 1 ORDER BY cd.detailid DESC LIMIT ${offset}, ${limit}`, (err, rows) => {
+        callback(err, rows)
+      })
+    })
+  },
+  getTotalDetail: (conn, courseId, keyword, callback) => {
+    conn.getConnection((errConnection, connection) => {
+      if (errConnection) console.error(errConnection)
+
+      connection.query(`SELECT COUNT(*) AS total FROM courses_detail_tab cd JOIN courses_tab c ON cd.courseid = c.courseid LEFT JOIN assessment_tab at ON at.assessmentid = cd.assesmentid WHERE c.courseid = ${courseId} AND cd.name LIKE '%${keyword}%' AND cd.status = 1`, (err, rows) => {
+        callback(err, rows)
+      })
+    })
+  },
+  getDetails: (conn, detailId, callback) => {
+    conn.getConnection((errConnection, connection) => {
+      if (errConnection) console.error(errConnection)
+
+      connection.query(`SELECT * FROM courses_detail_tab WHERE detailid = ${detailId}`, (err, rows) => {
         callback(err, rows)
       })
     })
@@ -108,11 +134,20 @@ module.exports = {
       })
     })
   },
-  getMaterialList: (conn, detailId, callback) => {
+  getMaterialList: (conn, detailId, limit, offset, keyword, callback) => {
     conn.getConnection((errConnection, connection) => {
       if (errConnection) console.error(errConnection)
 
-      connection.query('SELECT * FROM courses_material_tab WHERE detailid = ? AND status = 1', [detailId], (err, rows) => {
+      connection.query(`SELECT * FROM courses_material_tab WHERE detailid = ${detailId} AND name LIKE '%${keyword}%' AND status = 1 ORDER BY materialid DESC LIMIT ${offset}, ${limit}`, (err, rows) => {
+        callback(err, rows)
+      })
+    })
+  },
+  getTotalMaterial: (conn, detailId, keyword, callback) => {
+    conn.getConnection((errConnection, connection) => {
+      if (errConnection) console.error(errConnection)
+
+      connection.query(`SELECT COUNT(*) AS total FROM courses_material_tab WHERE detailid = ${detailId} AND name LIKE '%${keyword}%' AND status = 1`, (err, rows) => {
         callback(err, rows)
       })
     })

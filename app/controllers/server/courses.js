@@ -29,11 +29,10 @@ const s3 = new AWS.S3()
  * @return {object} Request object
  */
 exports.getCourse = (req, res) => {
-  if (req.validationErrors()) {
-    return MiscHelper.errorCustomStatus(res, req.validationErrors(true))
-  }
-
-  const key = `courses-list`
+  const limit = _.result(req.query, 'limit', 10)
+  const offset = _.result(req.query, 'offset', 0)
+  const keyword = _.result(req.query, 'keyword')
+  const key = `courses-list:${limit}:${offset}:${keyword}`
 
   async.waterfall([
     (cb) => {
@@ -46,12 +45,22 @@ exports.getCourse = (req, res) => {
       })
     },
     (cb) => {
-      coursesModel.getCourse(req, (errCourse, resultCourse) => {
+      coursesModel.getCourse(req, limit, offset, keyword, (errCourse, resultCourse) => {
         if (_.isEmpty(resultCourse)) {
-          return MiscHelper.errorCustomStatus(res, { message: 'Tidak ada Course di class ini' })
+          cb(errCourse, resultCourse)
         } else {
           cb(errCourse, resultCourse)
         }
+      })
+    },
+    (dataCourse, cb) => {
+      coursesModel.getTotalCourse(req, keyword, (errCourse, total) => {
+        if (errCourse) console.error(errCourse)
+        let data = {
+          data: dataCourse,
+          total: total[0].total
+        }
+        cb(errCourse, data)
       })
     },
     (dataCourse, cb) => {
@@ -107,17 +116,6 @@ exports.getCourseDetail = (req, res) => {
       })
     },
     (dataCourse, cb) => {
-      console.log('masuk kesini')
-      coursesModel.getDetail(req, courseId, (errCourse, resultCourse) => {
-        if (_.isEmpty(resultCourse)) {
-          dataCourse.bab = 'Tidak ada bab untuk course ini'
-        } else {
-          dataCourse.bab = resultCourse
-        }
-        cb(errCourse, dataCourse)
-      })
-    },
-    (dataCourse, cb) => {
       redisCache.setex(key, 600, dataCourse)
       console.log('data cached')
       cb(null, dataCourse)
@@ -167,8 +165,7 @@ exports.insertCourse = (req, res) => {
         updated_at: new Date()
       }
       coursesModel.insertCourse(req, data, (errCourse, resultCourse) => {
-        const key = `courses-list`
-        redisCache.del(key)
+        redisCache.delwild('courses-list:*')
         cb(errCourse, resultCourse)
       })
     }
@@ -304,8 +301,11 @@ exports.getDetail = (req, res) => {
     return MiscHelper.errorCustomStatus(res, req.validationErrors(true))
   }
 
+  const limit = _.result(req.query, 'limit', 10)
+  const offset = _.result(req.query, 'offset', 0)
+  const keyword = _.result(req.query, 'keyword')
   const courseId = req.params.courseId
-  const key = `courses-detail-:${courseId}`
+  const key = `courses-detail-:${limit}:${offset}:${keyword}`
 
   async.waterfall([
     (cb) => {
@@ -318,12 +318,22 @@ exports.getDetail = (req, res) => {
       })
     },
     (cb) => {
-      coursesModel.getDetail(req, courseId, (errDetail, resultDetail) => {
+      coursesModel.getDetail(req, courseId, limit, offset, keyword, (errDetail, resultDetail) => {
         if (_.isEmpty(resultDetail)) {
           return MiscHelper.errorCustomStatus(res, { message: 'Tidak ada chapter untuk class ini' })
         } else {
           cb(errDetail, resultDetail)
         }
+      })
+    },
+    (dataDetail, cb) => {
+      coursesModel.getTotalDetail(req, courseId, keyword, (err, total) => {
+        if (err) console.error(err)
+        let data = {
+          data: dataDetail,
+          total: total[0].total
+        }
+        cb(err, data)
       })
     },
     (dataDetail, cb) => {
@@ -333,6 +343,46 @@ exports.getDetail = (req, res) => {
     }
   ],
   (errDetail, resultDetail) => {
+    if (!errDetail) {
+      return MiscHelper.responses(res, resultDetail)
+    } else {
+      return MiscHelper.errorCustomStatus(res, errDetail, 400)
+    }
+  })
+}
+
+exports.getDetails = (req, res) => {
+  req.checkParams('detailId', 'detailId is required').notEmpty().isInt()
+
+  const detailId = req.params.detailId
+  const key = `courses-detail-:${detailId}`
+
+  async.waterfall([
+    (cb) => {
+      redisCache.get(key, courses => {
+        if (courses) {
+          return MiscHelper.responses(res, courses)
+        } else {
+          cb(null)
+        }
+      })
+    },
+    (cb) => {
+      coursesModel.getDetails(req, detailId, (errDetail, resultDetail) => {
+        if (errDetail) console.error(errDetail)
+        console.log(resultDetail)
+        if (_.isEmpty(resultDetail)) {
+          return MiscHelper.notFound(res, 'Detail not Found')
+        }
+        cb(errDetail, resultDetail)
+      })
+    },
+    (dataDetail, cb) => {
+      redisCache.setex(key, 600, dataDetail)
+      console.log('data cached')
+      cb(null, dataDetail)
+    }
+  ], (errDetail, resultDetail) => {
     if (!errDetail) {
       return MiscHelper.responses(res, resultDetail)
     } else {
@@ -520,8 +570,12 @@ exports.getMaterialList = (req, res) => {
   if (req.validationErrors()) {
     return MiscHelper.errorCustomStatus(res, req.validationErrors(true))
   }
+  const limit = _.result(req.query, 'limit', 10)
+  const offset = _.result(req.query, 'offset', 0)
+  const keyword = _.result(req.query, 'keyword')
   const detailId = req.params.detailId
-  const key = `course-material-list:${detailId}`
+  const key = `course-material-list:${limit}:${offset}:${keyword}`
+
   async.waterfall([
     (cb) => {
       redisCache.get(key, material => {
@@ -534,22 +588,28 @@ exports.getMaterialList = (req, res) => {
     },
     (cb) => {
       coursesModel.checkDetail(req, detailId, (errDetail, resultDetail) => {
+        if (errDetail) console.error(errDetail)
         if (_.isEmpty(resultDetail)) {
           return MiscHelper.errorCustomStatus(res, { message: 'Bab ini tidak ada' })
         } else {
-          cb(errDetail, resultDetail[0])
+          cb(null)
         }
       })
     },
-    (dataDetail, cb) => {
-      coursesModel.getMaterialList(req, detailId, (errMaterialList, resultMaterialList) => {
-        if (_.isEmpty(resultMaterialList)) {
-          dataDetail.material = 'Belum ada materi untuk bab ini'
-        } else {
-          dataDetail.material = resultMaterialList
-          console.log(dataDetail)
-          cb(errMaterialList, dataDetail)
+    (cb) => {
+      coursesModel.getMaterialList(req, detailId, limit, offset, keyword, (errMaterialList, resultMaterialList) => {
+        if (errMaterialList) console.error(errMaterialList)
+        cb(errMaterialList, resultMaterialList)
+      })
+    },
+    (dataMaterial, cb) => {
+      coursesModel.getTotalMaterial(req, detailId, keyword, (errMaterial, total) => {
+        if (errMaterial) console.error(errMaterial)
+        let data = {
+          data: dataMaterial,
+          total: total[0].total
         }
+        cb(errMaterial, data)
       })
     },
     (dataMaterialList, cb) => {
@@ -651,9 +711,6 @@ exports.insertMaterialDetail = (req, res) => {
 
   async.waterfall([
     (cb) => {
-      if (_.isEmpty(req.file)) {
-        return MiscHelper.errorCustomStatus(res, 'video file not found')
-      }
       singleUpload(req, res, (err) => {
         if (err) {
           return MiscHelper.errorCustomStatus(res, err, 400)
