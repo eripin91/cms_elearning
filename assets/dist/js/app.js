@@ -80,11 +80,11 @@ $.AdminLTE.options = {
   boxWidgetOptions: {
     boxWidgetIcons: {
       //Collapse icon
-      collapse: 'fa-minus',
+      collapse: "fa-minus",
       //Open icon
-      open: 'fa-plus',
+      open: "fa-plus",
       //Remove icon
-      remove: 'fa-times'
+      remove: "fa-times"
     },
     boxWidgetSelectors: {
       //Remove button selector
@@ -137,7 +137,7 @@ $.AdminLTE.options = {
  * functions and plugins as specified by the
  * options above.
  */
-$(function () {
+$(function() {
   "use strict";
 
   //Fix for IE page transitions
@@ -145,9 +145,7 @@ $(function () {
 
   //Extend options if external options exist
   if (typeof AdminLTEOptions !== "undefined") {
-    $.extend(true,
-      $.AdminLTE.options,
-      AdminLTEOptions);
+    $.extend(true, $.AdminLTE.options, AdminLTEOptions);
   }
 
   //Easy access to options
@@ -160,7 +158,7 @@ $(function () {
   $.AdminLTE.layout.activate();
 
   //Enable sidebar tree view controls
-  $.AdminLTE.tree('.sidebar');
+  $.AdminLTE.tree(".sidebar");
 
   //Enable control sidebar
   if (o.enableControlSidebar) {
@@ -168,12 +166,14 @@ $(function () {
   }
 
   //Add slimscroll to navbar dropdown
-  if (o.navbarMenuSlimscroll && typeof $.fn.slimscroll != 'undefined') {
-    $(".navbar .menu").slimscroll({
-      height: o.navbarMenuHeight,
-      alwaysVisible: false,
-      size: o.navbarMenuSlimscrollWidth
-    }).css("width", "100%");
+  if (o.navbarMenuSlimscroll && typeof $.fn.slimscroll != "undefined") {
+    $(".navbar .menu")
+      .slimscroll({
+        height: o.navbarMenuHeight,
+        alwaysVisible: false,
+        size: o.navbarMenuSlimscrollWidth
+      })
+      .css("width", "100%");
   }
 
   //Activate sidebar push menu
@@ -183,7 +183,7 @@ $(function () {
 
   //Activate Bootstrap tooltip
   if (o.enableBSToppltip) {
-    $('body').tooltip({
+    $("body").tooltip({
       selector: o.BSTooltipSelector
     });
   }
@@ -194,15 +194,17 @@ $(function () {
   }
 
   //Activate fast click
-  if (o.enableFastclick && typeof FastClick != 'undefined') {
+  if (o.enableFastclick && typeof FastClick != "undefined") {
     FastClick.attach(document.body);
   }
 
   //Activate direct chat widget
   if (o.directChat.enable) {
-    $(document).on('click', o.directChat.contactToggleSelector, function () {
-      var box = $(this).parents('.direct-chat').first();
-      box.toggleClass('direct-chat-contacts-open');
+    $(document).on("click", o.directChat.contactToggleSelector, function() {
+      var box = $(this)
+        .parents(".direct-chat")
+        .first();
+      box.toggleClass("direct-chat-contacts-open");
     });
   }
 
@@ -210,14 +212,15 @@ $(function () {
    * INITIALIZE BUTTON TOGGLE
    * ------------------------
    */
-  $('.btn-group[data-toggle="btn-toggle"]').each(function () {
+  $('.btn-group[data-toggle="btn-toggle"]').each(function() {
     var group = $(this);
-    $(this).find(".btn").on('click', function (e) {
-      group.find(".btn.active").removeClass("active");
-      $(this).addClass("active");
-      e.preventDefault();
-    });
-
+    $(this)
+      .find(".btn")
+      .on("click", function(e) {
+        group.find(".btn.active").removeClass("active");
+        $(this).addClass("active");
+        e.preventDefault();
+      });
   });
 });
 
@@ -227,7 +230,7 @@ $(function () {
  * All AdminLTE functions are implemented below.
  */
 function _init() {
-  'use strict';
+  "use strict";
   /* Layout
    * ======
    * Fixes the layout height in case min-height fails.
@@ -238,61 +241,78 @@ function _init() {
    *        $.AdminLTE.layout.fixSidebar()
    */
   $.AdminLTE.layout = {
-    activate: function () {
+    activate: function() {
       var _this = this;
       _this.fix();
       _this.fixSidebar();
-      $(window, ".wrapper").resize(function () {
+      $(window, ".wrapper").resize(function() {
         _this.fix();
         _this.fixSidebar();
       });
     },
-    fix: function () {
+    fix: function() {
       //Get window height and the wrapper height
-      var neg = $('.main-header').outerHeight() + $('.main-footer').outerHeight();
+      var neg =
+        $(".main-header").outerHeight() + $(".main-footer").outerHeight();
       var window_height = $(window).height();
       var sidebar_height = $(".sidebar").height();
       //Set the min-height of the content and sidebar based on the
       //the height of the document.
       if ($("body").hasClass("fixed")) {
-        $(".content-wrapper, .right-side").css('min-height', window_height - $('.main-footer').outerHeight());
+        $(".content-wrapper, .right-side").css(
+          "min-height",
+          window_height - $(".main-footer").outerHeight()
+        );
       } else {
         var postSetWidth;
         if (window_height >= sidebar_height) {
-          $(".content-wrapper, .right-side").css('min-height', window_height - neg);
+          $(".content-wrapper, .right-side").css(
+            "min-height",
+            window_height - neg
+          );
           postSetWidth = window_height - neg;
         } else {
-          $(".content-wrapper, .right-side").css('min-height', sidebar_height);
+          $(".content-wrapper, .right-side").css("min-height", sidebar_height);
           postSetWidth = sidebar_height;
         }
 
         //Fix for the control sidebar height
-        var controlSidebar = $($.AdminLTE.options.controlSidebarOptions.selector);
+        var controlSidebar = $(
+          $.AdminLTE.options.controlSidebarOptions.selector
+        );
         if (typeof controlSidebar !== "undefined") {
           if (controlSidebar.height() > postSetWidth)
-            $(".content-wrapper, .right-side").css('min-height', controlSidebar.height());
+            $(".content-wrapper, .right-side").css(
+              "min-height",
+              controlSidebar.height()
+            );
         }
-
       }
     },
-    fixSidebar: function () {
+    fixSidebar: function() {
       //Make sure the body tag has the .fixed class
       if (!$("body").hasClass("fixed")) {
-        if (typeof $.fn.slimScroll != 'undefined') {
-          $(".sidebar").slimScroll({destroy: true}).height("auto");
+        if (typeof $.fn.slimScroll != "undefined") {
+          $(".sidebar")
+            .slimScroll({ destroy: true })
+            .height("auto");
         }
         return;
-      } else if (typeof $.fn.slimScroll == 'undefined' && window.console) {
-        window.console.error("Error: the fixed layout requires the slimscroll plugin!");
+      } else if (typeof $.fn.slimScroll == "undefined" && window.console) {
+        window.console.error(
+          "Error: the fixed layout requires the slimscroll plugin!"
+        );
       }
       //Enable slimscroll for fixed layout
       if ($.AdminLTE.options.sidebarSlimScroll) {
-        if (typeof $.fn.slimScroll != 'undefined') {
+        if (typeof $.fn.slimScroll != "undefined") {
           //Destroy if it exists
-          $(".sidebar").slimScroll({destroy: true}).height("auto");
+          $(".sidebar")
+            .slimScroll({ destroy: true })
+            .height("auto");
           //Add slimscroll
           $(".sidebar").slimscroll({
-            height: ($(window).height() - $(".main-header").height()) + "px",
+            height: $(window).height() - $(".main-header").height() + "px",
             color: "rgba(0,0,0,0.2)",
             size: "3px"
           });
@@ -309,70 +329,94 @@ function _init() {
    * @usage: $.AdminLTE.pushMenu("[data-toggle='offcanvas']")
    */
   $.AdminLTE.pushMenu = {
-    activate: function (toggleBtn) {
+    activate: function(toggleBtn) {
       //Get the screen sizes
       var screenSizes = $.AdminLTE.options.screenSizes;
 
       //Enable sidebar toggle
-      $(document).on('click', toggleBtn, function (e) {
+      $(document).on("click", toggleBtn, function(e) {
         e.preventDefault();
 
         //Enable sidebar push menu
-        if ($(window).width() > (screenSizes.sm - 1)) {
-          if ($("body").hasClass('sidebar-collapse')) {
-            $("body").removeClass('sidebar-collapse').trigger('expanded.pushMenu');
+        if ($(window).width() > screenSizes.sm - 1) {
+          if ($("body").hasClass("sidebar-collapse")) {
+            $("body")
+              .removeClass("sidebar-collapse")
+              .trigger("expanded.pushMenu");
           } else {
-            $("body").addClass('sidebar-collapse').trigger('collapsed.pushMenu');
+            $("body")
+              .addClass("sidebar-collapse")
+              .trigger("collapsed.pushMenu");
           }
         }
         //Handle sidebar push menu for small screens
         else {
-          if ($("body").hasClass('sidebar-open')) {
-            $("body").removeClass('sidebar-open').removeClass('sidebar-collapse').trigger('collapsed.pushMenu');
+          if ($("body").hasClass("sidebar-open")) {
+            $("body")
+              .removeClass("sidebar-open")
+              .removeClass("sidebar-collapse")
+              .trigger("collapsed.pushMenu");
           } else {
-            $("body").addClass('sidebar-open').trigger('expanded.pushMenu');
+            $("body")
+              .addClass("sidebar-open")
+              .trigger("expanded.pushMenu");
           }
         }
       });
 
-      $(".content-wrapper").click(function () {
+      $(".content-wrapper").click(function() {
         //Enable hide menu when clicking on the content-wrapper on small screens
-        if ($(window).width() <= (screenSizes.sm - 1) && $("body").hasClass("sidebar-open")) {
-          $("body").removeClass('sidebar-open');
+        if (
+          $(window).width() <= screenSizes.sm - 1 &&
+          $("body").hasClass("sidebar-open")
+        ) {
+          $("body").removeClass("sidebar-open");
         }
       });
 
       //Enable expand on hover for sidebar mini
-      if ($.AdminLTE.options.sidebarExpandOnHover
-        || ($('body').hasClass('fixed')
-        && $('body').hasClass('sidebar-mini'))) {
+      if (
+        $.AdminLTE.options.sidebarExpandOnHover ||
+        ($("body").hasClass("fixed") && $("body").hasClass("sidebar-mini"))
+      ) {
         this.expandOnHover();
       }
     },
-    expandOnHover: function () {
+    expandOnHover: function() {
       var _this = this;
       var screenWidth = $.AdminLTE.options.screenSizes.sm - 1;
       //Expand sidebar on hover
-      $('.main-sidebar').hover(function () {
-        if ($('body').hasClass('sidebar-mini')
-          && $("body").hasClass('sidebar-collapse')
-          && $(window).width() > screenWidth) {
-          _this.expand();
+      $(".main-sidebar").hover(
+        function() {
+          if (
+            $("body").hasClass("sidebar-mini") &&
+            $("body").hasClass("sidebar-collapse") &&
+            $(window).width() > screenWidth
+          ) {
+            _this.expand();
+          }
+        },
+        function() {
+          if (
+            $("body").hasClass("sidebar-mini") &&
+            $("body").hasClass("sidebar-expanded-on-hover") &&
+            $(window).width() > screenWidth
+          ) {
+            _this.collapse();
+          }
         }
-      }, function () {
-        if ($('body').hasClass('sidebar-mini')
-          && $('body').hasClass('sidebar-expanded-on-hover')
-          && $(window).width() > screenWidth) {
-          _this.collapse();
-        }
-      });
+      );
     },
-    expand: function () {
-      $("body").removeClass('sidebar-collapse').addClass('sidebar-expanded-on-hover');
+    expand: function() {
+      $("body")
+        .removeClass("sidebar-collapse")
+        .addClass("sidebar-expanded-on-hover");
     },
-    collapse: function () {
-      if ($('body').hasClass('sidebar-expanded-on-hover')) {
-        $('body').removeClass('sidebar-expanded-on-hover').addClass('sidebar-collapse');
+    collapse: function() {
+      if ($("body").hasClass("sidebar-expanded-on-hover")) {
+        $("body")
+          .removeClass("sidebar-expanded-on-hover")
+          .addClass("sidebar-collapse");
       }
     }
   };
@@ -385,48 +429,56 @@ function _init() {
    * @type Function
    * @Usage: $.AdminLTE.tree('.sidebar')
    */
-  $.AdminLTE.tree = function (menu) {
+  $.AdminLTE.tree = function(menu) {
     var _this = this;
     var animationSpeed = $.AdminLTE.options.animationSpeed;
-    $(document).off('click', menu + ' li a')
-      .on('click', menu + ' li a', function (e) {
+    $(document)
+      .off("click", menu + " li a")
+      .on("click", menu + " li a", function(e) {
         //Get the clicked link and the next element
         var $this = $(this);
         var checkElement = $this.next();
 
         //Check if the next element is a menu and is visible
-        if ((checkElement.is('.treeview-menu')) && (checkElement.is(':visible')) && (!$('body').hasClass('sidebar-collapse'))) {
+        if (
+          checkElement.is(".treeview-menu") &&
+          checkElement.is(":visible") &&
+          !$("body").hasClass("sidebar-collapse")
+        ) {
           //Close the menu
-          checkElement.slideUp(animationSpeed, function () {
-            checkElement.removeClass('menu-open');
+          checkElement.slideUp(animationSpeed, function() {
+            checkElement.removeClass("menu-open");
             //Fix the layout in case the sidebar stretches over the height of the window
             //_this.layout.fix();
           });
           checkElement.parent("li").removeClass("active");
         }
         //If the menu is not visible
-        else if ((checkElement.is('.treeview-menu')) && (!checkElement.is(':visible'))) {
+        else if (
+          checkElement.is(".treeview-menu") &&
+          !checkElement.is(":visible")
+        ) {
           //Get the parent menu
-          var parent = $this.parents('ul').first();
+          var parent = $this.parents("ul").first();
           //Close all open menus within the parent
-          var ul = parent.find('ul:visible').slideUp(animationSpeed);
+          var ul = parent.find("ul:visible").slideUp(animationSpeed);
           //Remove the menu-open class from the parent
-          ul.removeClass('menu-open');
+          ul.removeClass("menu-open");
           //Get the parent li
           var parent_li = $this.parent("li");
 
           //Open the target menu and add the menu-open class
-          checkElement.slideDown(animationSpeed, function () {
+          checkElement.slideDown(animationSpeed, function() {
             //Add the class active to the parent li
-            checkElement.addClass('menu-open');
-            parent.find('li.active').removeClass('active');
-            parent_li.addClass('active');
+            checkElement.addClass("menu-open");
+            parent.find("li.active").removeClass("active");
+            parent_li.addClass("active");
             //Fix the layout in case the sidebar stretches over the height of the window
             _this.layout.fix();
           });
         }
         //if this isn't a link, prevent the page from being redirected
-        if (checkElement.is('.treeview-menu')) {
+        if (checkElement.is(".treeview-menu")) {
           e.preventDefault();
         }
       });
@@ -441,7 +493,7 @@ function _init() {
    */
   $.AdminLTE.controlSidebar = {
     //instantiate the object
-    activate: function () {
+    activate: function() {
       //Get the object
       var _this = this;
       //Update options
@@ -452,11 +504,13 @@ function _init() {
       var btn = $(o.toggleBtnSelector);
 
       //Listen to the click event
-      btn.on('click', function (e) {
+      btn.on("click", function(e) {
         e.preventDefault();
         //If the sidebar is not open
-        if (!sidebar.hasClass('control-sidebar-open')
-          && !$('body').hasClass('control-sidebar-open')) {
+        if (
+          !sidebar.hasClass("control-sidebar-open") &&
+          !$("body").hasClass("control-sidebar-open")
+        ) {
           //Open the sidebar
           _this.open(sidebar, o.slide);
         } else {
@@ -469,63 +523,63 @@ function _init() {
       _this._fix(bg);
 
       //If the body has a fixed layout, make the control sidebar fixed
-      if ($('body').hasClass('fixed')) {
+      if ($("body").hasClass("fixed")) {
         _this._fixForFixed(sidebar);
       } else {
         //If the content height is less than the sidebar's height, force max height
-        if ($('.content-wrapper, .right-side').height() < sidebar.height()) {
+        if ($(".content-wrapper, .right-side").height() < sidebar.height()) {
           _this._fixForContent(sidebar);
         }
       }
     },
     //Open the control sidebar
-    open: function (sidebar, slide) {
+    open: function(sidebar, slide) {
       //Slide over content
       if (slide) {
-        sidebar.addClass('control-sidebar-open');
+        sidebar.addClass("control-sidebar-open");
       } else {
         //Push the content by adding the open class to the body instead
         //of the sidebar itself
-        $('body').addClass('control-sidebar-open');
+        $("body").addClass("control-sidebar-open");
       }
     },
     //Close the control sidebar
-    close: function (sidebar, slide) {
+    close: function(sidebar, slide) {
       if (slide) {
-        sidebar.removeClass('control-sidebar-open');
+        sidebar.removeClass("control-sidebar-open");
       } else {
-        $('body').removeClass('control-sidebar-open');
+        $("body").removeClass("control-sidebar-open");
       }
     },
-    _fix: function (sidebar) {
+    _fix: function(sidebar) {
       var _this = this;
-      if ($("body").hasClass('layout-boxed')) {
-        sidebar.css('position', 'absolute');
+      if ($("body").hasClass("layout-boxed")) {
+        sidebar.css("position", "absolute");
         sidebar.height($(".wrapper").height());
         if (_this.hasBindedResize) {
           return;
         }
-        $(window).resize(function () {
+        $(window).resize(function() {
           _this._fix(sidebar);
         });
         _this.hasBindedResize = true;
       } else {
         sidebar.css({
-          'position': 'fixed',
-          'height': 'auto'
+          position: "fixed",
+          height: "auto"
         });
       }
     },
-    _fixForFixed: function (sidebar) {
+    _fixForFixed: function(sidebar) {
       sidebar.css({
-        'position': 'fixed',
-        'max-height': '100%',
-        'overflow': 'auto',
-        'padding-bottom': '50px'
+        position: "fixed",
+        "max-height": "100%",
+        overflow: "auto",
+        "padding-bottom": "50px"
       });
     },
-    _fixForContent: function (sidebar) {
-      $(".content-wrapper, .right-side").css('min-height', sidebar.height());
+    _fixForContent: function(sidebar) {
+      $(".content-wrapper, .right-side").css("min-height", sidebar.height());
     }
   };
 
@@ -542,50 +596,54 @@ function _init() {
     selectors: $.AdminLTE.options.boxWidgetOptions.boxWidgetSelectors,
     icons: $.AdminLTE.options.boxWidgetOptions.boxWidgetIcons,
     animationSpeed: $.AdminLTE.options.animationSpeed,
-    activate: function (_box) {
+    activate: function(_box) {
       var _this = this;
       if (!_box) {
         _box = document; // activate all boxes per default
       }
       //Listen for collapse event triggers
-      $(_box).on('click', _this.selectors.collapse, function (e) {
+      $(_box).on("click", _this.selectors.collapse, function(e) {
         e.preventDefault();
         _this.collapse($(this));
       });
 
       //Listen for remove event triggers
-      $(_box).on('click', _this.selectors.remove, function (e) {
+      $(_box).on("click", _this.selectors.remove, function(e) {
         e.preventDefault();
         _this.remove($(this));
       });
     },
-    collapse: function (element) {
+    collapse: function(element) {
       var _this = this;
       //Find the box parent
       var box = element.parents(".box").first();
       //Find the body and the footer
-      var box_content = box.find("> .box-body, > .box-footer, > form  >.box-body, > form > .box-footer");
+      var box_content = box.find(
+        "> .box-body, > .box-footer, > form  >.box-body, > form > .box-footer"
+      );
       if (!box.hasClass("collapsed-box")) {
         //Convert minus into plus
-        element.children(":first")
+        element
+          .children(":first")
           .removeClass(_this.icons.collapse)
           .addClass(_this.icons.open);
         //Hide the content
-        box_content.slideUp(_this.animationSpeed, function () {
+        box_content.slideUp(_this.animationSpeed, function() {
           box.addClass("collapsed-box");
         });
       } else {
         //Convert plus into minus
-        element.children(":first")
+        element
+          .children(":first")
           .removeClass(_this.icons.open)
           .addClass(_this.icons.collapse);
         //Show the content
-        box_content.slideDown(_this.animationSpeed, function () {
+        box_content.slideDown(_this.animationSpeed, function() {
           box.removeClass("collapsed-box");
         });
       }
     },
-    remove: function (element) {
+    remove: function(element) {
       //Find the box parent
       var box = element.parents(".box").first();
       box.slideUp(this.animationSpeed);
@@ -608,32 +666,34 @@ function _init() {
  * @type plugin
  * @usage $("#box-widget").boxRefresh( options );
  */
-(function ($) {
-
+(function($) {
   "use strict";
 
-  $.fn.boxRefresh = function (options) {
-
+  $.fn.boxRefresh = function(options) {
     // Render options
-    var settings = $.extend({
-      //Refresh button selector
-      trigger: ".refresh-btn",
-      //File source to be loaded (e.g: ajax/src.php)
-      source: "",
-      //Callbacks
-      onLoadStart: function (box) {
-        return box;
-      }, //Right after the button has been clicked
-      onLoadDone: function (box) {
-        return box;
-      } //When the source has been loaded
-
-    }, options);
+    var settings = $.extend(
+      {
+        //Refresh button selector
+        trigger: ".refresh-btn",
+        //File source to be loaded (e.g: ajax/src.php)
+        source: "",
+        //Callbacks
+        onLoadStart: function(box) {
+          return box;
+        }, //Right after the button has been clicked
+        onLoadDone: function(box) {
+          return box;
+        } //When the source has been loaded
+      },
+      options
+    );
 
     //The overlay
-    var overlay = $('<div class="overlay"><div class="fa fa-refresh fa-spin"></div></div>');
+    var overlay = $(
+      '<div class="overlay"><div class="fa fa-refresh fa-spin"></div></div>'
+    );
 
-    return this.each(function () {
+    return this.each(function() {
       //if a source is specified
       if (settings.source === "") {
         if (window.console) {
@@ -647,13 +707,13 @@ function _init() {
       var rBtn = box.find(settings.trigger).first();
 
       //On trigger click
-      rBtn.on('click', function (e) {
+      rBtn.on("click", function(e) {
         e.preventDefault();
         //Add loading overlay
         start(box);
 
         //Perform ajax call
-        box.find(".box-body").load(settings.source, function () {
+        box.find(".box-body").load(settings.source, function() {
           done(box);
         });
       });
@@ -672,9 +732,7 @@ function _init() {
 
       settings.onLoadDone.call(box);
     }
-
   };
-
 })(jQuery);
 
 /*
@@ -688,24 +746,22 @@ function _init() {
  * @usage $("#box-widget").toggleBox();
  * @usage $("#box-widget").removeBox();
  */
-(function ($) {
+(function($) {
+  "use strict";
 
-  'use strict';
-
-  $.fn.activateBox = function () {
+  $.fn.activateBox = function() {
     $.AdminLTE.boxWidget.activate(this);
   };
 
-  $.fn.toggleBox = function () {
+  $.fn.toggleBox = function() {
     var button = $($.AdminLTE.boxWidget.selectors.collapse, this);
     $.AdminLTE.boxWidget.collapse(button);
   };
 
-  $.fn.removeBox = function () {
+  $.fn.removeBox = function() {
     var button = $($.AdminLTE.boxWidget.selectors.remove, this);
     $.AdminLTE.boxWidget.remove(button);
   };
-
 })(jQuery);
 
 /*
@@ -716,42 +772,49 @@ function _init() {
  * @type plugin
  * @usage $("#todo-widget").todolist( options );
  */
-(function ($) {
+(function($) {
+  "use strict";
 
-  'use strict';
-
-  $.fn.todolist = function (options) {
+  $.fn.todolist = function(options) {
     // Render options
-    var settings = $.extend({
-      //When the user checks the input
-      onCheck: function (ele) {
-        return ele;
+    var settings = $.extend(
+      {
+        //When the user checks the input
+        onCheck: function(ele) {
+          return ele;
+        },
+        //When the user unchecks the input
+        onUncheck: function(ele) {
+          return ele;
+        }
       },
-      //When the user unchecks the input
-      onUncheck: function (ele) {
-        return ele;
-      }
-    }, options);
+      options
+    );
 
-    return this.each(function () {
-
-      if (typeof $.fn.iCheck != 'undefined') {
-        $('input', this).on('ifChecked', function () {
-          var ele = $(this).parents("li").first();
+    return this.each(function() {
+      if (typeof $.fn.iCheck != "undefined") {
+        $("input", this).on("ifChecked", function() {
+          var ele = $(this)
+            .parents("li")
+            .first();
           ele.toggleClass("done");
           settings.onCheck.call(ele);
         });
 
-        $('input', this).on('ifUnchecked', function () {
-          var ele = $(this).parents("li").first();
+        $("input", this).on("ifUnchecked", function() {
+          var ele = $(this)
+            .parents("li")
+            .first();
           ele.toggleClass("done");
           settings.onUncheck.call(ele);
         });
       } else {
-        $('input', this).on('change', function () {
-          var ele = $(this).parents("li").first();
+        $("input", this).on("change", function() {
+          var ele = $(this)
+            .parents("li")
+            .first();
           ele.toggleClass("done");
-          if ($('input', ele).is(":checked")) {
+          if ($("input", ele).is(":checked")) {
             settings.onCheck.call(ele);
           } else {
             settings.onUncheck.call(ele);
@@ -760,58 +823,87 @@ function _init() {
       }
     });
   };
-}(jQuery));
+})(jQuery);
 
 // section: users
-(function ($) {
-  'use strict';
-    var url = SITE_URL + $("#sTableUsers").attr('src')
-    $('#sTableUsers').DataTable({
-      "processing": true,
-      "serverSide": true,
-      "bFilter": true,
-      "ordering": false,
-      "scrollX": false,
-      "aaSorting": [],
-      "pageLength": 10,
-      "columnDefs": [],
-      "pagingType": "full_numbers",
-      "ajax": url,
-      columns: [
-        { "data": "userid" },
-        { "data": "email" },
-        { "data": "fullname" },
-        { "data": "phone" },
-        { "data": "confirm" },
-        { "data": "created_at" },
-        { "data": "action" }
-      ]
-    });
-}(jQuery));
-
+(function($) {
+  "use strict";
+  var url = SITE_URL + $("#sTableUsers").attr("src");
+  $("#sTableUsers").DataTable({
+    processing: true,
+    serverSide: true,
+    bFilter: true,
+    ordering: false,
+    scrollX: false,
+    aaSorting: [],
+    pageLength: 10,
+    columnDefs: [],
+    pagingType: "full_numbers",
+    ajax: url,
+    columns: [
+      { data: "userid" },
+      { data: "email" },
+      { data: "fullname" },
+      { data: "phone" },
+      { data: "confirm" },
+      { data: "created_at" },
+      { data: "action" }
+    ]
+  });
+})(jQuery);
 
 // section: admin
-(function ($) {
-  'use strict';
-    var url = SITE_URL + $("#sTableAdmin").attr('src')
-    $('#sTableAdmin').DataTable({
-      "processing": true,
-      "serverSide": true,
-      "bFilter": true,
-      "ordering": false,
-      "scrollX": false,
-      "aaSorting": [],
-      "pageLength": 10,
-      "columnDefs": [],
-      "pagingType": "full_numbers",
-      "ajax": url,
-      columns: [
-        { "data": "adminid" },
-        { "data": "email" },
-        { "data": "nick" },
-        { "data": "created_at" },
-        { "data": "status" },
-        { "data": "action" }
-      ]
-    });
-}(jQuery));
+(function($) {
+  "use strict";
+  var url = SITE_URL + $("#sTableAdmin").attr("src");
+  $("#sTableAdmin").DataTable({
+    processing: true,
+    serverSide: true,
+    bFilter: true,
+    ordering: false,
+    scrollX: false,
+    aaSorting: [],
+    pageLength: 10,
+    columnDefs: [],
+    pagingType: "full_numbers",
+    ajax: url,
+    columns: [
+      { data: "adminid" },
+      { data: "email" },
+      { data: "nick" },
+      { data: "created_at" },
+      { data: "status" },
+      { data: "action" }
+    ]
+  });
+})(jQuery);
+
+// section: classes
+(function($) {
+  "use strict";
+  var url = SITE_URL + $("#sTableClasses").attr("src");
+  $("#sTableClasses").DataTable({
+    processing: true,
+    serverSide: true,
+    bFilter: true,
+    ordering: false,
+    scrollX: false,
+    aaSorting: [],
+    pageLength: 10,
+    columnDefs: [],
+    pagingType: "full_numbers",
+    ajax: url,
+    columns: [
+      { data: "classid" },
+      { data: "guruid" },
+      { data: "name" },
+      { data: "description" },
+      { data: "cover" },
+      { data: "priority" },
+      { data: "rating" },
+      { data: "status" },
+      { data: "created_at" },
+      { data: "action" }
+    ]
+  });
+})(jQuery);
