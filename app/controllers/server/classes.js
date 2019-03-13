@@ -18,20 +18,33 @@ aws.config.update({
 const s3 = new aws.S3()
 
 exports.get = (req, res) => {
-  const key = 'get-all-class'
+  const limit = _.result(req.query, 'limit', 10)
+  const offset = _.result(req.query, 'offset', 0)
+  const keyword = _.result(req.query, 'keyword')
+
+  const key = `get-all-class-${limit}-${offset}-${keyword}`
 
   async.waterfall([
     (cb) => {
       redisCache.get(key, classes => {
-        if (classes) {
-          return MiscHelper.responses(res, classes)
+        if (_.result(classes, 'data')) {
+          return MiscHelper.responses(res, classes.data, 200, { total: classes.total })
         } else {
           cb(null)
         }
       })
     },
     (cb) => {
-      classesModel.get(req, (errClass, resultClass) => {
+      classesModel.get(req, limit, offset, keyword, (errClass, classes) => {
+        cb(errClass, classes)
+      })
+    },
+    (classes, cb) => {
+      classesModel.getTotalClass(req, keyword, (errClass, total) => {
+        const resultClass = {
+          data: classes,
+          total: total[0].total
+        }
         cb(errClass, resultClass)
       })
     },
@@ -41,7 +54,7 @@ exports.get = (req, res) => {
     }
   ], (errClass, resultClass) => {
     if (!errClass) {
-      return MiscHelper.responses(res, resultClass)
+      return MiscHelper.responses(res, resultClass.data, 200, { total: resultClass.total })
     } else {
       return MiscHelper.errorCustomStatus(res, errClass, 400)
     }

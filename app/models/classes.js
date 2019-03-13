@@ -1,11 +1,20 @@
 'use strict'
 
 module.exports = {
-  get: (conn, callback) => {
+  get: (conn, limit, offset, keyword, callback) => {
     conn.getConnection((errConnection, connection) => {
       if (errConnection) console.error(errConnection)
 
-      connection.query(`SELECT * FROM classes_tab WHERE status = 1`, (err, rows) => {
+      connection.query(`SELECT a.classid, a.guruid, b.courseid, c.fullname AS guru, a.name AS class_name, b.name AS course_name, a.description, a.cover, a.priority, a.rating, a.created_at, a.updated_at FROM classes_tab a LEFT JOIN courses_tab b on a.classid=b.classid JOIN guru_tab c on a.guruid=c.guruid WHERE a.status = 1 AND (a.name LIKE '%${keyword}%' OR c.fullname LIKE '%${keyword}%') ORDER BY a.classid DESC LIMIT ${offset}, ${limit}`, (err, rows) => {
+        callback(err, rows)
+      })
+    })
+  },
+  getTotalClass: (conn, keyword, callback) => {
+    conn.getConnection((errConnection, connection) => {
+      if (errConnection) console.error(errConnection)
+
+      connection.query(`SELECT COUNT(*) as total FROM classes_tab a JOIN guru_tab b on a.guruid=b.guruid WHERE a.status=1 AND (a.name LIKE '%${keyword}%' OR b.fullname LIKE '%${keyword}%')`, (err, rows) => {
         callback(err, rows)
       })
     })
@@ -14,7 +23,7 @@ module.exports = {
     conn.getConnection((errConnection, connection) => {
       if (errConnection) console.error(errConnection)
 
-      connection.query(`SELECT a.classid, a.guruid, b.courseid, a.name AS class_name, b.name AS course_name, a.description, a.cover, a.priority, a.rating, a.created_at, b.updated_at FROM classes_tab a JOIN courses_tab b on a.classid=b.classid  WHERE a.status = 1 AND a.classid = ?`, classId, (err, rows) => {
+      connection.query(`SELECT a.classid, a.guruid, b.courseid, c.fullname As guru, a.name AS class_name, b.name AS course_name, a.description, a.cover, a.priority, a.rating, a.created_at, b.updated_at FROM classes_tab a JOIN courses_tab b on a.classid=b.classid JOIN guru_tab c on a.guruid=c.guruid WHERE a.status = 1 AND a.classid = ?`, classId, (err, rows) => {
         callback(err, rows)
       })
     })
