@@ -5,20 +5,24 @@ const discussionsModel = require('../../models/discussions')
 const redisCache = require('../../libs/RedisCache')
 
 exports.get = (req, res) => {
-  const key = `get-thread-list`
+  const limit = _.result(req.query, 'limit', 10)
+  const offset = _.result(req.query, 'offset', 0)
+  const keyword = _.result(req.query, 'keyword')
+
+  const key = `get-thread-list-${limit}-${offset}-${keyword}`
 
   async.waterfall([
     (cb) => {
       redisCache.get(key, thread => {
-        if (thread) {
-          return MiscHelper.responses(res, thread)
+        if (_.result(thread, 'data')) {
+          return MiscHelper.responses(res, thread.data, 200, { total: thread.total })
         } else {
           cb(null)
         }
       })
     },
     (cb) => {
-      discussionsModel.get(req, (errThread, resultThread) => {
+      discussionsModel.get(req, limit, offset, keyword, (errThread, resultThread) => {
         cb(errThread, resultThread)
       })
     },
@@ -34,6 +38,15 @@ exports.get = (req, res) => {
         cb(err, dataThread)
       })
     },
+    (thread, cb) => {
+      discussionsModel.getTotalThread(req, keyword, (errThread, total) => {
+        const dataResult = {
+          data: thread,
+          total: total[0].total
+        }
+        cb(errThread, dataResult)
+      })
+    },
     (dataThread, cb) => {
       redisCache.setex(key, 600, dataThread)
       console.log('proccess cached')
@@ -41,9 +54,9 @@ exports.get = (req, res) => {
     }
   ], (errThreads, resultThreads) => {
     if (!errThreads) {
-      return MiscHelper.responses(res, resultThreads)
+      return MiscHelper.responses(res, resultThreads.data, 200, { total: resultThreads.total })
     } else {
-      return MiscHelper.errorCustomStatus(res, errThreads)
+      return MiscHelper.errorCustomStatus(res, errThreads, 400)
     }
   })
 }
@@ -167,14 +180,14 @@ exports.deleteThread = (req, res) => {
       discussionsModel.deleteThread(req, req.params.discussionId, (errDelete, resultDelete) => {
         if (!errDelete) {
           if (dataThread.parent !== 0) {
-            redisCache.del(`get-thread-list`)
-            redisCache.del(`get-thread-list-${dataThread.courseid}`)
-            redisCache.del(`get-thread-detail-${dataThread.parent}`)
+            redisCache.delwild(`get-thread-*`)
+            // redisCache.del(`get-thread-list-${dataThread.courseid}`)
+            // redisCache.del(`get-thread-detail-${dataThread.parent}`)
             return MiscHelper.responses(res, resultDelete)
           } else {
-            redisCache.del(`get-thread-list`)
-            redisCache.del(`get-thread-list-${dataThread.courseid}`)
-            redisCache.del(`get-thread-detail-${req.params.discussionId}`)
+            redisCache.delwild(`get-thread-*`)
+            // redisCache.del(`get-thread-list-${dataThread.courseid}`)
+            // redisCache.del(`get-thread-detail-${req.params.discussionId}`)
             cb(null)
           }
         } else {

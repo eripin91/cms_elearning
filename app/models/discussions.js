@@ -1,11 +1,20 @@
 'use strict'
 
 module.exports = {
-  get: (conn, callback) => {
+  get: (conn, limit, offset, keyword, callback) => {
     conn.getConnection((errConnection, connection) => {
       if (errConnection) console.error(errConnection)
 
-      connection.query(`SELECT a.discussionid, a.userid, a.courseid, c.fullname, b.name AS course, a.post_content, a.created_at, a.updated_at FROM discussion_tab a JOIN courses_tab b ON a.courseid=b.courseid JOIN users_tab c ON a.userid = c.userid WHERE a.status = 1 AND a.parent = 0`, (err, rows) => {
+      connection.query(`SELECT a.discussionid, a.userid, a.courseid, c.fullname, b.name AS course, a.post_content, a.created_at, a.updated_at FROM discussion_tab a JOIN courses_tab b ON a.courseid=b.courseid JOIN users_tab c ON a.userid = c.userid WHERE a.status = 1 AND a.parent = 0 AND (b.name LIKE '%${keyword}%' OR c.fullname LIKE '%${keyword}%' OR a.post_content LIKE '%${keyword}%') ORDER BY a.discussionid DESC LIMIT ${offset},${limit}`, (err, rows) => {
+        callback(err, rows)
+      })
+    })
+  },
+  getTotalThread: (conn, keyword, callback) => {
+    conn.getConnection((errConnection, connection) => {
+      if (errConnection) console.error(errConnection)
+
+      connection.query(`SELECT COUNT(*) AS total FROM discussion_tab a JOIN courses_tab b ON a.courseid=b.courseid JOIN users_tab c ON a.userid = c.userid WHERE a.status = 1 AND a.parent = 0 AND (b.name LIKE '%${keyword}%' OR c.fullname LIKE '%${keyword}%' OR a.post_content LIKE '%${keyword}%')`, (err, rows) => {
         callback(err, rows)
       })
     })
