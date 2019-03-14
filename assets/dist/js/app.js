@@ -895,7 +895,7 @@ function _init() {
     ajax: url,
     columns: [
       { data: 'classid' },
-      { data: 'guruid' },
+      { data: 'guru' },
       { data: 'class_name' },
       { data: 'description' },
       {
