@@ -896,12 +896,11 @@ function _init() {
     columns: [
       { data: "classid" },
       { data: "guruid" },
-      { data: "name" },
+      { data: "class_name" },
       { data: "description" },
       { data: "cover" },
       { data: "priority" },
       { data: "rating" },
-      { data: "status" },
       { data: "created_at" },
       { data: "action" }
     ]
