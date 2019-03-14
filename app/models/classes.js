@@ -63,7 +63,7 @@ module.exports = {
     conn.getConnection((errConnection, connection) => {
       if (errConnection) console.error(errConnection)
 
-      connection.query(`UPDATE classes_tab SET status = 0 WHERE classid = ?`, classId, (err) => {
+      connection.query(`UPDATE classes_tab SET status = 0, updated_at = NOW() WHERE classid = ?`, classId, (err) => {
         callback(err, { message: 'Data has been deleted' })
       })
     })
