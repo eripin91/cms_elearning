@@ -280,9 +280,6 @@ exports.insertClassUltimate = (req, res) => {
           .resize(500, 500, '^')
           .gravity('Center')
           .crop(500, 500)
-          // .stream((err, stdout, stderr) => {
-          //   stdout.pipe(res)
-          // })
           .write(`./assets/img/medium-${getParams.Key}`, (err) => {
             if (!err) {
               const filePath = `./assets/img/medium-${getParams.Key}`
