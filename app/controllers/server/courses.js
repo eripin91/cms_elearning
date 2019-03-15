@@ -804,11 +804,10 @@ exports.updateMaterial = (req, res) => {
 
       if (!_.isEmpty(dataUpload)) {
         data.video_url = dataUpload.fileUrl
-        data.size = dataUpload.video_url
+        data.size = dataUpload.size
         data.duration = dataUpload.duration
-        data.thumbnail = dataUpload.thumbnail
+        data.thumbnails = dataUpload.thumbnail
       }
-      console.log(data)
       coursesModel.updateMaterial(req, data, materialId, (errUpdateMaterial, resultUpdateMaterial) => {
         redisCache.delwild(`course-material-list:*`)
         cb(errUpdateMaterial, resultUpdateMaterial)

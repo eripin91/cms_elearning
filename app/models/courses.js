@@ -206,6 +206,8 @@ module.exports = {
   updateMaterial: (conn, data, id, callback) => {
     conn.getConnection((errConnection, connection) => {
       if (errConnection) console.error(errConnection)
+
+      console.log(data)
       connection.query('UPDATE courses_material_tab SET ? WHERE materialid = ?', [data, id], (err, rows) => {
         callback(err, rows.affectedRows > 0 ? _.merge(data, { materialid: id }) : [])
       })
