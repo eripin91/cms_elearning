@@ -31,7 +31,7 @@ exports.main = async (req, res) => {
 */
 
 exports.ajaxGet = async (req, res) => {
-  API_SERVICE.get('v1/discussions/get?keyword=', (err, response) => {
+  API_SERVICE.get('v1/discussions/get?keyword=', {}, (err, response) => {
     if (!err) {
       const dataDiscussions = []
       async.eachSeries(_.result(response, 'data', {}), (item, next) => {

@@ -1,11 +1,11 @@
-/* global DiscussionsControllers AuthHelper */
+/* global DiscussionsControllers  */
 
 'use strict'
 
 var Route = express.Router()
 
 Route
-  .all('/*', AuthHelper.requiresAuthorization)
+  // .all('/*', AuthHelper.requiresAuthorization)
   .get('/get', DiscussionsControllers.get)
   .get('/get/:courseId', DiscussionsControllers.getThreadCourse)
   .get('/get/detail/:discussionId', DiscussionsControllers.getDetail)

@@ -815,3 +815,29 @@ function _init() {
       ]
     });
 }(jQuery));
+
+// section: discussions
+(function ($) {
+  'use strict';
+    var url = SITE_URL + $("#sTableDiscussions").attr('src')
+    $('#sTableDiscussions').DataTable({
+      "processing": true,
+      "serverSide": true,
+      "bFilter": true,
+      "ordering": false,
+      "scrollX": false,
+      "aaSorting": [],
+      "pageLength": 10,
+      "columnDefs": [],
+      "pagingType": "full_numbers",
+      "ajax": url,
+      columns: [
+        { "data": "discussionid" },
+        { "data": "course" },
+        { "data": "fullname" },
+        { "data": "post_content" },
+        { "data": "total_replied" },
+        { "data": "action" }
+      ]
+    });
+}(jQuery));
