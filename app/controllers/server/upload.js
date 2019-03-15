@@ -16,20 +16,25 @@ AWS.config.update({
 })
 const s3 = new AWS.S3()
 
-exports.uploadAws = (req, res) => {
+exports.uploadAws = (req, res, next) => {
   async.waterfall([
     (cb) => {
       singleUpload(req, res, (err) => {
-        if (err) {
-          return MiscHelper.errorCustomStatus(res, err, 400)
+        if (!_.result(req.file, 'key')) {
+          req.dataUpload = undefined
+          next()
         } else {
-          let data = {
-            key: req.file.key,
-            fileUrl: req.file.location,
-            size: req.file.size
+          if (err) {
+            return MiscHelper.errorCustomStatus(res, err, 400)
+          } else {
+            let data = {
+              key: req.file.key,
+              fileUrl: req.file.location,
+              size: req.file.size
+            }
+            console.log('file uploaded')
+            cb(null, data)
           }
-          console.log('file uploaded')
-          cb(null, data)
         }
       })
     },
@@ -81,7 +86,8 @@ exports.uploadAws = (req, res) => {
   ],
   (errUpload, dataUpload) => {
     if (!errUpload) {
-      return MiscHelper.responses(res, dataUpload)
+      req.dataUpload = dataUpload
+      next()
     } else {
       return MiscHelper.errorCustomStatus(res, errUpload, 400)
     }

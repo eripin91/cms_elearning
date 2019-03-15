@@ -1,4 +1,4 @@
-/* global CoursesControllers AuthHelper */
+/* global CoursesControllers UploadControllers AuthHelper */
 
 'use strict'
 
@@ -20,7 +20,7 @@ Route
 
   .get('/chapter/:detailId/material', CoursesControllers.getMaterialList)
   .get('/chapter/:detailId/material/:materialId', CoursesControllers.getMaterialDetail)
-  .post('/chapter/:detailId/material', CoursesControllers.insertMaterialDetail)
-  .patch('/chapter/:detailId/material/:materialId', CoursesControllers.updateMaterial)
+  .post('/chapter/:detailId/material', UploadControllers.uploadAws, CoursesControllers.insertMaterialDetail)
+  .patch('/chapter/:detailId/material/:materialId', UploadControllers.uploadAws, CoursesControllers.updateMaterial)
   .delete('/chapter/:detailId/material/:materialId', CoursesControllers.deleteMaterial)
 module.exports = Route

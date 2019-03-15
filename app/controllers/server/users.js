@@ -38,7 +38,7 @@ exports.get = (req, res) => {
     }
   ], (errUsers, resultUsers) => {
     if (!errUsers) {
-      return MiscHelper.responses(res, resultUsers)
+      return MiscHelper.responses(res, { dataDetail: resultUsers })
     } else {
       return MiscHelper.errorCustomStatus(res, errUsers, 400)
     }

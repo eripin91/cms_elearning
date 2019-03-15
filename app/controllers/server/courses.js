@@ -5,18 +5,6 @@
 const async = require('async')
 const coursesModel = require('../../models/courses')
 const redisCache = require('../../libs/RedisCache')
-const ffmpeg = require('fluent-ffmpeg')
-const upload = require('../../helper/upload')
-const singleUpload = upload.single('file')
-const AWS = require('aws-sdk')
-const fs = require('fs')
-
-AWS.config.update({
-  secretAccessKey: CONFIG.AWS.AWS_ACCESS_KEY_SECRET,
-  accessKeyId: CONFIG.AWS.AWS_ACCESS_KEY_ID,
-  region: CONFIG.AWS.AWS_S3_REGION
-})
-const s3 = new AWS.S3()
 
 /*
  * GET : '/courses/:courseId
@@ -732,75 +720,22 @@ exports.insertMaterialDetail = (req, res) => {
   }
 
   const detailId = req.params.detailId
+  let dataUpload = req.dataUpload
 
   async.waterfall([
     (cb) => {
-      singleUpload(req, res, (err) => {
-        if (err) {
-          return MiscHelper.errorCustomStatus(res, err, 400)
-        } else {
-          let data = {
-            key: req.file.key,
-            video_url: req.file.location,
-            size: req.file.size
-          }
-
-          console.log('file uploaded')
-          cb(err, data)
-        }
-      })
-    },
-    (dataUpload, cb) => {
-      ffmpeg(dataUpload.video_url)
-        .input(dataUpload.video_url)
-        .ffprobe((err, data) => {
-          if (err) console.error(err)
-          dataUpload.duration = parseInt(data.streams[0].duration)
-          cb(err, dataUpload)
-        })
-    },
-    (dataUpload, cb) => {
       if (_.isEmpty(dataUpload)) {
-        return MiscHelper.errorCustomStatus('Tidak ada video')
+        return MiscHelper.errorCustomStatus(res, 'Invalid file upload')
       } else {
-        dataUpload.thumbnail = dataUpload.key + 'screenshot.jpg'
-        ffmpeg(dataUpload.video_url)
-          .takeScreenshots({
-            count: 1,
-            timemarks: ['5'],
-            filename: dataUpload.thumbnail,
-            folder: './assets/img'
-          })
-          .on('end', () => {
-            const filePath = './assets/img/' + dataUpload.thumbnail
-            const bucketName = 'developmentarkadmi'
-            const key = dataUpload.thumbnail
-
-            fs.readFile(filePath, (err, data) => {
-              if (err) console.error(err)
-              var base64Data = Buffer.from(data, 'binary')
-              var params = {
-                Bucket: bucketName,
-                Key: key,
-                Body: base64Data,
-                ACL: 'public-read'
-              }
-              s3.upload(params, (err, result) => {
-                if (err) console.error(err)
-                fs.unlinkSync('./assets/img/' + dataUpload.thumbnail)
-                dataUpload.thumbnail = result.Location
-                cb(err, dataUpload)
-              })
-            })
-          })
+        cb(null)
       }
     },
-    (dataUpload, cb) => {
+    (cb) => {
       const data = {
         detailid: detailId,
         name: req.body.name,
         description: req.body.description,
-        video_url: dataUpload.video_url,
+        video_url: dataUpload.fileUrl,
         thumbnails: dataUpload.thumbnail,
         size: dataUpload.size,
         assessmentid: 0,
@@ -809,7 +744,6 @@ exports.insertMaterialDetail = (req, res) => {
         created_at: new Date(),
         updated_at: new Date()
       }
-      console.log(data)
       coursesModel.insertMaterial(req, data, (errMaterial, resultMaterial) => {
         const key = `course-material-list:*`
         redisCache.delwild(key)
@@ -846,6 +780,7 @@ exports.updateMaterial = (req, res) => {
   }
 
   const materialId = req.params.materialId
+  let dataUpload = req.dataUpload
 
   async.waterfall([
     (cb) => {
@@ -862,11 +797,19 @@ exports.updateMaterial = (req, res) => {
       let data = {
         updated_at: new Date()
       }
+
       for (let key in req.body) {
         data[key] = req.body[key]
       }
+
+      if (!_.isEmpty(dataUpload)) {
+        data.video_url = dataUpload.fileUrl
+        data.size = dataUpload.video_url
+        data.duration = dataUpload.duration
+        data.thumbnail = dataUpload.thumbnail
+      }
       console.log(data)
-      coursesModel.updateDetail(req, data, materialId, (errUpdateMaterial, resultUpdateMaterial) => {
+      coursesModel.updateMaterial(req, data, materialId, (errUpdateMaterial, resultUpdateMaterial) => {
         redisCache.delwild(`course-material-list:*`)
         cb(errUpdateMaterial, resultUpdateMaterial)
       })

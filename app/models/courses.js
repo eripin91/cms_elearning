@@ -109,12 +109,12 @@ module.exports = {
       })
     })
   },
-  updateDetail: (conn, id, callback) => {
+  updateDetail: (conn, data, id, callback) => {
     conn.getConnection((errConnection, connection) => {
       if (errConnection) console.error(errConnection)
 
-      connection.query(`UPDATE courses_detail_tab SET status = 0, updated_at = now() WHERE detailid = ?`, [id], (errUpdate, resultUpdate) => {
-        callback(errUpdate, resultUpdate.affectedRows > 0 ? _.merge({ detailid: id }) : [])
+      connection.query('UPDATE courses_detail_tab SET ? WHERE detailid = ?', [data, id], (errUpdate, resultUpdate) => {
+        callback(errUpdate, resultUpdate.affectedRows > 0 ? _.merge(data, { detailid: id }) : [])
       })
     })
   },
@@ -122,7 +122,7 @@ module.exports = {
     conn.getConnection((errConnection, connection) => {
       if (errConnection) console.error(errConnection)
 
-      connection.query('UPDATE courses_detail_tab SET status = 0, updated_at = now() WHERE detailid = ?', [id], (errUpdate) => {
+      connection.query('UPDATE courses_detail_tab SET ? WHERE detailid = ?', [id], (errUpdate) => {
         callback(errUpdate, { message: 'Bab has been deleted' })
       })
     })
@@ -203,10 +203,9 @@ module.exports = {
       })
     })
   },
-  updateMaterial: (conn, id, data, callback) => {
+  updateMaterial: (conn, data, id, callback) => {
     conn.getConnection((errConnection, connection) => {
       if (errConnection) console.error(errConnection)
-
       connection.query('UPDATE courses_material_tab SET ? WHERE materialid = ?', [data, id], (err, rows) => {
         callback(err, rows.affectedRows > 0 ? _.merge(data, { materialid: id }) : [])
       })
