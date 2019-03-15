@@ -219,7 +219,7 @@ exports.updateCourse = (req, res) => {
       }
       console.log(data)
       coursesModel.updateCourse(req, data, courseId, (errUpdateCourse, resultUpdateCourse) => {
-        redisCache.del(`courses-list`)
+        redisCache.delwild(`courses-list:*`)
         cb(errUpdateCourse, resultUpdateCourse)
       })
     }
@@ -252,26 +252,47 @@ exports.deleteCourse = (req, res) => {
   const courseId = req.params.courseId
 
   async.waterfall([
+
     (cb) => {
       coursesModel.getCourseDetail(req, courseId, (errCourse, resultCourse) => {
-        if (errCourse) console.error(errCourse)
-
-        if (_.isEmpty(resultCourse)) {
+        if (_.isEmpty(resultCourse) || errCourse) {
           return MiscHelper.errorCustomStatus(res, { message: 'Course Tidak ada' })
         } else {
-          cb(null)
+          coursesModel.getDetailCourses(req, courseId, (errDetail, resultDetail) => {
+            if (_.isEmpty(resultDetail) || errDetail) {
+              cb(null)
+            } else {
+              async.eachSeries(resultDetail, (item, next) => {
+                console.log(item)
+                coursesModel.getMaterialCourses(req, item.detailid, (err, result) => {
+                  if (_.isEmpty(result) || err) {
+                    next()
+                  } else {
+                    coursesModel.deleteAllMaterial(req, item.detailid, (err, result) => {
+                      if (err) console.error(err)
+                      next()
+                    })
+                  }
+                })
+              }, err => {
+                if (err) console.error(err)
+                redisCache.delwild(`course-material-list:*`)
+                coursesModel.deleteAllDetail(req, courseId, (errCourse) => {
+                  redisCache.delwild(`courses-detail-list:*`)
+                  if (errCourse) console.error(errCourse)
+                })
+                cb(null)
+              })
+            }
+          })
         }
       })
     },
     (cb) => {
-      let data = {
-        status: 0,
-        updated_at: new Date()
-      }
+      coursesModel.deleteCourse(req, courseId, (errUpdateCourse, resultUpdateCourse) => {
+        redisCache.delwild(`courses-list:*`)
 
-      coursesModel.deleteCourse(req, data, courseId, (errUpdateCourse, resultUpdateCourse) => {
-        redisCache.del(`courses-list`)
-        cb(errUpdateCourse, resultUpdateCourse)
+        cb(errUpdateCourse, { message: 'course deleted' })
       })
     }
   ], (errUpdateCourse, resultUpdateCourse) => {
@@ -305,7 +326,7 @@ exports.getDetail = (req, res) => {
   const offset = _.result(req.query, 'offset', 0)
   const keyword = _.result(req.query, 'keyword')
   const courseId = req.params.courseId
-  const key = `courses-detail-:${limit}:${offset}:${keyword}`
+  const key = `courses-detail-list:${limit}:${offset}:${keyword}`
 
   async.waterfall([
     (cb) => {
@@ -355,7 +376,7 @@ exports.getDetails = (req, res) => {
   req.checkParams('detailId', 'detailId is required').notEmpty().isInt()
 
   const detailId = req.params.detailId
-  const key = `courses-detail-:${detailId}`
+  const key = `courses-details:${detailId}`
 
   async.waterfall([
     (cb) => {
@@ -370,7 +391,6 @@ exports.getDetails = (req, res) => {
     (cb) => {
       coursesModel.getDetails(req, detailId, (errDetail, resultDetail) => {
         if (errDetail) console.error(errDetail)
-        console.log(resultDetail)
         if (_.isEmpty(resultDetail)) {
           return MiscHelper.notFound(res, 'Detail not Found')
         }
@@ -435,8 +455,8 @@ exports.insertDetail = (req, res) => {
       }
       coursesModel.insertDetail(req, data, (errDetail, resultDetail) => {
         if (errDetail) console.error(errDetail)
-        const key = `courses-detail-:${courseId}`
-        redisCache.del(key)
+        const key = `courses-detail-list:*`
+        redisCache.delwild(key)
         cb(errDetail, resultDetail)
       })
     }
@@ -535,13 +555,17 @@ exports.deleteDetail = (req, res) => {
       })
     },
     (cb) => {
-      let data = {
-        status: 0,
-        updated_at: new Date()
-      }
-      coursesModel.updateDetail(req, data, detailId, (errUpdate, resultUpdate) => {
-        redisCache.del(`courses-detail-:${courseId}`)
-        cb(errUpdate, resultUpdate)
+      coursesModel.getMaterialCourses(req, detailId, (errMaterial, resultMaterial) => {
+        if (!_.isEmpty(resultMaterial) || errMaterial) {
+          coursesModel.deleteAllMaterial(req, detailId, (err) => {
+            if (err) console.error(err)
+            redisCache.delwild(`course-material-list:*`)
+          })
+        }
+        coursesModel.updateDetail(req, detailId, (errUpdate, resultUpdate) => {
+          redisCache.del(`courses-detail-:${courseId}`)
+          cb(errUpdate, resultUpdate)
+        })
       })
     }
   ],
@@ -772,7 +796,6 @@ exports.insertMaterialDetail = (req, res) => {
       }
     },
     (dataUpload, cb) => {
-      console.log(dataUpload)
       const data = {
         detailid: detailId,
         name: req.body.name,
@@ -788,8 +811,8 @@ exports.insertMaterialDetail = (req, res) => {
       }
       console.log(data)
       coursesModel.insertMaterial(req, data, (errMaterial, resultMaterial) => {
-        const key = `course-material-list:${detailId}`
-        redisCache.del(key)
+        const key = `course-material-list:*`
+        redisCache.delwild(key)
         cb(errMaterial, resultMaterial)
       })
     }
@@ -822,7 +845,6 @@ exports.updateMaterial = (req, res) => {
     return MiscHelper.errorCustomStatus(res, req.validationErrors(true))
   }
 
-  const detailId = req.params.detailId
   const materialId = req.params.materialId
 
   async.waterfall([
@@ -845,7 +867,7 @@ exports.updateMaterial = (req, res) => {
       }
       console.log(data)
       coursesModel.updateDetail(req, data, materialId, (errUpdateMaterial, resultUpdateMaterial) => {
-        redisCache.del(`course-material-list:${detailId}`)
+        redisCache.delwild(`course-material-list:*`)
         cb(errUpdateMaterial, resultUpdateMaterial)
       })
     }
@@ -877,7 +899,6 @@ exports.deleteMaterial = (req, res) => {
     return MiscHelper.errorCustomStatus(res, req.validationErrors(true))
   }
 
-  const detailId = req.parms.detailId
   const materialId = req.params.materialId
 
   async.waterfall([
@@ -897,7 +918,7 @@ exports.deleteMaterial = (req, res) => {
       }
 
       coursesModel.updateDetail(req, data, materialId, (errUpdateMaterial, resultUpdateMaterial) => {
-        redisCache.del(`course-material-list:${detailId}`)
+        redisCache.delwild(`course-material-list:*`)
         cb(errUpdateMaterial, resultUpdateMaterial)
       })
     }

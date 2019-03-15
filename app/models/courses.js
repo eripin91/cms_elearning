@@ -49,12 +49,12 @@ module.exports = {
       })
     })
   },
-  deleteCourse: (conn, data, id, callback) => {
+  deleteCourse: (conn, id, callback) => {
     conn.getConnection((errConnection, connection) => {
       if (errConnection) console.error(errConnection)
 
-      connection.query('UPDATE courses_tab SET ? WHERE courseid = ?', [data, id], (err, result) => {
-        callback(err, result.affectedRows > 0 ? _.merge(data, { courseid: id }) : [])
+      connection.query('UPDATE courses_tab SET status = 0, updated_at = now() WHERE courseid = ?', [id], (err) => {
+        callback(err, { message: 'Course has been deleted' })
       })
     })
   },
@@ -63,6 +63,17 @@ module.exports = {
       if (errConnection) console.error(errConnection)
 
       connection.query(`SELECT cd.detailid, cd.name, at.title AS assessment_title FROM courses_detail_tab cd JOIN courses_tab c ON cd.courseid = c.courseid LEFT JOIN assessment_tab at ON at.assessmentid = cd.assesmentid WHERE c.courseid = ${courseId} AND cd.name LIKE '%${keyword}%' AND cd.status = 1 ORDER BY cd.detailid DESC LIMIT ${offset}, ${limit}`, (err, rows) => {
+        callback(err, rows)
+      })
+    })
+  },
+  getDetailCourses: (conn, courseId, callback) => {
+    conn.getConnection((errConnection, connection) => {
+      if (errConnection) console.error(errConnection)
+
+      connection.query(`SELECT cd.detailid, cd.name, at.title AS assessment_title FROM courses_detail_tab cd JOIN courses_tab c ON cd.courseid = c.courseid LEFT JOIN assessment_tab at ON at.assessmentid = cd.assesmentid WHERE cd.courseid = ${courseId} and cd.status = 1`, (err, rows) => {
+        console.log(courseId)
+
         callback(err, rows)
       })
     })
@@ -98,21 +109,30 @@ module.exports = {
       })
     })
   },
-  updateDetail: (conn, data, id, callback) => {
+  updateDetail: (conn, id, callback) => {
     conn.getConnection((errConnection, connection) => {
       if (errConnection) console.error(errConnection)
 
-      connection.query('UPDATE courses_detail_tab SET ? WHERE detailid = ?', [data, id], (errUpdate, resultUpdate) => {
-        callback(errUpdate, resultUpdate.affectedRows > 0 ? _.merge(data, { detailid: id }) : [])
+      connection.query(`UPDATE courses_detail_tab SET status = 0, updated_at = now() WHERE detailid = ?`, [id], (errUpdate, resultUpdate) => {
+        callback(errUpdate, resultUpdate.affectedRows > 0 ? _.merge({ detailid: id }) : [])
       })
     })
   },
-  deleteDetail: (conn, id, data, callback) => {
+  deleteDetail: (conn, id, callback) => {
     conn.getConnection((errConnection, connection) => {
       if (errConnection) console.error(errConnection)
 
-      connection.query('UPDATE courses_detail_tab SET ? WHERE detailid = ?', [data, id], (errUpdate, resultUpdate) => {
-        callback(errUpdate, resultUpdate.affectedRows > 0 ? _.merge(data, { detailid: id }) : [])
+      connection.query('UPDATE courses_detail_tab SET status = 0, updated_at = now() WHERE detailid = ?', [id], (errUpdate) => {
+        callback(errUpdate, { message: 'Bab has been deleted' })
+      })
+    })
+  },
+  deleteAllDetail: (conn, courseId, callback) => {
+    conn.getConnection((errConnection, connection) => {
+      if (errConnection) console.error(errConnection)
+
+      connection.query(`UPDATE courses_detail_tab SET status = 0, updated_at = NOW() WHERE courseid = ${courseId}`, (err) => {
+        callback(err, { message: 'Course and bab has been deleted' })
       })
     })
   },
@@ -139,6 +159,15 @@ module.exports = {
       if (errConnection) console.error(errConnection)
 
       connection.query(`SELECT * FROM courses_material_tab WHERE detailid = ${detailId} AND name LIKE '%${keyword}%' AND status = 1 ORDER BY materialid DESC LIMIT ${offset}, ${limit}`, (err, rows) => {
+        callback(err, rows)
+      })
+    })
+  },
+  getMaterialCourses: (conn, detailId, callback) => {
+    conn.getConnection((errConnection, connection) => {
+      if (errConnection) console.error(errConnection)
+
+      connection.query(`SELECT * FROM courses_material_tab WHERE detailid = ${detailId}`, (err, rows) => {
         callback(err, rows)
       })
     })
@@ -188,7 +217,16 @@ module.exports = {
       if (errConnection) console.error(errConnection)
 
       connection.query('UPDATE courses_material_tab SET ? WHERE materialid = ?', [data, id], (err, rows) => {
-        callback(err, rows.affectedRows > 0 ? _.merge(data, { materialid: id }) : [])
+        callback(err, { message: 'material has been deleted' })
+      })
+    })
+  },
+  deleteAllMaterial: (conn, detailId, callback) => {
+    conn.getConnection((errConnection, connection) => {
+      if (errConnection) console.error(errConnection)
+
+      connection.query(`UPDATE courses_material_tab SET status = 0, updated_at = NOW() WHERE detailid = ${detailId}`, (errConnection) => {
+        callback(errConnection, { message: 'Material has been deleted' })
       })
     })
   }
