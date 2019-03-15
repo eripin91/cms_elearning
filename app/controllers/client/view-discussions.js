@@ -31,12 +31,11 @@ exports.main = async (req, res) => {
 */
 
 exports.ajaxGet = async (req, res) => {
-  API_SERVICE.get('v1/discussions/get?keyword=', {}, (err, response) => {
+  API_SERVICE.get('v1/discussions/get', { keyword: _.result(req.query, 'keyword', '') }, (err, response) => {
     if (!err) {
       const dataDiscussions = []
-      async.eachSeries(_.result(response, 'data', {}), (item, next) => {
+      async.eachSeries(_.result(response, 'data', []), (item, next) => {
         item.action = MiscHelper.getActionButtonFull('discussions', item.discussionid)
-        item.status = MiscHelper.getStatus(item.status, 1)
         item.created_at = moment(item.created_at).format('DD/MM/YYYY hh:mm')
         dataDiscussions.push(item)
         next()
