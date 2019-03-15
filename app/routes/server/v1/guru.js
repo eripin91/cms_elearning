@@ -1,4 +1,4 @@
-/* global GuruControllers AuthHelper */
+/* global GuruControllers UploadControllers AuthHelper */
 
 'use strict'
 
@@ -8,8 +8,8 @@ Route
   .all('/*', AuthHelper.requiresAuthorization)
   .get('/get', GuruControllers.get)
   .get('/get/:guruId', GuruControllers.getDetail)
-  .post('/add', GuruControllers.insertGuru)
-  .patch('/update/:guruId', GuruControllers.updateGuru)
+  .post('/add', UploadControllers.upload.single('file'), GuruControllers.insertGuru)
+  .patch('/update/:guruId', UploadControllers.upload.single('file'), GuruControllers.updateGuru)
   .delete('/delete/:guruId', GuruControllers.deleteGuru)
 
 module.exports = Route
