@@ -195,16 +195,16 @@ exports.updateClass = (req, res) => {
           .resize(120, 120, '^')
           .gravity('Center')
           .crop(120, 120)
-          .write(`./assets/img/medium-${getParams.Key}`, (err) => {
+          .write(`./assets/img/thumbnail-${getParams.Key}`, (err) => {
             if (!err) {
-              const filePath = `./assets/img/medium-${getParams.Key}`
+              const filePath = `./assets/img/thumbnail-${getParams.Key}`
 
               fs.readFile(filePath, (err, data) => {
                 if (!err) {
                   let base64Data = Buffer.from(data, 'binary')
                   let params = {
                     Bucket: dataClass.bucket,
-                    Key: `medium-${dataClass.key}`,
+                    Key: `thumbnail-${dataClass.key}`,
                     Body: base64Data,
                     ACL: 'public-read'
                   }

@@ -3,9 +3,9 @@ const multer = require('multer')
 const multerS3 = require('multer-s3')
 
 const s3Config = new AWS.S3({
-  accessKeyId: CONFIG.AWS.ACCESS_KEY_ID,
-  secretAccessKey: CONFIG.AWS.ACCESS_KEY_SECRET,
-  region: CONFIG.AWS.AWS_S3_REGION,
+  accessKeyId: CONFIG.AWS.AWS_ACCESS_KEY_ID,
+  secretAccessKey: CONFIG.AWS.AWS_ACCESS_KEY_SECRET,
+  region: CONFIG.AWS.AWS_REGION,
   Bucket: 'developmentarkadmi'
 })
 
