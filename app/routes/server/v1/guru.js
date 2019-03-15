@@ -5,7 +5,7 @@
 var Route = express.Router()
 
 Route
-  .all('/*', AuthHelper.requiresAuthorization)
+  // .all('/*', AuthHelper.requiresAuthorization)
   .get('/get', GuruControllers.get)
   .get('/get/:guruId', GuruControllers.getDetail)
   .post('/add', GuruControllers.insertGuru)

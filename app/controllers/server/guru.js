@@ -16,20 +16,33 @@ const guruModel = require('../../models/guru')
  */
 
 exports.get = (req, res) => {
-  const key = `get-guru`
+  const limit = _.result(req.query, 'limit', 10)
+  const offset = _.result(req.query, 'offset', 0)
+  const keyword = _.result(req.query, 'keyword')
+
+  const key = `get-guru-list-${limit}-${offset}-${keyword}`
 
   async.waterfall([
     (cb) => {
       redisCache.get(key, guru => {
-        if (guru) {
-          return MiscHelper.responses(res, guru)
+        if (_.result(guru, 'data')) {
+          return MiscHelper.responses(res, guru.data, 200, { total: guru.total })
         } else {
           cb(null)
         }
       })
     },
     (cb) => {
-      guruModel.get(req, (errGuru, resultGuru) => {
+      guruModel.get(req, limit, offset, keyword, (errGuru, resultGuru) => {
+        cb(errGuru, resultGuru)
+      })
+    },
+    (dataGuru, cb) => {
+      guruModel.getTotalGuru(req, keyword, (errGuru, total) => {
+        const resultGuru = {
+          data: dataGuru,
+          total: total[0].total
+        }
         cb(errGuru, resultGuru)
       })
     },
@@ -39,7 +52,7 @@ exports.get = (req, res) => {
     }
   ], (errGuru, resultGuru) => {
     if (!errGuru) {
-      return MiscHelper.responses(res, resultGuru)
+      return MiscHelper.responses(res, resultGuru.data, 200, { total: resultGuru.total })
     } else {
       return MiscHelper.errorCustomStatus(res, errGuru, 400)
     }

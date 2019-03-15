@@ -1,11 +1,20 @@
 'use strict'
 
 module.exports = {
-  get: (conn, callback) => {
+  get: (conn, limit, offset, keyword, callback) => {
     conn.getConnection((errConnection, connection) => {
       if (errConnection) console.error(errConnection)
 
-      connection.query(`SELECT * FROM guru_tab WHERE status = 1`, (err, rows) => {
+      connection.query(`SELECT * FROM guru_tab WHERE status = 1 AND (fullname LIKE '%${keyword}%' OR description LIKE '%${keyword}%') ORDER BY guruid DESC LIMIT ${offset}, ${limit}`, (err, rows) => {
+        callback(err, rows)
+      })
+    })
+  },
+  getTotalGuru: (conn, keyword, callback) => {
+    conn.getConnection((errConnection, connection) => {
+      if (errConnection) console.error(errConnection)
+
+      connection.query(`SELECT COUNT(*) as total FROM guru_tab WHERE status=1 AND (fullname LIKE '%${keyword}%' OR description LIKE '%${keyword}%')`, (err, rows) => {
         callback(err, rows)
       })
     })
@@ -54,7 +63,7 @@ module.exports = {
     conn.getConnection((errConnection, connection) => {
       if (errConnection) console.error(errConnection)
 
-      connection.query(`UPDATE guru_tab SET status = 0 WHERE guruid = ?`, guruId, (err) => {
+      connection.query(`UPDATE guru_tab SET status = 0, updated_at = NOW() WHERE guruid = ?`, guruId, (err) => {
         callback(err, { message: 'Data deleted' })
       })
     })
