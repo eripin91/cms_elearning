@@ -146,7 +146,12 @@ exports.update = async (req, res) => {
       {},
       (err, response) => {
         if (err) console.error(err)
-        res.render('class_update', { errorMsg: errorMsg, data: response.data })
+        console.log('BODY CLASS UPDATE ===========')
+        console.log(req.body)
+        res.render('class_update', {
+          errorMsg: errorMsg,
+          data: response.data[0]
+        })
       }
     )
   } else {

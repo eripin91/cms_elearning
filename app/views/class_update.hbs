@@ -13,6 +13,8 @@
     </ol>
   </section>
 
+  {{ showLog data }}
+
   <!-- Main content -->
   <section class="content">
     <div class="row">
@@ -29,38 +31,64 @@
             <input type="hidden" name="id" value="{{ data.classid }}">
             <div class="box-body">
               <div class="form-group">
-                <label for="inputEmail3" class="col-sm-2 control-label">Email</label>
+                <label for="classId" class="col-sm-2 control-label">Class Id</label>
 
                 <div class="col-sm-10">
-                  <input type="text" name="uemail" class="form-control" id="inputEmail3" placeholder="Email"
-                    value="{{ data.email }}">
+                  <input type="text" readonly name="classid" class="form-control" id="classId" placeholder="Class Id"
+                    value="{{ data.classid }}">
                 </div>
               </div>
               <div class="form-group">
-                <label for="Nick" class="col-sm-2 control-label">Full Name</label>
+                <label for="teacherId" class="col-sm-2 control-label">Teacher Id</label>
 
                 <div class="col-sm-10">
-                  <input type="text" name="nick" class="form-control" id="Nick" placeholder="Full Name"
-                    value="{{ data.nick }}">
+                  <input type="text" name="teacherid" class="form-control" id="teacherId" placeholder="Teacher Id"
+                    value="{{ data.guruid }}">
                 </div>
               </div>
               <div class="form-group">
-                <label for="NewPassword" class="col-sm-2 control-label">New Password</label>
+                <label for="ClassName" class="col-sm-2 control-label">Class Name</label>
 
                 <div class="col-sm-10">
-                  <input type="password" name="newpassword" class="form-control" id="NewPassword"
-                    placeholder="New Password">
+                  <input type="text" name="class_name" class="form-control" id="ClassName" placeholder="Class Name"
+                    value="{{ data.class_name }}">
                 </div>
               </div>
               <div class="form-group">
-                <label for="ConfirmPassword" class="col-sm-2 control-label">Confirm Password</label>
+                <label for="Description" class="col-sm-2 control-label">Description</label>
 
                 <div class="col-sm-10">
-                  <input type="password" name="confpassword" class="form-control" id="ConfirmPassword"
-                    placeholder="Confirm Password">
+                  <input type="text" name="description" class="form-control" id="Description" placeholder="Description"
+                    value="{{ data.description }}">
                 </div>
               </div>
               <div class="form-group">
+                <label for="Cover" class="col-sm-2 control-label">Cover</label>
+
+                <div class="col-sm-10">
+                  <input type="text" name="cover" class="form-control" id="Cover" placeholder="Cover"
+                    value="{{ data.cover }}">
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="Priority" class="col-sm-2 control-label">Priority</label>
+
+                <div class="col-sm-10">
+                  <input type="number" name="priority" class="form-control" id="Priority" placeholder="Priority"
+                    value="{{ data.priority }}">
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="Rating" class="col-sm-2 control-label">Rating</label>
+
+                <div class="col-sm-10">
+                  <input type="number" name="rating" class="form-control" id="Rating" placeholder="Rating"
+                    value="{{ data.rating }}">
+                </div>
+              </div>
+
+              {{!--Status --}}
+              {{!-- <div class="form-group">
                 <label for="inputPassword3" class="col-sm-2 control-label">Status</label>
 
                 <div class="col-sm-10">
@@ -68,11 +96,11 @@
                     {{{ getStatus data.status 2 }}}
                   </div>
                 </div>
-              </div>
+              </div> --}}
 
             </div>
             <!-- /.box-body -->
-            <div class="box-footer">
+            <div class=" box-footer">
               <button type="button" onclick="javascript:history.go(-1);" class="btn btn-default">Cancel</button>
               <button type="submit" class="btn btn-info pull-right">Submit</button>
             </div>
