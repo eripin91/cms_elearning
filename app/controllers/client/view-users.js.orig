@@ -34,8 +34,12 @@ exports.main = async (req, res) => {
  * @return {object} Request object
  */
 exports.ajaxGet = async (req, res) => {
+<<<<<<< HEAD
+  API_SERVICE.get('v1/users/get', { limit: _.result(req.query, 'length', 25), offset: _.result(req.query, 'start', 0), keyword: req.query.search['value'] }, (err, response) => {
+=======
   const classId = _.result(req.query, 'classid', 0)
   API_SERVICE.get('v1/users/get', { limit: _.result(req.query, 'length', 25), offset: _.result(req.query, 'start', 0), keyword: req.query.search['value'], classId: classId }, (err, response) => {
+>>>>>>> fixed-users
     if (!err) {
       const dataUsers = []
       async.eachSeries(_.result(response, 'data', {}), (item, next) => {
