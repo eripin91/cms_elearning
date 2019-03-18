@@ -20,7 +20,7 @@ exports.get = (req, res) => {
   const offset = _.result(req.query, 'offset', 0)
   const keyword = _.result(req.query, 'keyword', '')
   const classId = parseInt(_.result(req.query, 'classId', 0))
-  const key = `get-user:${limit}:${offset}:${keyword}:${classId}`+ new Date().getTime()
+  const key = `get-user:${limit}:${offset}:${keyword}:${classId}` + new Date().getTime()
 
   async.waterfall([
     (cb) => {
