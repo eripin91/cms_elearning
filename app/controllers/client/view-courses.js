@@ -44,7 +44,7 @@ exports.ajaxGet = async (req, res) => {
       if (!err) {
         const dataCourses = []
         async.eachSeries(
-          _.result(response, 'data', {}),
+          _.result(response.data, 'data', {}),
           (item, next) => {
             item.action = MiscHelper.getActionButtonFull(
               'courses',
