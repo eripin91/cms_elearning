@@ -142,11 +142,11 @@ exports.update = async (req, res) => {
   if (_.isEmpty(req.body)) {
     const errorMsg = await MiscHelper.get_error_msg(req.sessionID)
     API_SERVICE.get(
-      'v1/admin/get/' + req.params.adminId,
+      'v1/courses/' + req.params.courseId,
       {},
       (err, response) => {
         if (err) console.error(err)
-        res.render('admin_update', { errorMsg: errorMsg, data: response.data })
+        res.render('course_update', { errorMsg: errorMsg, data: response.data })
       }
     )
   } else {
