@@ -1,6 +1,22 @@
 'use strict'
 
 module.exports = {
+  get: (conn, limit, offset, keyword, callback) => {
+    conn.getConnection((errConnection, connection) => {
+      if (errConnection) console.error(errConnection)
+      connection.query(`SELECT * FROM admin_tab WHERE (status=1 OR status=0) AND (email LIKE '%${keyword}%' OR nick LIKE '%${keyword}%') ORDER BY adminid DESC LIMIT ${offset},${limit}`, (err, rows) => {
+        callback(err, rows)
+      })
+    })
+  },
+  getTotalAdmin: (conn, keyword, callback) => {
+    conn.getConnection((errConnection, connection) => {
+      if (errConnection) console.error(errConnection)
+      connection.query(`SELECT COUNT(*) as total FROM admin_tab WHERE (status=1 OR status=0) AND (email LIKE '%${keyword}%' OR nick LIKE '%${keyword}%')`, (err, rows) => {
+        callback(err, rows)
+      })
+    })
+  },
   getAdminDetail: (conn, id, callback) => {
     conn.getConnection((errConnection, connection) => {
       if (errConnection) console.error(errConnection)
@@ -36,7 +52,7 @@ module.exports = {
   getAdminByEmail: (conn, email, callback) => {
     conn.getConnection((errConnection, connection) => {
       if (errConnection) console.error(errConnection)
-      connection.query('SELECT * FROM admin_tab WHERE email = ?', [email], (err, rows) => {
+      connection.query('SELECT * FROM admin_tab WHERE status=1 AND email = ?', [email], (err, rows) => {
         callback(err, _.result(rows, '[0]', {}))
       })
     })
