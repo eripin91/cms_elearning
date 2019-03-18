@@ -35,7 +35,7 @@ exports.getCourse = (req, res) => {
     (cb) => {
       coursesModel.getCourse(req, limit, offset, keyword, (errCourse, resultCourse) => {
         if (_.isEmpty(resultCourse)) {
-          cb(errCourse, resultCourse)
+          return MiscHelper.errorCustomStatus(res, { message: 'course tidak ada' }, 400)
         } else {
           cb(errCourse, resultCourse)
         }
