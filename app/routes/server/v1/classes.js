@@ -8,6 +8,7 @@ Route
   .all('/*', AuthHelper.requiresAuthorization)
   .get('/get', ClassesControllers.get)
   .get('/get/:classId', ClassesControllers.getDetail)
+  .get('/get/user/:classId', ClassesControllers.usersClass)
   .post('/add', UploadControllers.upload.single('file'), ClassesControllers.insertClassUltimate)
   .patch('/update/:classId', UploadControllers.upload.single('file'), ClassesControllers.updateClass)
   .delete('/delete/:classId', ClassesControllers.deleteClass)

@@ -67,5 +67,23 @@ module.exports = {
         callback(err, { message: 'Data has been deleted' })
       })
     })
+  },
+  getUserClass: (conn, classId, limit, offset, keyword, callback) => {
+    conn.getConnection((errConnection, connection) => {
+      if (errConnection) console.error(errConnection)
+
+      connection.query(`SELECT ut.userid, ut.email, ur.fullname, ut.phone, ut.confirm FROM users_classes_tab uc JOIN users_tab ut ON uc.userid = ut.userid WHERE classid = ${classId} AND (ut.email LIKE '%${keyword}%' OR ut.fullname LIKE '%${keyword}%') ORDER BY ut.userid DESC LIMIT ${offset}, ${limit}`, (err, rows) => {
+        callback(err, rows)
+      })
+    })
+  },
+  getTotalUserClass: (conn, classId, keyword, callback) => {
+    conn.getConnection((errConnection, connection) => {
+      if (errConnection) console.error(errConnection)
+
+      connection.query(`SELECT COUNT(*) AS total FROM users_classes_tab uc JOIN users_tab ut ON uc.userid = ut.userid WHERE classid = ${classId} AND (ut.email LIKE '%${keyword}%' OR ut.fullname LIKE '%${keyword}%')`, (err, rows) => {
+        callback(err, rows)
+      })
+    })
   }
 }

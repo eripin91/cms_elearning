@@ -401,3 +401,48 @@ exports.insertClassUltimate = (req, res) => {
     }
   })
 }
+
+exports.usersClass = (req, res) => {
+  const limit = _.result(req.query, 'limit', 10)
+  const offset = _.result(req.query, 'offset', 0)
+  const keyword = _.result(req.query, 'keyword', '')
+  const classId = req.params.classId
+
+  const key = `users-class-${classId}`
+
+  async.waterfall([
+    (cb) => {
+      redisCache.get(key, classes => {
+        if (classes) {
+          return MiscHelper.responses(res, classes)
+        } else {
+          cb(null)
+        }
+      })
+    },
+    (cb) => {
+      classesModel.getUserClass(req, classId, limit, offset, keyword, (errClass, resultClass) => {
+        cb(errClass, resultClass)
+      })
+    },
+    (classes, cb) => {
+      classesModel.getTotalUserClass(req, classId, keyword, (errClass, total) => {
+        const resultClass = {
+          data: classes,
+          total: total[0].total
+        }
+        cb(errClass, resultClass)
+      })
+    },
+    (dataClass, cb) => {
+      redisCache.setex(key, 100, dataClass)
+      cb(null, dataClass)
+    }
+  ], (errClass, resultClass) => {
+    if (!errClass) {
+      return MiscHelper.responses(res, resultClass)
+    } else {
+      return MiscHelper.errorCustomStatus(res, errClass, 400)
+    }
+  })
+}
