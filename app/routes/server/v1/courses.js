@@ -4,8 +4,7 @@
 
 var Route = express.Router()
 
-Route
-  .all('/*', AuthHelper.requiresAuthorization)
+Route.all('/*', AuthHelper.requiresAuthorization)
   .get('/', CoursesControllers.getCourse)
   .get('/:courseId', CoursesControllers.getCourseDetail)
   .post('/', CoursesControllers.insertCourse)
