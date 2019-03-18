@@ -6,9 +6,9 @@ const async = require('async')
 const usersModel = require('../../models/users')
 
 /*
- * GET : '/users/get'
+ * GET : '/classes/get'
  *
- * @desc Get user list
+ * @desc Get class list
  *
  * @param  {object} req - Parameters for request
  *
