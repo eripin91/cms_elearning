@@ -41,7 +41,7 @@ exports.main = async (req, res) => {
 exports.stats = async (req, res) => {
   API_SERVICE.get('v1/stats/get/' + req.params.userId, { }, (err, response) => {
     if (err) console.error(err)
-    res.render('users_stats', { data: response.data })
+    res.render('users_stats', { data: _.result(response, 'data', { total_video_duration: 0, total_video_watch: 0, total_assessment: 0, total_module: 0 }) })
   })
 }
 

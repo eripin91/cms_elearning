@@ -21,13 +21,18 @@
             
            <div class="box box-info">
             <div class="box-header with-border">
+              {{#if data.user }}
               <h3 class="box-title">User Stats ( {{ data.user.fullname }} )</h3>
+              {{else}}
+              <h3 class="box-title">User Stats</h3>
+              {{/if}}
             </div>
             <!-- /.box-header -->
             <!-- form start -->
             <form class="form-horizontal" action="{{ site_url 'users/update' }}" method="post">
             <input type="hidden" name="id" value="{{ data.userid }}">
               <div class="box-body">
+              {{#if data.user }}
                 <div class="col-lg-3 col-xs-6">
                   <!-- small box -->
                   <div class="small-box bg-red">
@@ -129,6 +134,9 @@
                     </tr>
                   </tfoot>
                 </table>
+                {{else}}
+                <h3>Stats Not Found !!!</h3>
+                {{/if}}
               </div>
               <!-- /.box-body -->
               <div class="box-footer">
