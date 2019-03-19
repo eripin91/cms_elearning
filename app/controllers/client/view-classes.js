@@ -38,7 +38,7 @@ exports.ajaxGet = async (req, res) => {
     {
       limit: _.result(req.query, 'length', 25),
       offset: _.result(req.query, 'start', 0),
-      keyword: req.query.search['value']
+      keyword: _.result(req.query, 'search[value]')
     },
     (err, response) => {
       if (!err) {

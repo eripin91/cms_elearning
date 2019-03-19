@@ -853,7 +853,7 @@ function _init() {
 })(jQuery)
 
 // section: discussions
-(function ($) {
+;(function ($) {
   'use strict';
     var url = SITE_URL + $("#sTableDiscussions").attr('src')
     $('#sTableDiscussions').DataTable({
@@ -877,10 +877,39 @@ function _init() {
         { "data": "action" }
       ]
     });
-}(jQuery));
+}(jQuery))
+
+// section: classes
+;(function($) {
+  'use strict'
+  var url = SITE_URL + $('#sTableClasses').attr('src')
+  $('#sTableClasses').DataTable({
+    processing: true,
+    serverSide: true,
+    bFilter: true,
+    ordering: false,
+    scrollX: false,
+    aaSorting: [],
+    pageLength: 10,
+    columnDefs: [],
+    pagingType: 'full_numbers',
+    ajax: url,
+    columns: [
+      { "data": "classid" },
+      { "data": "guru" },
+      { "data": "class_name" },
+      { "data": "description" },
+      { "data": "cover" },
+      { "data": "priority" },
+      { "data": "rating" },
+      { "data": "created_at" },
+      { "data": "action" }
+    ]
+  })
+})(jQuery)
 
 // section admin
-(function($) {
+;(function($) {
   'use strict'
   var url = SITE_URL + $('#sTableAdmin').attr('src')
   $('#sTableAdmin').DataTable({
@@ -906,7 +935,7 @@ function _init() {
 })(jQuery)
 
 // section: courses
-(function($) {
+;(function($) {
   'use strict'
   var url = SITE_URL + $('#sTableCourses').attr('src')
   $('#sTableCourses').DataTable({

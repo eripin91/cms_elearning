@@ -4,8 +4,10 @@
 
 const async = require('async')
 const ffmpeg = require('fluent-ffmpeg')
-const upload = require('../../helper/upload')
-const singleUpload = upload.single('file')
+const uploadCk = require('../../helper/upload')
+const singleUpload = uploadCk.single('file')
+const multer = require('multer')
+const multerS3 = require('multer-s3')
 const AWS = require('aws-sdk')
 const fs = require('fs')
 
@@ -14,6 +16,7 @@ AWS.config.update({
   accessKeyId: CONFIG.AWS.AWS_ACCESS_KEY_ID,
   region: CONFIG.AWS.AWS_REGION
 })
+
 const s3 = new AWS.S3()
 
 exports.uploadAws = (req, res, next) => {
@@ -93,3 +96,33 @@ exports.uploadAws = (req, res, next) => {
     }
   })
 }
+
+const fileFilter = (req, file, cb) => {
+  if (file.mimetype === 'image/jpeg' || file.mimetype === 'image/png') {
+    cb(null, true)
+  } else {
+    cb(null, false)
+  }
+}
+
+const multerS3Config = multerS3({
+  s3: s3,
+  bucket: 'developmentarkadmi',
+  acl: 'public-read',
+  metadata: function (req, file, cb) {
+    cb(null, { fieldName: file.fieldname })
+  },
+  key: function (req, file, cb) {
+    cb(null, new Date().getTime() + '-' + file.originalname.replace(/\s/g, '-'))
+  }
+})
+
+const upload = multer({
+  storage: multerS3Config,
+  fileFilter: fileFilter,
+  limits: {
+    fileSize: 1024 * 1024 * 2 // we are allowing only 2 MB files
+  }
+})
+
+exports.upload = upload
