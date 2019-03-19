@@ -4,7 +4,6 @@
 
 var Route = express.Router()
 
-// Route.all('/*')
 Route.all('/*', AuthHelper.requiresAuthorization)
   .get('/get', AdminControllers.get)
   .get('/get/:adminId', AdminControllers.getDetail)
