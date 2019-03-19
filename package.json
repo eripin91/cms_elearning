@@ -1,26 +1,26 @@
 {
   "name": "e-learning-backoffice",
   "version": "1.0.0",
-  "description": "E-learning backoffice telkom",
+  "description": "E-learning Backoffice Telkom",
   "main": "app.js",
   "scripts": {
     "test": "npm run standard && NODE_PATH=./config:./app/controllers NODE_ENV=testing ./node_modules/.bin/mocha --exit --reporter spec --timeout 10000 test/*.js",
     "start": "nodemon app.js",
-    "start-production": "pm2 start app.js -i 0 --name 'courses' --node-args='--max-old-space-size=2048' --max-memory-restart 1500M --log-date-format 'YYYY-MM-DD HH:mm Z' --no-pmx",
+    "start-production": "pm2 start app.js -i 0 --name 'cms-e-learning' --node-args='--max-old-space-size=2048' --max-memory-restart 1500M --log-date-format 'YYYY-MM-DD HH:mm Z' --no-pmx",
     "standard": "./node_modules/.bin/standard",
     "deploy-production": "npm test && pm2 deploy ecosystem.json production",
     "deploy-staging": "npm test && pm2 deploy ecosystem.json staging"
   },
   "repository": {
     "type": "git",
-    "url": "git+ssh://git@github.com/gratcy/e-learning-backoffice.git"
+    "url": "git+ssh://git@github.com/arkelearning/cms_e-learning.git"
   },
   "author": "Dev Team",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/gratcy/e-learning-backoffice/issues"
+    "url": "https://github.com/arkelearning/cms_e-learning/issues"
   },
-  "homepage": "https://github.com/gratcy/e-learning-backoffice#readme",
+  "homepage": "https://github.com/arkelearning/cms_e-learning#readme",
   "pre-commit": [
     "standard",
     "test"
@@ -43,7 +43,7 @@
   },
   "dependencies": {
     "async": "^2.6.2",
-    "aws-sdk": "^2.413.0",
+    "aws-sdk": "^2.422.0",
     "body-parser": "^1.18.3",
     "compression": "^1.7.3",
     "connect-redis": "^3.4.0",
@@ -60,6 +60,7 @@
     "fast-safe-stringify": "^2.0.6",
     "ffmpeg": "0.0.4",
     "fluent-ffmpeg": "^2.1.2",
+    "gm": "^1.23.1",
     "handlebars": "^4.1.0",
     "lodash": "^4.17.11",
     "moment": "^2.24.0",

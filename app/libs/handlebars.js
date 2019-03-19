@@ -68,7 +68,7 @@ const register = (Handlebars) => {
     },
     check_permission: (perm) => {
       for (let i = 0; i < _.size(sauth.perms); ++i) {
-        if (sauth.perms[i].perm === perm) {
+        if (_.result(sauth.perms[i], 'perm') === perm) {
           return (sauth.perms[i].access === 1)
         }
       }
@@ -97,7 +97,7 @@ const register = (Handlebars) => {
         return options.inverse(this)
       }
     },
-    get_status: (status, type) => {
+    getStatus: (status, type) => {
       if (type === 1) { return (status === 1 ? 'Active' : 'Inactive') } else { return (status === 1 ? 'Active <input type="radio" checked="checked" name="status" value="1" /> Inactive <input type="radio" name="status" value="0" />' : 'Active <input type="radio" name="status" value="1" /> Inactive <input type="radio" checked="checked" name="status" value="0" />') }
     },
     get_roles: (roles) => {

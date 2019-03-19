@@ -4,10 +4,12 @@
 
 var Route = express.Router()
 
-Route
-  .all('/*', AuthHelper.requiresAuthorization)
+Route.all('/*', AuthHelper.requiresAuthorization)
+  .get('/get', AdminControllers.get)
   .get('/get/:adminId', AdminControllers.getDetail)
+  .post('/create', AdminControllers.create)
   .post('/update/:adminId', AdminControllers.update)
+  .get('/delete/:adminId', AdminControllers.delete)
   .post('/login', AdminControllers.login)
 
 module.exports = Route

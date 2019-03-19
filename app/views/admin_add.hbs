@@ -3,13 +3,13 @@
     <!-- Content Header (Page header) -->
     <section class="content-header">
       <h1>
-        Users
-        <small>Add New User</small>
+        Admin
+        <small>Add New Admin</small>
       </h1>
       <ol class="breadcrumb">
         <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
-        <li><a href="#">Users</a></li>
-        <li class="active"><a href="#">Add New User</a></li>
+        <li><a href="#">Admin</a></li>
+        <li class="active"><a href="#">Add New Admin</a></li>
       </ol>
     </section>
 
@@ -17,50 +17,42 @@
     <section class="content">
       <div class="row">
         <div class="col-xs-12">
-            {{{ error_msg }}}
+            {{{ errorMsg }}}
             
            <div class="box box-info">
             <div class="box-header with-border">
-              <h3 class="box-title">Add New User</h3>
+              <h3 class="box-title">Add New Admin</h3>
             </div>
             <!-- /.box-header -->
             <!-- form start -->
-            <form class="form-horizontal" action="{{ site_url 'users/users_add' }}" method="post">
+            <form class="form-horizontal" action="{{ site_url 'admin/add' }}" method="post">
               <div class="box-body">
-                <div class="form-group">
-                  <label for="Country" class="col-sm-2 control-label">Group</label>
-
-                  <div class="col-sm-10">
-					  <select name="group" class="form-control" id="Group">
-                    </select>
-                  </div>
-                </div>
                 <div class="form-group">
                   <label for="inputEmail3" class="col-sm-2 control-label">Email</label>
 
                   <div class="col-sm-10">
-                    <input type="text" name="uemail" class="form-control" id="inputEmail3" placeholder="Email">
+                    <input type="text" name="email" class="form-control" id="inputEmail3" placeholder="Email">
                   </div>
                 </div>
                 <div class="form-group">
                   <label for="Nick" class="col-sm-2 control-label">Full Name</label>
 
                   <div class="col-sm-10">
-                    <input type="text" name="unick" class="form-control" id="Nick" placeholder="Full Name">
+                    <input type="text" name="nick" class="form-control" id="Nick" placeholder="Full Name">
                   </div>
                 </div>
                 <div class="form-group">
                   <label for="NewPassword" class="col-sm-2 control-label">New Password</label>
 
                   <div class="col-sm-10">
-                    <input type="password" name="newpass" class="form-control" id="NewPassword" placeholder="New Password">
+                    <input type="password" name="password" class="form-control" id="NewPassword" placeholder="New Password">
                   </div>
                 </div>
                 <div class="form-group">
                   <label for="ConfirmPassword" class="col-sm-2 control-label">Confirm Password</label>
 
                   <div class="col-sm-10">
-                    <input type="password" name="confpass" class="form-control" id="ConfirmPassword" placeholder="Confirm Password">
+                    <input type="password" name="confpassword" class="form-control" id="ConfirmPassword" placeholder="Confirm Password">
                   </div>
                 </div>
                 <div class="form-group">
@@ -68,7 +60,7 @@
 
                   <div class="col-sm-10">
                     <div class="checkbox">
-					  {{{ __get_status 1 2 }}}
+					  {{{ getStatus 1 2 }}}
                   </div>
                   </div>
                 </div>

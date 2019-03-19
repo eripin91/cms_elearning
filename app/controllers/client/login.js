@@ -43,23 +43,28 @@ exports.logging = (req, res) => {
     global.sauth = req.session
 
     API_SERVICE.post('v1/admin/login', { email: input.uemail, password: input.upass }, (err, response) => {
-      if (err) console.error(err)
-      if (_.result(response, 'adminid')) {
-        const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
-        let memberSince = new Date(_.result(response, 'created_at'))
-        memberSince = monthNames[memberSince.getMonth()] + ' ' + memberSince.getFullYear()
+      if (!err) {
+        response = _.result(response, 'data')
+        if (_.result(response, 'adminid')) {
+          const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
+          let memberSince = new Date(_.result(response, 'created_at'))
+          memberSince = monthNames[memberSince.getMonth()] + ' ' + memberSince.getFullYear()
 
-        sauth.login = {
-          adminid: _.result(response, 'adminid'),
-          created_at: memberSince,
-          group: _.result(response, 'groupid'),
-          email: _.result(response, 'email'),
-          perms: _.result(response, 'perms')
+          sauth.login = {
+            adminid: _.result(response, 'adminid'),
+            created_at: memberSince,
+            group: _.result(response, 'groupid'),
+            email: _.result(response, 'email'),
+            perms: _.result(response, 'perms')
+          }
+
+          res.redirect('/')
+        } else {
+          MiscHelper.set_error_msg({ error: 'Email dan Password tidak sesuai !!!' }, req.sessionID)
+          res.redirect('/login')
         }
-
-        res.redirect('/')
       } else {
-        MiscHelper.set_error_msg({ error: 'Email dan Password tidak sesuai !!!' }, req.sessionID)
+        MiscHelper.set_error_msg({ error: err.message }, req.sessionID)
         res.redirect('/login')
       }
     })

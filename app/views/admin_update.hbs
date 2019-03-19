@@ -3,13 +3,13 @@
     <!-- Content Header (Page header) -->
     <section class="content-header">
       <h1>
-        Users Group
-        <small>Add New User Group</small>
+        Admin
+        <small>Update User</small>
       </h1>
       <ol class="breadcrumb">
         <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
-        <li><a href="#">Users Group</a></li>
-        <li class="active"><a href="#">Add New User Group</a></li>
+        <li><a href="#">Admin</a></li>
+        <li class="active"><a href="#">Update Admin</a></li>
       </ol>
     </section>
 
@@ -17,28 +17,43 @@
     <section class="content">
       <div class="row">
         <div class="col-xs-12">
-            {{{ error_msg }}}
+            {{{ errorMsg }}}
             
            <div class="box box-info">
             <div class="box-header with-border">
-              <h3 class="box-title">Add New User Group</h3>
+              <h3 class="box-title">Update Admin</h3>
             </div>
             <!-- /.box-header -->
             <!-- form start -->
-            <form class="form-horizontal" action="{{ site_url 'users_group/users_group_add' }}" method="post">
+            <form class="form-horizontal" action="{{ site_url 'admin/update' }}" method="post">
+            <input type="hidden" name="id" value="{{ data.adminid }}">
               <div class="box-body">
                 <div class="form-group">
-                  <label for="inputEmail3" class="col-sm-2 control-label">Group</label>
+                  <label for="inputEmail3" class="col-sm-2 control-label">Email</label>
 
                   <div class="col-sm-10">
-                    <input type="text" name="name" class="form-control" id="inputEmail3" placeholder="Group Name">
+                    <input type="text" readonly name="uemail" class="form-control" id="inputEmail3" placeholder="Email" value="{{ data.email }}">
                   </div>
                 </div>
                 <div class="form-group">
-                  <label for="Description" class="col-sm-2 control-label">Description</label>
+                  <label for="Nick" class="col-sm-2 control-label">Full Name</label>
 
                   <div class="col-sm-10">
-                    <textarea type="text" name="desc" class="form-control" id="Description" placeholder="Description"></textarea>
+                    <input type="text" name="nick" class="form-control" id="Nick" placeholder="Full Name" value="{{ data.nick }}">
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label for="NewPassword" class="col-sm-2 control-label">New Password</label>
+
+                  <div class="col-sm-10">
+                    <input type="password" name="newpassword" class="form-control" id="NewPassword" placeholder="New Password">
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label for="ConfirmPassword" class="col-sm-2 control-label">Confirm Password</label>
+
+                  <div class="col-sm-10">
+                    <input type="password" name="confpassword" class="form-control" id="ConfirmPassword" placeholder="Confirm Password">
                   </div>
                 </div>
                 <div class="form-group">
@@ -46,35 +61,13 @@
 
                   <div class="col-sm-10">
                     <div class="checkbox">
-					  {{{ __get_status 0 2 }}}
+					  {{{ getStatus data.status 2 }}}
                   </div>
                   </div>
                 </div>
 
               </div>
               <!-- /.box-body -->
-                                <div class="box-body">
-                                <div class="box-header">
-                                    <label>Group Permission</label>
-                                </div><!-- /.box-header -->
-                                    <table class="table table-bordered">
-      <thead>
-		<tr>
-		<th>Name</th>
-		<th>Access</th>
-		</tr>
-      </thead>
-      <tbody>
-		{{#each perms}}
-        <input type='hidden' name='perm[null]' />
-		<tr>
-        <td>{{ udesc }}</td>
-        <td><label>Yes <input type="radio" class="uniform" value="1" name="perm[{{ uid }}]"></label>&nbsp;<label> No <input class="uniform" type="radio" value="0" name="perm[{{ uid }}]" checked></label></td>
-        </tr>
-		{{/each}}
-      </tbody>
-      </table>
-                            </div>
               <div class="box-footer">
                 <button type="button" onclick="javascript:history.go(-1);" class="btn btn-default">Cancel</button>
                 <button type="submit" class="btn btn-info pull-right">Submit</button>

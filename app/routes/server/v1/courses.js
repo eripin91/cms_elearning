@@ -23,4 +23,22 @@ Route
   .post('/chapter/:detailId/material', UploadControllers.uploadAws, CoursesControllers.insertMaterialDetail)
   .patch('/chapter/:detailId/material/:materialId', UploadControllers.uploadAws, CoursesControllers.updateMaterial)
   .delete('/chapter/:detailId/material/:materialId', CoursesControllers.deleteMaterial)
+  .get(
+    '/chapter/:detailId/material/:materialId',
+    CoursesControllers.getMaterialDetail
+  )
+  .post(
+    '/chapter/:detailId/material',
+    UploadControllers.uploadAws,
+    CoursesControllers.insertMaterialDetail
+  )
+  .patch(
+    '/chapter/:detailId/material/:materialId',
+    UploadControllers.uploadAws,
+    CoursesControllers.updateMaterial
+  )
+  .delete(
+    '/chapter/:detailId/material/:materialId',
+    CoursesControllers.deleteMaterial
+  )
 module.exports = Route
