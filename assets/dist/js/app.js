@@ -852,8 +852,35 @@ function _init() {
   })
 })(jQuery)
 
-// section: admin
-;(function($) {
+// section: discussions
+(function ($) {
+  'use strict';
+    var url = SITE_URL + $("#sTableDiscussions").attr('src')
+    $('#sTableDiscussions').DataTable({
+      "processing": true,
+      "serverSide": true,
+      "bFilter": true,
+      "ordering": false,
+      "scrollX": false,
+      "aaSorting": [],
+      "pageLength": 25,
+      "columnDefs": [],
+      "pagingType": "full_numbers",
+      "ajax": url,
+      columns: [
+        { "data": "discussionid" },
+        { "data": "course" },
+        { "data": "fullname" },
+        { "data": "post_content" },
+        { "data": "total_replied" },
+        { "data": "created_at" },
+        { "data": "action" }
+      ]
+    });
+}(jQuery));
+
+// section admin
+(function($) {
   'use strict'
   var url = SITE_URL + $('#sTableAdmin').attr('src')
   $('#sTableAdmin').DataTable({
@@ -879,7 +906,7 @@ function _init() {
 })(jQuery)
 
 // section: courses
-;(function($) {
+(function($) {
   'use strict'
   var url = SITE_URL + $('#sTableCourses').attr('src')
   $('#sTableCourses').DataTable({
