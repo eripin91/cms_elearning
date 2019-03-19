@@ -12,7 +12,7 @@ const API_SERVICE = ApiLibs.client({
 /*
  * GET : '/'
  *
- * @desc Get admin list view
+ * @desc Get course list view
  *
  * @param  {object} req - Parameters for request
  *
@@ -20,13 +20,13 @@ const API_SERVICE = ApiLibs.client({
  */
 exports.main = async (req, res) => {
   const errorMsg = await MiscHelper.get_error_msg(req.sessionID)
-  res.render('admin', { errorMsg: errorMsg })
+  res.render('courses', { errorMsg: errorMsg })
 }
 
 /*
  * GET : '/ajax/get'
  *
- * @desc Ajax get admin list
+ * @desc Ajax get course list
  *
  * @param  {object} req - Parameters for request
  *
@@ -34,7 +34,7 @@ exports.main = async (req, res) => {
  */
 exports.ajaxGet = async (req, res) => {
   API_SERVICE.get(
-    'v1/admin/get',
+    'v1/courses',
     {
       limit: _.result(req.query, 'length', 25),
       offset: _.result(req.query, 'start', 0),
@@ -42,14 +42,17 @@ exports.ajaxGet = async (req, res) => {
     },
     (err, response) => {
       if (!err) {
-        const dataAdmin = []
+        const dataCourses = []
         async.eachSeries(
-          _.result(response, 'data', {}),
+          _.result(response.data, 'data', {}),
           (item, next) => {
-            item.action = MiscHelper.getActionButtonFull('admin', item.adminid)
+            item.action = MiscHelper.getActionButtonFull(
+              'courses',
+              item.courseid
+            )
             item.status = MiscHelper.getStatus(item.status, 1)
             item.created_at = moment(item.created_at).format('DD/MM/YYYY hh:mm')
-            dataAdmin.push(item)
+            dataCourses.push(item)
             next()
           },
           err => {
@@ -60,7 +63,7 @@ exports.ajaxGet = async (req, res) => {
                 recordsFiltered: _.result(response, 'total', 0)
               }
 
-              return MiscHelper.responses(res, dataAdmin, 200, data)
+              return MiscHelper.responses(res, dataCourses, 200, data)
             } else {
               return MiscHelper.errorCustomStatus(res, err, 400)
             }
@@ -89,7 +92,7 @@ exports.ajaxGet = async (req, res) => {
 exports.add = async (req, res) => {
   if (_.isEmpty(req.body)) {
     const errorMsg = await MiscHelper.get_error_msg(req.sessionID)
-    res.render('admin_add', { errorMsg: errorMsg })
+    res.render('courses_add', { errorMsg: errorMsg })
   } else {
     const email = req.body.email
     const nick = req.body.nick
@@ -139,11 +142,11 @@ exports.update = async (req, res) => {
   if (_.isEmpty(req.body)) {
     const errorMsg = await MiscHelper.get_error_msg(req.sessionID)
     API_SERVICE.get(
-      'v1/admin/get/' + req.params.adminId,
+      'v1/courses/' + req.params.courseId,
       {},
       (err, response) => {
         if (err) console.error(err)
-        res.render('admin_update', { errorMsg: errorMsg, data: response.data })
+        res.render('course_update', { errorMsg: errorMsg, data: response.data })
       }
     )
   } else {
@@ -174,6 +177,7 @@ exports.update = async (req, res) => {
             )
             res.redirect('/admin/update/' + adminId)
           }
+          delete req.body.confpassword
         }
 
         API_SERVICE.post(
