@@ -136,7 +136,6 @@ exports.update = async (req, res) => {
             MiscHelper.set_error_msg({ error: 'Password dan konfimasi password tidak sesuai !!!' }, req.sessionID)
             res.redirect('/admin/update/' + adminId)
           }
-          delete req.body.confpassword
         }
 
         API_SERVICE.post('v1/admin/update/' + adminId, req.body, (err, response) => {

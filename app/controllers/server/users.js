@@ -6,9 +6,9 @@ const async = require('async')
 const usersModel = require('../../models/users')
 
 /*
- * GET : '/users/get'
+ * GET : '/classes/get'
  *
- * @desc Get user list
+ * @desc Get class list
  *
  * @param  {object} req - Parameters for request
  *
@@ -18,8 +18,9 @@ const usersModel = require('../../models/users')
 exports.get = (req, res) => {
   const limit = _.result(req.query, 'limit', 10)
   const offset = _.result(req.query, 'offset', 0)
-  const keyword = _.result(req.query, 'keyword')
-  const key = `get-user:${limit}:${offset}:${keyword}`
+  const keyword = _.result(req.query, 'keyword', '')
+  const classId = parseInt(_.result(req.query, 'classId', 0))
+  const key = `get-user:${limit}:${offset}:${keyword}:${classId}` + new Date().getTime()
 
   async.waterfall([
     (cb) => {
@@ -32,15 +33,15 @@ exports.get = (req, res) => {
       })
     },
     (cb) => {
-      usersModel.get(req, limit, offset, keyword, (errUsers, users) => {
+      usersModel.get(req, limit, offset, keyword, classId, (errUsers, users) => {
         cb(errUsers, users)
       })
     },
     (users, cb) => {
-      usersModel.getTotalUser(req, keyword, (errUsers, total) => {
+      usersModel.getTotalUser(req, keyword, classId, (errUsers, total) => {
         const resultUsers = {
           data: users,
-          total: total[0].total
+          total: _.result(total, '[0].total', 0)
         }
         cb(errUsers, resultUsers)
       })

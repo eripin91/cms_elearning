@@ -4,7 +4,13 @@ module.exports = {
   get: (conn, limit, offset, keyword, callback) => {
     conn.getConnection((errConnection, connection) => {
       if (errConnection) console.error(errConnection)
-      connection.query(`SELECT * FROM admin_tab WHERE (status=1 OR status=0) AND (email LIKE '%${keyword}%' OR nick LIKE '%${keyword}%') ORDER BY adminid DESC LIMIT ${offset},${limit}`, (err, rows) => {
+      let sql = ''
+
+      if (!_.isEmpty(keyword)) {
+        sql = ` AND (email LIKE '%${keyword}%' OR nick LIKE '%${keyword}%')`
+      }
+
+      connection.query(`SELECT * FROM admin_tab WHERE (status=1 OR status=0) ${sql} ORDER BY adminid DESC LIMIT ${offset},${limit}`, (err, rows) => {
         callback(err, rows)
       })
     })
