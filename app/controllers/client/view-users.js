@@ -19,8 +19,9 @@ const API_SERVICE = ApiLibs.client({
  * @return {object} Request object
  */
 exports.main = async (req, res) => {
+
   const errorMsg = await MiscHelper.get_error_msg(req.sessionID)
-  res.render('users', { errorMsg: errorMsg })
+  res.render('users', { errorMsg: errorMsg, data: req.query })
 }
 
 /*
@@ -33,7 +34,8 @@ exports.main = async (req, res) => {
  * @return {object} Request object
  */
 exports.ajaxGet = async (req, res) => {
-  API_SERVICE.get('v1/users/get', { limit: _.result(req.query, 'length', 25), offset: _.result(req.query, 'start', 0), keyword: req.query.search['value'] }, (err, response) => {
+  const classId = _.result(req.query, 'classid', 0)
+  API_SERVICE.get('v1/users/get', { limit: _.result(req.query, 'length', 25), offset: _.result(req.query, 'start', 0), keyword: req.query.search['value'], classId: classId }, (err, response) => {
     if (!err) {
       const dataUsers = []
       async.eachSeries(_.result(response, 'data', {}), (item, next) => {
