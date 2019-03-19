@@ -5,6 +5,7 @@
 const async = require('async')
 const coursesModel = require('../../models/courses')
 const redisCache = require('../../libs/RedisCache')
+const scoreModel = require('../../models/score')
 
 /*
  * GET : '/courses/:courseId
@@ -42,12 +43,30 @@ exports.getCourse = (req, res) => {
       })
     },
     (dataCourse, cb) => {
+      async.eachSeries(dataCourse, (item, next) => {
+        scoreModel.getUserTotalScore(req, item.classId, (err, result) => {
+          if (err) console.error(err)
+
+          if (_.isEmpty(result)) {
+            item.avg_score = 0
+          } else {
+            item.avg_score = result[0].total_score / result[0].score_count
+          }
+          next()
+        })
+      }, err => {
+        if (err) console.error(err)
+        cb(err, dataCourse)
+      })
+    },
+    (dataCourse, cb) => {
       coursesModel.getTotalCourse(req, keyword, (errCourse, total) => {
         if (errCourse) console.error(errCourse)
         let data = {
           data: dataCourse,
           total: total[0].total
         }
+        console.log(data)
         cb(errCourse, data)
       })
     },
