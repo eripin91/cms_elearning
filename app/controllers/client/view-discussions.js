@@ -31,7 +31,7 @@ exports.main = async (req, res) => {
 */
 
 exports.ajaxGet = async (req, res) => {
-  API_SERVICE.get('v1/discussions/get', { keyword: _.result(req.query, 'keyword', '') }, (err, response) => {
+  API_SERVICE.get('v1/discussions/get', { limit: _.result(req.query, 'length', 25), offset: _.result(req.query, 'start', 0), keyword: req.query.search['value'] }, (err, response) => {
     if (!err) {
       const dataDiscussions = []
       async.eachSeries(_.result(response, 'data', []), (item, next) => {
@@ -46,7 +46,8 @@ exports.ajaxGet = async (req, res) => {
             recordsTotal: _.result(response, 'total', 0),
             recordsFiltered: _.result(response, 'total', 0)
           }
-          return MiscHelper.responses(res.dataDiscussions, 200, data)
+
+          return MiscHelper.responses(res, dataDiscussions, 200, data)
         } else {
           return MiscHelper.errorCustomStatus(res, err, 400)
         }

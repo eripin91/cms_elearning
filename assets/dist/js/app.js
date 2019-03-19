@@ -827,7 +827,7 @@ function _init() {
       "ordering": false,
       "scrollX": false,
       "aaSorting": [],
-      "pageLength": 10,
+      "pageLength": 25,
       "columnDefs": [],
       "pagingType": "full_numbers",
       "ajax": url,
@@ -837,6 +837,7 @@ function _init() {
         { "data": "fullname" },
         { "data": "post_content" },
         { "data": "total_replied" },
+        { "data": "created_at" },
         { "data": "action" }
       ]
     });
