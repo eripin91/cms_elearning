@@ -1,0 +1,147 @@
+  <!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+      <h1>
+        Users
+        <small>User Stats</small>
+      </h1>
+      <ol class="breadcrumb">
+        <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
+        <li><a href="#">Users</a></li>
+        <li class="active"><a href="#">User Stats</a></li>
+      </ol>
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+      <div class="row">
+        <div class="col-xs-12">
+            {{{ errorMsg }}}
+            
+           <div class="box box-info">
+            <div class="box-header with-border">
+              <h3 class="box-title">User Stats ( {{ data.user.fullname }} )</h3>
+            </div>
+            <!-- /.box-header -->
+            <!-- form start -->
+            <form class="form-horizontal" action="{{ site_url 'users/update' }}" method="post">
+            <input type="hidden" name="id" value="{{ data.userid }}">
+              <div class="box-body">
+                <div class="col-lg-3 col-xs-6">
+                  <!-- small box -->
+                  <div class="small-box bg-red">
+                    <div class="inner">
+                      <h3>{{ data.total_video_duration }} <span style="font-size:12px">minutes</span></h3>
+                      <p>Video Duration</p>
+                    </div>
+                    <div class="icon">
+                      <i class="fa fa-clock-o"></i>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-lg-3 col-xs-6">
+                  <!-- small box -->
+                  <div class="small-box bg-yellow">
+                    <div class="inner">
+                      <h3>{{ data.total_video_watch }}</h3>
+                      <p>Video Watch</p>
+                    </div>
+                    <div class="icon">
+                      <i class="fa fa-video-camera"></i>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-lg-3 col-xs-6">
+                  <!-- small box -->
+                  <div class="small-box bg-primary">
+                    <div class="inner">
+                      <h3>{{ data.total_assessment }}</h3>
+                      <p>Quiz</p>
+                    </div>
+                    <div class="icon">
+                      <i class="fa fa-question"></i>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-lg-3 col-xs-6">
+                  <!-- small box -->
+                  <div class="small-box bg-green">
+                    <div class="inner">
+                      <h3>{{ data.total_module }}</h3>
+                      <p>Modules</p>
+                    </div>
+                    <div class="icon">
+                      <i class="fa fa-book"></i>
+                    </div>
+                  </div>
+                </div>
+                <label><h3>Class Joined</h3></label>
+                <table class="table table-bordered table-striped">
+                  <thead>
+                    <tr>
+                      <th>Class Name</th>
+                      <th>Score</th>
+                      <th>Complete Class</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {{#each data.classes}}
+                      <tr>
+                        <td>{{ name }}</td>
+                        <td>{{ score }}</td>
+                        {{#if is_completed }}
+                        <td>Completed</td>
+                        {{else}}
+                        <td>Incomplete</td>
+                        {{/if}}
+                      </tr>
+                    {{/each}}
+                  </tbody>
+                  <tfoot>
+                    <tr>
+                      <th>Class Name</th>
+                      <th>Score</th>
+                      <th>Complete Class</th>
+                    </tr>
+                  </tfoot>
+                </table>
+                <label><h3>Awards</h3></label>
+                <table class="table table-bordered table-striped">
+                  <thead>
+                    <tr>
+                      <th>Title</th>
+                      <th>Date</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {{#each data.award}}
+                      <tr>
+                        <td>{{ message }}</td>
+                        <td>{{ time }}</td>
+                      </tr>
+                    {{/each}}
+                  </tbody>
+                  <tfoot>
+                    <tr>
+                      <th>Title</th>
+                      <th>Date</th>
+                    </tr>
+                  </tfoot>
+                </table>
+              </div>
+              <!-- /.box-body -->
+              <div class="box-footer">
+                <button type="button" onclick="javascript:history.go(-1);" class="btn btn-default">Back!</button>
+              </div>
+              <!-- /.box-footer -->
+            </form>
+          </div>
+          <!-- /.box -->
+        </div>
+        <!-- /.col -->
+      </div>
+      <!-- /.row -->
+    </section>
+    <!-- /.content -->
+</div>

@@ -9,6 +9,15 @@ module.exports = {
       })
     })
   },
+  getClassByUser: (conn, userId, callback) => {
+    conn.getConnection((errConnection, connection) => {
+      if (errConnection) console.error(errConnection)
+
+      connection.query(`SELECT a.score,a.is_completed,b.name FROM users_classes_tab a JOIN classes_tab b ON a.classid=b.classid WHERE a.status=1 AND a.userid = ?`, [userId], (err, rows) => {
+        callback(err, rows)
+      })
+    })
+  },
   getUserCertificate: (conn, userId, classId, callback) => {
     conn.getConnection((errConnection, connection) => {
       if (errConnection) console.error(errConnection)

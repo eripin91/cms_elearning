@@ -30,6 +30,21 @@ exports.main = async (req, res) => {
 }
 
 /*
+ * GET : '/'
+ *
+ * @desc Get user stats
+ *
+ * @param  {object} req - Parameters for request
+ *
+ * @return {object} Request object
+ */
+exports.stats = async (req, res) => {
+  API_SERVICE.get('v1/stats/get/' + req.params.userId, { }, (err, response) => {
+    res.render('users_stats', { data: response.data })
+  })
+}
+
+/*
  * GET : '/ajax/get'
  *
  * @desc Ajax Get user list
@@ -48,6 +63,7 @@ exports.ajaxGet = async (req, res) => {
       let i = 1
       async.eachSeries(_.result(response, 'data', {}), (item, next) => {
         item.action = MiscHelper.getActionButtonFull('users', item.userid)
+        item.action += ' <a href="users/stats/' + item.userid + '"><i class="fa fa-bar-chart-o"></i></a>'
         item.ranking = i
         item.score = parseInt(item.score)
         item.confirm = MiscHelper.getConfirm(item.confirm)
