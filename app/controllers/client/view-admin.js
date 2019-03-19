@@ -152,6 +152,8 @@ exports.update = async (req, res) => {
     const password = req.body.newpassword
     const confpassword = req.body.confpassword
 
+    console.log('BODY OF VIEW-ADMIN =================')
+    console.log(req.body)
     if (!adminId) {
       MiscHelper.set_error_msg(
         { error: 'Kesalahan input data !!!' },
@@ -174,7 +176,6 @@ exports.update = async (req, res) => {
             )
             res.redirect('/admin/update/' + adminId)
           }
-          delete req.body.confpassword
         }
 
         API_SERVICE.post(

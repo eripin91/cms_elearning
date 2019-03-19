@@ -146,8 +146,8 @@ exports.update = async (req, res) => {
       {},
       (err, response) => {
         if (err) console.error(err)
-        console.log('BODY CLASS UPDATE ===========')
-        console.log(req.body)
+        // console.log('BODY CLASS UPDATE ===========')
+        // console.log(req.body)
         res.render('class_update', {
           errorMsg: errorMsg,
           data: response.data[0]
@@ -156,7 +156,7 @@ exports.update = async (req, res) => {
     )
   } else {
     const classId = req.body.id
-    const name = req.body.name
+    // const name = req.body.name
     // const teacherId = req.body.id
     // const description = req.body.description
     // const cover = req.body.cover
@@ -165,6 +165,8 @@ exports.update = async (req, res) => {
     // const nick = req.body.nick
     // const password = req.body.newpassword
     // const confpassword = req.body.confpassword
+    console.log('BODY OF VIEW-CLASSES ==============')
+    console.log(req.body)
 
     if (!classId) {
       MiscHelper.set_error_msg(
@@ -173,41 +175,41 @@ exports.update = async (req, res) => {
       )
       res.redirect('/classes')
     } else {
-      if (!name) {
-        MiscHelper.set_error_msg(
-          { error: 'Nama wajib di isi !!!' },
-          req.sessionID
-        )
-        res.redirect('/classes/update/' + classId)
-      } else {
-        // if (teacherId) {
-        //   if (password !== confpassword) {
-        //     MiscHelper.set_error_msg(
-        //       { error: 'Password dan konfimasi password tidak sesuai !!!' },
-        //       req.sessionID
-        //     )
-        //     res.redirect('/classes/update/' + classId)
-        //   }
-        //   delete req.body.confpassword
-        // }
+      // if (!name) {
+      //   MiscHelper.set_error_msg(
+      //     { error: 'Nama wajib di isi !!!' },
+      //     req.sessionID
+      //   )
+      //   res.redirect('/classes/update/' + classId)
+      // } else {
+      // if (teacherId) {
+      //   if (password !== confpassword) {
+      //     MiscHelper.set_error_msg(
+      //       { error: 'Password dan konfimasi password tidak sesuai !!!' },
+      //       req.sessionID
+      //     )
+      //     res.redirect('/classes/update/' + classId)
+      //   }
+      //   delete req.body.confpassword
+      // }
 
-        API_SERVICE.patch(
-          'v1/classes/update/' + classId,
-          req.body,
-          (err, response) => {
-            if (!err) {
-              MiscHelper.set_error_msg(
-                { info: 'Class berhasil diubah.' },
-                req.sessionID
-              )
-              res.redirect('/classes')
-            } else {
-              MiscHelper.set_error_msg({ error: err.message }, req.sessionID)
-              res.redirect('/classes/update/' + classId)
-            }
+      API_SERVICE.patch(
+        'v1/classes/update/' + classId,
+        req.body,
+        (err, response) => {
+          if (!err) {
+            MiscHelper.set_error_msg(
+              { info: 'Class berhasil diubah.' },
+              req.sessionID
+            )
+            res.redirect('/classes')
+          } else {
+            MiscHelper.set_error_msg({ error: err.message }, req.sessionID)
+            res.redirect('/classes/update/' + classId)
           }
-        )
-      }
+        }
+      )
+      // }
     }
   }
 }

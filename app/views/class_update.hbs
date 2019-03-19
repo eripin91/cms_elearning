@@ -13,8 +13,6 @@
     </ol>
   </section>
 
-  {{ showLog data }}
-
   <!-- Main content -->
   <section class="content">
     <div class="row">
@@ -27,8 +25,7 @@
           </div>
           <!-- /.box-header -->
           <!-- form start -->
-          <form class="form-horizontal" action="{{ site_url 'classes/update' }}" method="post"
-            enctype="multipart/form-data">
+          <form class="form-horizontal" action="{{ site_url 'classes/update' }}" method="post">
             <input type="hidden" name="id" value="{{ data.classid }}">
             <div class="box-body">
               <div class="form-group">
@@ -43,7 +40,7 @@
                 <label for="teacherId" class="col-sm-2 control-label">Teacher Id</label>
 
                 <div class="col-sm-10">
-                  <input type="number" name="teacherid" class="form-control" id="teacherId" placeholder="Teacher Id"
+                  <input type="number" name="guruid" class="form-control" id="teacherId" placeholder="Teacher Id"
                     value="{{ data.guruid }}">
                 </div>
               </div>
@@ -51,7 +48,7 @@
                 <label for="ClassName" class="col-sm-2 control-label">Class Name</label>
 
                 <div class="col-sm-10">
-                  <input type="text" name="class_name" class="form-control" id="ClassName" placeholder="Class Name"
+                  <input type="text" name="name" class="form-control" id="ClassName" placeholder="Class Name"
                     value="{{ data.class_name }}">
                 </div>
               </div>
@@ -67,10 +64,18 @@
                 <label for="Cover" class="col-sm-2 control-label">Cover</label>
 
                 <div class="col-sm-10">
-                  <input type="file" accept="image/*" name="cover" class="form-control" id="Cover" placeholder="Cover"
+                  <input type="text" name="cover" class="form-control" id="Cover" placeholder="Cover"
                     value="{{ data.cover }}">
                 </div>
               </div>
+              {{!-- <div class="form-group">
+                <label for="Cover" class="col-sm-2 control-label">Cover</label>
+
+                <div class="col-sm-10">
+                  <input type="file" accept="image/*" name="cover" class="form-control" id="Cover" placeholder="Cover"
+                    value="{{ data.cover }}">
+                </div>
+              </div> --}}
               <div class="form-group">
                 <label for="Priority" class="col-sm-2 control-label">Priority</label>
 
