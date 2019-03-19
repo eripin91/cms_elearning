@@ -191,7 +191,7 @@ exports.update = async (req, res) => {
         //   delete req.body.confpassword
         // }
 
-        API_SERVICE.post(
+        API_SERVICE.patch(
           'v1/classes/update/' + classId,
           req.body,
           (err, response) => {
