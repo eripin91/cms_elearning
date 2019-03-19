@@ -40,6 +40,7 @@ exports.main = async (req, res) => {
  */
 exports.stats = async (req, res) => {
   API_SERVICE.get('v1/stats/get/' + req.params.userId, { }, (err, response) => {
+    if (err) console.error(err)
     res.render('users_stats', { data: response.data })
   })
 }
