@@ -21,7 +21,7 @@ const API_SERVICE = ApiLibs.client({
 exports.main = async (req, res) => {
   const ranking = _.result(req.query, 'ranking')
   const errorMsg = await MiscHelper.get_error_msg(req.sessionID)
-  
+
   if (!ranking) {
     res.render('users', { errorMsg: errorMsg, data: req.query })
   } else {
@@ -88,14 +88,13 @@ exports.update = async (req, res) => {
   if (_.isEmpty(req.body)) {
     const errorMsg = await MiscHelper.get_error_msg(req.sessionID)
     API_SERVICE.get('v1/users/get/' + req.params.userId, {}, (err, response) => {
-        if (err) console.error(err)
-        res.render('users_update', { errorMsg: errorMsg, data: response.data })
+      if (err) console.error(err)
+      res.render('users_update', { errorMsg: errorMsg, data: response.data })
     })
   } else {
     const userId = req.body.id
     const fullname = req.body.fullname
     const phone = req.body.phone
-    const status = req.body.status
 
     if (!userId) {
       MiscHelper.set_error_msg(
@@ -107,6 +106,12 @@ exports.update = async (req, res) => {
       if (!fullname) {
         MiscHelper.set_error_msg(
           { error: 'Fullname wajib di isi !!!' },
+          req.sessionID
+        )
+        res.redirect('/users/update/' + userId)
+      } else if (!phone) {
+        MiscHelper.set_error_msg(
+          { error: 'Phone wajib di isi !!!' },
           req.sessionID
         )
         res.redirect('/users/update/' + userId)
