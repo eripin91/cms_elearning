@@ -25,18 +25,9 @@
                     </div>
                     <!-- /.box-header -->
                     <!-- form start -->
-                    <form class="form-horizontal" action="{{ site_url 'course/update' }}" method="post"
-                        enctype="multipart/form-data">
-                        <input type="hidden" name="id" value="{{ data.courseid }}">
+                    <form class="form-horizontal" action="{{ site_url 'courses/update' }}" method="post">
+                        <input type="hidden" name="courseid" value="{{ data.courseid }}">
                         <div class="box-body">
-                            <div class="form-group">
-                                <label for="courseId" class="col-sm-2 control-label">Course Id</label>
-
-                                <div class="col-sm-10">
-                                    <input type="number" readonly name="courseid" class="form-control" id="courseId"
-                                        placeholder="Course Id" value="{{ data.courseid }}">
-                                </div>
-                            </div>
                             <div class="form-group">
                                 <label for="classId" class="col-sm-2 control-label">Class Id</label>
 

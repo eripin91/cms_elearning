@@ -41,8 +41,8 @@ exports.ajaxGet = async (req, res) => {
       keyword: req.query.search['value']
     },
     (err, response) => {
+      const dataCourses = []
       if (!err) {
-        const dataCourses = []
         async.eachSeries(
           _.result(response.data, 'data', {}),
           (item, next) => {
@@ -134,7 +134,7 @@ exports.add = async (req, res) => {
  * @desc Update admin
  *
  * @param  {object} req - for request
- * @param  {object} req.body.adminId - adminId for identifier
+ * @param  {object} req.body.courseId - courseId for identifier
  *
  * @return {object} Request object
  */
@@ -150,52 +150,62 @@ exports.update = async (req, res) => {
       }
     )
   } else {
-    const adminId = req.body.id
-    const nick = req.body.nick
-    const password = req.body.newpassword
-    const confpassword = req.body.confpassword
+    const courseId = req.body.courseid
+    const classid = req.body.classid
+    const name = req.body.name
+    const preassessmentid = req.body.preassessmentid
+    const finalassessmentid = req.body.finalassessmentid
 
-    if (!adminId) {
+    if (!courseId) {
       MiscHelper.set_error_msg(
         { error: 'Kesalahan input data !!!' },
         req.sessionID
       )
-      res.redirect('/admin')
+      res.redirect('/courses')
     } else {
-      if (!nick) {
+      if (!classid) {
         MiscHelper.set_error_msg(
-          { error: 'Fullname wajib di isi !!!' },
+          { error: 'Class Id wajib di isi !!!' },
           req.sessionID
         )
-        res.redirect('/admin/update/' + adminId)
+        res.redirect('/courses/update/' + courseId)
+      } else if (!name) {
+        MiscHelper.set_error_msg(
+          { error: 'Name wajib di isi !!!' },
+          req.sessionID
+        )
+        res.redirect('/courses/update/' + courseId)
+      } else if (!preassessmentid) {
+        MiscHelper.set_error_msg(
+          { error: 'Pre Assessment Id wajib di isi !!!' },
+          req.sessionID
+        )
+        res.redirect('/courses/update/' + courseId)
+      } else if (!finalassessmentid) {
+        MiscHelper.set_error_msg(
+          { error: 'Final Assessment Id wajib di isi !!!' },
+          req.sessionID
+        )
+        res.redirect('/courses/update/' + courseId)
       } else {
-        if (password) {
-          if (password !== confpassword) {
-            MiscHelper.set_error_msg(
-              { error: 'Password dan konfimasi password tidak sesuai !!!' },
-              req.sessionID
-            )
-            res.redirect('/admin/update/' + adminId)
-          }
-          delete req.body.confpassword
-        }
-
-        API_SERVICE.post(
-          'v1/admin/update/' + adminId,
+        API_SERVICE.patch(
+          'v1/courses/' + courseId,
           req.body,
           (err, response) => {
             if (!err) {
               MiscHelper.set_error_msg(
-                { info: 'Admin berhasil diubah.' },
+                { info: 'Courses berhasil diubah.' },
                 req.sessionID
               )
-              res.redirect('/admin')
+              res.redirect('/courses')
             } else {
               MiscHelper.set_error_msg({ error: err.message }, req.sessionID)
-              res.redirect('/admin/update/' + adminId)
+              res.redirect('/courses/update/' + courseId)
             }
           }
         )
+        console.log('REQ BODY OF VIEW-COURSES ================== ')
+        console.log(req.body)
       }
     }
   }
@@ -207,17 +217,17 @@ exports.update = async (req, res) => {
  * @desc Get dashboard home
  *
  * @param  {object} req - Parameters for request
- * @param  {object} req.params.adminId - Parameters adminId for identifier
+ * @param  {object} req.params.courseId - Parameters courseId for identifier
  *
  * @return {object} Request object
  */
 exports.delete = async (req, res) => {
-  const adminId = 0 || req.params.adminId
-  if (!adminId) {
-    MiscHelper.set_error_msg({ error: 'adminId required !!!' }, req.sessionID)
+  const courseId = 0 || req.params.courseId
+  if (!courseId) {
+    MiscHelper.set_error_msg({ error: 'courseId required !!!' }, req.sessionID)
     res.redirect('/admin')
   } else {
-    API_SERVICE.get('v1/admin/delete/' + adminId, {}, (err, response) => {
+    API_SERVICE.get('v1/admin/delete/' + courseId, {}, (err, response) => {
       if (err) {
         MiscHelper.set_error_msg({ error: err }, req.sessionID)
       } else {
