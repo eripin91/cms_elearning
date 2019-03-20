@@ -3,9 +3,10 @@
 'use strict'
 
 const async = require('async')
-const coursesModel = require('../../models/courses')
 const redisCache = require('../../libs/RedisCache')
+const coursesModel = require('../../models/courses')
 const scoreModel = require('../../models/score')
+const discussionModel = require('../../models/discussions')
 
 /*
  * GET : '/courses/:courseId
@@ -52,8 +53,17 @@ exports.getCourse = (req, res) => {
           } else {
             item.avg_score = result[0].total_score / result[0].score_count
           }
-          next()
         })
+        discussionModel.getTotalThreadCourse(req, item.courseid, (err, result) => {
+          if (err) console.error(err)
+
+          if (_.isEmpty(result)) {
+            item.discussion = 0
+          } else {
+            item.discussion = result[0].discussion
+          }
+        })
+        next()
       }, err => {
         if (err) console.error(err)
         cb(err, dataCourse)
@@ -66,7 +76,6 @@ exports.getCourse = (req, res) => {
           data: dataCourse,
           total: total[0].total
         }
-        console.log(data)
         cb(errCourse, data)
       })
     },
@@ -116,7 +125,7 @@ exports.getCourseDetail = (req, res) => {
     (cb) => {
       coursesModel.getCourseDetail(req, courseId, (errCourse, resultCourse) => {
         if (_.isEmpty(resultCourse)) {
-          return MiscHelper.errorCustomStatus(res, { message: 'Course ini tidak tersedia' })
+          return MiscHelper.responses(res, {})
         } else {
           cb(errCourse, resultCourse[0])
         }
@@ -348,7 +357,7 @@ exports.getDetail = (req, res) => {
     (cb) => {
       coursesModel.getDetail(req, courseId, limit, offset, keyword, (errDetail, resultDetail) => {
         if (_.isEmpty(resultDetail)) {
-          return MiscHelper.errorCustomStatus(res, { message: 'Tidak ada chapter untuk class ini' })
+          return MiscHelper.responses(res, {})
         } else {
           cb(errDetail, resultDetail)
         }
@@ -399,7 +408,7 @@ exports.getDetails = (req, res) => {
       coursesModel.getDetails(req, detailId, (errDetail, resultDetail) => {
         if (errDetail) console.error(errDetail)
         if (_.isEmpty(resultDetail)) {
-          return MiscHelper.notFound(res, 'Detail not Found')
+          return MiscHelper.responses(res, {})
         }
         cb(errDetail, resultDetail)
       })
@@ -690,7 +699,7 @@ exports.getMaterialDetail = (req, res) => {
     (cb) => {
       coursesModel.getMaterialDetail(req, materialId, (errMaterialDetail, resultMaterialDetail) => {
         if (_.isEmpty(resultMaterialDetail)) {
-          return MiscHelper.errorCustomStatus(res, { message: 'Maaf lecture ini belum tersedia' })
+          return MiscHelper.responses(res, { })
         } else {
           cb(errMaterialDetail, resultMaterialDetail)
         }
