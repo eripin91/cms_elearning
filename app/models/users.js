@@ -14,12 +14,9 @@ module.exports = {
         sql = ` AND b.classid=${classId}`
       }
 
-      connection.query(
-        `SELECT a.*, b.score FROM users_tab a LEFT JOIN users_classes_tab b ON a.userid=b.userid WHERE a.status=1 ${sql} ORDER BY a.userid DESC LIMIT ${offset},${limit}`,
-        (err, rows) => {
-          callback(err, rows)
-        }
-      )
+      connection.query(`SELECT a.*, b.score FROM users_tab a LEFT JOIN users_classes_tab b ON a.userid=b.userid WHERE a.status=1 ${sql} ORDER BY a.userid DESC LIMIT ${offset},${limit}`, (err, rows) => {
+        callback(err, rows)
+      })
     })
   },
   getTotalUser: (conn, keyword, classId, callback) => {
@@ -35,12 +32,9 @@ module.exports = {
         sql = ` AND b.classid=${classId}`
       }
 
-      connection.query(
-        `SELECT COUNT(*) as total FROM users_tab a LEFT JOIN users_classes_tab b ON a.userid=b.userid WHERE a.status=1 ${sql}`,
-        (err, rows) => {
-          callback(err, rows)
-        }
-      )
+      connection.query(`SELECT COUNT(*) as total FROM users_tab a LEFT JOIN users_classes_tab b ON a.userid=b.userid WHERE a.status=1 ${sql}`, (err, rows) => {
+        callback(err, rows)
+      })
     })
   },
   update: (conn, id, data, callback) => {
