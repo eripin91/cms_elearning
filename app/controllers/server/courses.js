@@ -236,6 +236,7 @@ exports.updateCourse = (req, res) => {
       console.log(data)
       coursesModel.updateCourse(req, data, courseId, (errUpdateCourse, resultUpdateCourse) => {
         redisCache.delwild(`courses-list:*`)
+        redisCache.del(`course-detail:${courseId}`)
         cb(errUpdateCourse, resultUpdateCourse)
       })
     }
@@ -295,6 +296,8 @@ exports.deleteCourse = (req, res) => {
                 redisCache.delwild(`course-material-list:*`)
                 coursesModel.deleteAllDetail(req, courseId, (errCourse) => {
                   redisCache.delwild(`courses-detail-list:*`)
+                  redisCache.del(`course-detail:${courseId}`)
+
                   if (errCourse) console.error(errCourse)
                 })
                 cb(null)
@@ -505,7 +508,7 @@ exports.updateDetail = (req, res) => {
     return MiscHelper.errorCustomStatus(res, req.validationErrors(true))
   }
   const detailId = req.params.detailId
-  const courseId = req.params.courseId
+  // const courseId = req.params.courseId
   async.waterfall([
     (cb) => {
       coursesModel.checkDetail(req, detailId, (errCourse, resultCourse) => {
@@ -525,7 +528,8 @@ exports.updateDetail = (req, res) => {
       }
 
       coursesModel.updateDetail(req, data, detailId, (errUpdate, resultUpdate) => {
-        redisCache.del(`courses-detail-:${courseId}`)
+        redisCache.delwild(`courses-detail-list:*`)
+        redisCache.del(`courses-details:${detailId}`)
         cb(errUpdate, resultUpdate)
       })
     }
@@ -578,8 +582,10 @@ exports.deleteDetail = (req, res) => {
             redisCache.delwild(`course-material-list:*`)
           })
         }
-        coursesModel.updateDetail(req, detailId, (errUpdate, resultUpdate) => {
+        coursesModel.deleteDetail(req, detailId, (errUpdate, resultUpdate) => {
           redisCache.del(`courses-detail-:${courseId}`)
+          redisCache.delwild(`courses-detail-list:*`)
+
           cb(errUpdate, resultUpdate)
         })
       })
@@ -838,6 +844,7 @@ exports.updateMaterial = (req, res) => {
       }
       coursesModel.updateMaterial(req, data, materialId, (errUpdateMaterial, resultUpdateMaterial) => {
         redisCache.delwild(`course-material-list:*`)
+        redisCache.del(`course-material-detail:${materialId}`)
         cb(errUpdateMaterial, resultUpdateMaterial)
       })
     }
@@ -887,8 +894,9 @@ exports.deleteMaterial = (req, res) => {
         updated_at: new Date()
       }
 
-      coursesModel.updateDetail(req, data, materialId, (errUpdateMaterial, resultUpdateMaterial) => {
+      coursesModel.deleteMaterial(req, materialId, data, (errUpdateMaterial, resultUpdateMaterial) => {
         redisCache.delwild(`course-material-list:*`)
+        redisCache.del(`course-material-detail:${materialId}`)
         cb(errUpdateMaterial, resultUpdateMaterial)
       })
     }
