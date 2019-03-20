@@ -19,7 +19,6 @@ const API_SERVICE = ApiLibs.client({
  * @return {object} Request object
  */
 exports.main = async (req, res) => {
-
   const errorMsg = await MiscHelper.get_error_msg(req.sessionID)
   res.render('users', { errorMsg: errorMsg, data: req.query })
 }

@@ -852,7 +852,63 @@ function _init() {
   })
 })(jQuery)
 
-// section: admin
+// section: discussions
+;(function($) {
+  'use strict'
+  var url = SITE_URL + $('#sTableDiscussions').attr('src')
+  $('#sTableDiscussions').DataTable({
+    processing: true,
+    serverSide: true,
+    bFilter: true,
+    ordering: false,
+    scrollX: false,
+    aaSorting: [],
+    pageLength: 25,
+    columnDefs: [],
+    pagingType: 'full_numbers',
+    ajax: url,
+    columns: [
+      { data: 'discussionid' },
+      { data: 'course' },
+      { data: 'fullname' },
+      { data: 'post_content' },
+      { data: 'total_replied' },
+      { data: 'created_at' },
+      { data: 'action' }
+    ]
+  })
+})(jQuery)
+
+// section: classes
+;(function($) {
+  'use strict'
+  var url = SITE_URL + $('#sTableClasses').attr('src')
+  $('#sTableClasses').DataTable({
+    processing: true,
+    serverSide: true,
+    bFilter: true,
+    ordering: false,
+    scrollX: false,
+    aaSorting: [],
+    pageLength: 10,
+    columnDefs: [],
+    pagingType: 'full_numbers',
+    ajax: url,
+    columns: [
+      { data: 'classid' },
+      { data: 'guru' },
+      { data: 'class_name' },
+      { data: 'description' },
+      { data: 'cover' },
+      { data: 'priority' },
+      { data: 'rating' },
+      { data: 'created_at' },
+      { data: 'action' }
+    ]
+  })
+})(jQuery)
+
+// section admin
 ;(function($) {
   'use strict'
   var url = SITE_URL + $('#sTableAdmin').attr('src')

@@ -67,7 +67,6 @@ module.exports = {
   deleteThread: (conn, discussionId, callback) => {
     conn.getConnection((errConnection, connection) => {
       if (errConnection) console.error(errConnection)
-
       connection.query(`UPDATE discussion_tab SET status = 0, updated_at = NOW() WHERE discussionid = ?`, discussionId, (err) => {
         callback(err, { message: 'Thread has been deleted' })
       })
@@ -76,7 +75,6 @@ module.exports = {
   deleteAnswer: (conn, parentId, callback) => {
     conn.getConnection((errConnection, connection) => {
       if (errConnection) console.error(errConnection)
-
       connection.query(`UPDATE discussion_tab SET status = 0, updated_at = NOW() WHERE parent = ?`, parentId, (err) => {
         callback(err, { message: 'Data Thread and reply has been deleted' })
       })

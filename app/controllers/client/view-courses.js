@@ -204,8 +204,6 @@ exports.update = async (req, res) => {
             }
           }
         )
-        console.log('REQ BODY OF VIEW-COURSES ================== ')
-        console.log(req.body)
       }
     }
   }

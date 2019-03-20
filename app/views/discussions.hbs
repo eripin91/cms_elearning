@@ -3,12 +3,12 @@
   <!-- Content Header (Page header) -->
   <section class="content-header">
     <h1>
-      Admin
-      <small>Admin</small>
+      Discussions
+      <small>Discussions</small>
     </h1>
     <ol class="breadcrumb">
       <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
-      <li class="active"><a href="#">Admin</a></li>
+      <li class="active"><a href="#">Discussions</a></li>
     </ol>
   </section>
 
@@ -18,25 +18,22 @@
       <div class="col-xs-12">
         <div class="box">
           <div class="box-header">
-            <h3 class="box-title">Admin</h3>
+            <h3 class="box-title">Discussions</h3>
           </div>
           <!-- /.box-header -->
           <div class="box-body">
             {{{ errorMsg }}}
 
-            <div class="box-header">
-              <h3 class="box-title">
-                <a href="{{ site_url 'admin/add' }}" class="btn btn-default"><i class="fa fa-plus"></i> Add Admin</a>
-              </h3>
-            </div>
-            <table id="sTableAdmin" class="table table-bordered table-striped" src="admin/ajax/get">
+
+            <table id="sTableDiscussions" class="table table-bordered table-striped" src="discussions/ajax/get">
               <thead>
                 <tr>
-                  <th>AdminId</th>
-                  <th>Email</th>
+                  <th>Discussion Id</th>
+                  <th>Course</th>
                   <th>Full Name</th>
-                  <th>Created Date</th>
-                  <th>Status</th>
+                  <th>Comment</th>
+                  <th>Replied</th>
+                  <th>Date</th>
                   <th>Action</th>
                 </tr>
               </thead>
@@ -44,11 +41,12 @@
               </tbody>
               <tfoot>
                 <tr>
-                  <th>AdminId</th>
-                  <th>Email</th>
+                  <th>Discussion Id</th>
+                  <th>Course</th>
                   <th>Full Name</th>
-                  <th>Created Date</th>
-                  <th>Status</th>
+                  <th>Comment</th>
+                  <th>Replied</th>
+                  <th>Date</th>
                   <th>Action</th>
                 </tr>
               </tfoot>
