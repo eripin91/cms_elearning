@@ -249,6 +249,7 @@ exports.update = (req, res) => {
 
   async.waterfall([
     (cb) => {
+      console.log(req.body)
       adminModel.update(req, req.params.adminId, dataUpdate, (errAdmin, resultAdmin) => {
         cb(errAdmin, resultAdmin)
       })

@@ -12,7 +12,7 @@ const fs = require('fs')
 AWS.config.update({
   secretAccessKey: CONFIG.AWS.AWS_ACCESS_KEY_SECRET,
   accessKeyId: CONFIG.AWS.AWS_ACCESS_KEY_ID,
-  region: CONFIG.AWS.AWS_S3_REGION
+  region: CONFIG.AWS.AWS_REGION
 })
 const s3 = new AWS.S3()
 
