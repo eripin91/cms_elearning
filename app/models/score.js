@@ -5,7 +5,7 @@ module.exports = {
     conn.getConnection((errConnection, connection) => {
       if (errConnection) console.error(errConnection)
 
-      connection.query(`SELECT ut.fullname, ut.score FROM users_scores_tab us JOIN users_tab ut on us.userid = ut.userid WHERE us.type = 'class' AND us.parentid = ${classId} ORDER BY us.score DESC LIMIT ${offset}, ${limit}`, (err, rows) => {
+      connection.query(`SELECT ut.fullname, us.score FROM users_scores_tab us JOIN users_tab ut on us.userid = ut.userid WHERE us.type = 'class' AND us.parentid = ${classId} ORDER BY us.score DESC LIMIT ${offset}, ${limit}`, (err, rows) => {
         callback(err, rows)
       })
     })
