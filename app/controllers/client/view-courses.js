@@ -303,6 +303,46 @@ exports.chapterGetAll = async (req, res) => {
 }
 
 /*
+ * GET && POST : '/add'
+ *
+ * @desc Add chapter
+ *
+ * @param  {object} req - Parameters for request
+ *
+ * @return {object} Request object
+ */
+exports.chapterAdd = async (req, res) => {
+  if (_.isEmpty(req.body)) {
+    const errorMsg = await MiscHelper.get_error_msg(req.sessionID)
+    res.render('chapter_add', { errorMsg: errorMsg, courseId: req.params.courseId })
+  } else {
+    const name = req.body.name
+    const assessmentid = req.body.assessmentid
+
+    if (!name || !assessmentid) {
+      MiscHelper.set_error_msg(
+        { error: 'Data yang anda masukkan tidak lengkap !!!' },
+        req.sessionID
+      )
+      res.redirect('/courses/chapter/add/' + req.params.courseId)
+    } else {
+      API_SERVICE.post(`v1/courses/chapter/${req.params.courseId}`, req.body, (err, response) => {
+        if (!err) {
+          MiscHelper.set_error_msg(
+            { info: 'Chapter berhasil ditambahkan.' },
+            req.sessionID
+          )
+          res.redirect(`/courses/chapter/${req.params.courseId}`)
+        } else {
+          MiscHelper.set_error_msg({ error: response.message }, req.sessionID)
+          res.redirect('/admin/add')
+        }
+      })
+    }
+  }
+}
+
+/*
  * GET && POST : '/chapterupdate'
  *
  * @desc Update admin

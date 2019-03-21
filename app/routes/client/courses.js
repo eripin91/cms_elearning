@@ -17,7 +17,8 @@ Route.get('/', ViewCoursesControllers.main)
   .get('/chapter/delete/:courseId/:chapterId', ViewCoursesControllers.chapterDelete)
   .post('/chapter/update/:courseId/:chapterId', ViewCoursesControllers.chapterUpdate)
   .get('/chapter/update/:courseId/:chapterId', ViewCoursesControllers.chapterUpdate)
-  // .post('/chapter/add/:courseId', ViewCoursesControllers.chapterUpdate)
+  .get('/chapter/add/:courseId', ViewCoursesControllers.chapterAdd)
+  .post('/chapter/add/:courseId', ViewCoursesControllers.chapterAdd)
 
 // .get('/chapter/:chapterId/lecture', ViewCoursesControllers.lectureGetAll)
 module.exports = Route
