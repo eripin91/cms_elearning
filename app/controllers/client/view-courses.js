@@ -93,36 +93,30 @@ exports.ajaxGet = async (req, res) => {
 exports.add = async (req, res) => {
   if (_.isEmpty(req.body)) {
     const errorMsg = await MiscHelper.get_error_msg(req.sessionID)
-    res.render('courses_add', { errorMsg: errorMsg })
+    res.render('course_add', { errorMsg: errorMsg })
   } else {
-    const email = req.body.email
-    const nick = req.body.nick
-    const password = req.body.password
-    const confpassword = req.body.confpassword
+    const classId = req.body.classId
+    const name = req.body.name
+    const preAssessmentId = req.body.preAssessmentId
+    const finalAssessmentId = req.body.finalAssessmentId
 
-    if (!email || !nick || !password) {
+    if (!classId || !name || !preAssessmentId || !finalAssessmentId) {
       MiscHelper.set_error_msg(
         { error: 'Data yang anda masukkan tidak lengkap !!!' },
         req.sessionID
       )
-      res.redirect('/admin/add')
-    } else if (password !== confpassword) {
-      MiscHelper.set_error_msg(
-        { error: 'Password dan konfimasi password tidak sesuai !!!' },
-        req.sessionID
-      )
-      res.redirect('/admin/add')
+      res.redirect('/courses/add')
     } else {
-      API_SERVICE.post('v1/admin/create', req.body, (err, response) => {
+      API_SERVICE.post('v1/courses', req.body, (err, response) => {
         if (!err) {
           MiscHelper.set_error_msg(
-            { info: 'Admin berhasil ditambahkan.' },
+            { info: 'Course berhasil ditambahkan.' },
             req.sessionID
           )
-          res.redirect('/admin')
+          res.redirect('/courses')
         } else {
           MiscHelper.set_error_msg({ error: response.message }, req.sessionID)
-          res.redirect('/admin/add')
+          res.redirect('/courses/add')
         }
       })
     }
