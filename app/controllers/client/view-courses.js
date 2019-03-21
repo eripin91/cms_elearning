@@ -50,6 +50,7 @@ exports.ajaxGet = async (req, res) => {
               'courses',
               item.courseid
             )
+            item.name = `<a href="courses/chapter/${item.courseid}">${item.name}</a>`
             item.status = MiscHelper.getStatus(item.status, 1)
             item.created_at = moment(item.created_at).format('DD/MM/YYYY hh:mm')
             dataCourses.push(item)
@@ -237,4 +238,68 @@ exports.delete = async (req, res) => {
       }
     })
   }
+}
+
+exports.chapterMain = async (req, res) => {
+  const errorMsg = await MiscHelper.get_error_msg(req.sessionID)
+  res.render('chapters', { errorMsg: errorMsg, courseId: req.params.courseId })
+}
+
+/*
+ * GET : '/chapter/courseId'
+ *
+ * @desc Ajax get chapter list
+ *
+ * @param  {object} req - Parameters for request
+ *
+ * @return {object} Request object
+ */
+exports.chapterGetAll = async (req, res) => {
+  API_SERVICE.get(
+    'v1/courses/chapter/' + req.params.courseId,
+    {
+      limit: _.result(req.query, 'length', 25),
+      offset: _.result(req.query, 'start', 0),
+      keyword: req.query.search['value']
+    },
+    (err, response) => {
+      const dataChapters = []
+      if (!err) {
+        async.eachSeries(
+          _.result(response.data, 'data', {}),
+          (item, next) => {
+            item.action = MiscHelper.getActionButtonFull(
+              'courses/chapter',
+              item.detailid
+            )
+            item.name = `<a href="courses/chapter/${item.detailid}/lecture">${item.name}</a>`
+            item.assessment_title = item.assessment_title === null ? 'Belum ada test' : item.assessment_title
+            // item.status = MiscHelper.getStatus(item.status, 1)
+            // item.created_at = moment(item.created_at).format('DD/MM/YYYY hh:mm')
+            dataChapters.push(item)
+            next()
+          },
+          err => {
+            if (!err) {
+              const data = {
+                draw: _.result(req.query, 'draw', 1),
+                recordsTotal: _.result(response, 'total', 0),
+                recordsFiltered: _.result(response, 'total', 0)
+              }
+
+              return MiscHelper.responses(res, dataChapters, 200, data)
+            } else {
+              return MiscHelper.errorCustomStatus(res, err, 400)
+            }
+          }
+        )
+      } else {
+        return MiscHelper.errorCustomStatus(
+          res,
+          err,
+          _.result(err, 'status', 400)
+        )
+      }
+    }
+  )
 }

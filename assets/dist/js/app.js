@@ -961,3 +961,27 @@ function _init() {
     ]
   })
 })(jQuery)
+
+// section: chapter
+;(function($) {
+  'use strict'
+  var url = SITE_URL + $('#sTableChapters').attr('src')
+  $('#sTableChapters').DataTable({
+    processing: true,
+    serverSide: true,
+    bFilter: true,
+    ordering: false,
+    scrollX: false,
+    aaSorting: [],
+    pageLength: 10,
+    columnDefs: [],
+    pagingType: 'full_numbers',
+    ajax: url,
+    columns: [
+      { data: 'detailid' },
+      { data: 'name' },
+      { data: 'assessment_title' },
+      { data: 'action' }
+    ]
+  })
+})(jQuery)

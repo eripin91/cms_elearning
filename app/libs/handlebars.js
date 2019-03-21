@@ -8,6 +8,12 @@ const register = Handlebars => {
     site_url: str => {
       return CONFIG.SERVER.BASE_WEBHOST + str
     },
+    site_url_params: (str, params) => {
+      return CONFIG.SERVER.BASE_WEBHOST + str + params
+    },
+    add_params: (str, params) => {
+      return str + params
+    },
     implode: (sep, arr) => {
       let str = ''
       for (let i = 0; i < arr.length; ++i) {
