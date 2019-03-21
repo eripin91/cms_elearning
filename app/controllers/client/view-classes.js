@@ -208,8 +208,6 @@ exports.update = async (req, res) => {
         )
         res.redirect('/classes/update/' + classId)
       } else {
-        console.log('REQ BODY OF VIEW-CLASSES ============== ')
-        console.log(req.body)
         API_SERVICE.patch(
           'v1/classes/update/' + classId,
           req.body,
