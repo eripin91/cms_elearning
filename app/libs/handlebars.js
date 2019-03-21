@@ -11,6 +11,9 @@ const register = Handlebars => {
     site_url_params: (str, params) => {
       return CONFIG.SERVER.BASE_WEBHOST + str + params
     },
+    site_url_two_params: (str, param1, param2) => {
+      return CONFIG.SERVER.BASE_WEBHOST + str + param1 + '/' + param2
+    },
     add_params: (str, params) => {
       return str + params
     },
