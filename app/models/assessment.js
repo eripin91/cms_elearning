@@ -23,7 +23,7 @@ module.exports = {
     conn.getConnection((errConnection, connection) => {
       if (errConnection) console.error(errConnection)
 
-      connection.query(`SELECT * FROM assessment_tab at JOIN courses_tab c ON at.parentid = c.courseid WHERE assessmentid = ${assessmentId} AND status = 1`, (err, rows) => {
+      connection.query(`SELECT c.name AS course_name, at.* FROM assessment_tab at JOIN courses_tab c ON at.parentid = c.courseid WHERE assessmentid = ${assessmentId} AND at.status = 1`, (err, rows) => {
         callback(err, rows)
       })
     })
@@ -31,8 +31,9 @@ module.exports = {
   insertAssessment: (conn, data, callback) => {
     conn.getConnection((errConnection, connection) => {
       if (errConnection) console.error(errConnection)
-
-      connection.query(`INSERT INTO assessment_tab SET ${data}`, (err, rows) => {
+      console.log(data)
+      connection.query(`INSERT INTO assessment_tab SET ?`, [data], (err, rows) => {
+        console.log(rows)
         if (err) {
           callback(err)
         } else {
@@ -45,7 +46,7 @@ module.exports = {
     conn.getConnection((errConnection, connection) => {
       if (errConnection) console.error(connection)
 
-      connection.query(`UPDATE assessment_tab SET ${data} WHERE assessmentid = ${id}`, (err, rows) => {
+      connection.query(`UPDATE assessment_tab SET ? WHERE assessmentid = ?`, [data, id], (err, rows) => {
         callback(err, rows.affectedRows > 0 ? _.merge(data, { assessmentid: id }) : [])
       })
     })
@@ -54,7 +55,7 @@ module.exports = {
     conn.getConnection((errConnection, connection) => {
       if (errConnection) console.error(connection)
 
-      connection.query(`UPDATE assessment_tab SET status = 0 WHERE assessmentid = ${id}`, (err, rows) => {
+      connection.query(`UPDATE assessment_tab SET status = 0, updated_at = now() WHERE assessmentid = ?`, [id], (err) => {
         callback(err, { message: 'data has been deleted' })
       })
     })
