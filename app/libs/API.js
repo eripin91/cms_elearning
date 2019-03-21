@@ -200,6 +200,67 @@ const createClient = config => {
       }
     })
   }
+
+  api.delete = (url, data, headers, callback) => {
+    if (typeof data === 'function') {
+      callback = data
+      headers = {}
+      data = {}
+    }
+
+    if (typeof headers === 'function') {
+      callback = headers
+      headers = {}
+    }
+
+    const options = {
+      url: api.baseUrl + url,
+      method: 'DELETE',
+      form: data,
+      headers: assignIn(api.defaultHeaders, headers || {})
+    }
+
+    request(options, (err, response, body) => {
+      const statusCode = result(response, 'statusCode')
+      let errorMessage = {
+        status: 503,
+        message:
+          'The server is currently unavailable because it is overloaded or down for maintenance'
+      }
+
+      if (err || statusCode !== 200) {
+        try {
+          const errorOutput = JSON.parse(body)
+          if (typeof callback === 'function') {
+            return callback(errorOutput, null)
+          } else {
+            return true
+          }
+        } catch (err) {
+          if (typeof callback === 'function') {
+            return callback(errorMessage, null)
+          } else {
+            return true
+          }
+        }
+      } else {
+        try {
+          const output = JSON.parse(body)
+          if (output && output.data && typeof callback === 'function') {
+            return callback(null, output)
+          } else {
+            return callback(null, output)
+          }
+        } catch (err) {
+          if (typeof callback === 'function') {
+            return callback(errorMessage, null)
+          }
+        }
+
+        return true
+      }
+    })
+  }
   return api
 }
 

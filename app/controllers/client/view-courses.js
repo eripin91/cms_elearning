@@ -425,17 +425,17 @@ exports.chapterDelete = async (req, res) => {
   const chapterId = 0 || req.params.chapterId
   if (!courseId || !chapterId) {
     MiscHelper.set_error_msg({ error: 'courseId & chapterId required !!!' }, req.sessionID)
-    res.redirect('/courses')
+    res.redirect(`/courses/chapter/${courseId}`)
   } else {
-    API_SERVICE.get('v1/courses/chapter/delete/' + courseId, {}, (err, response) => {
+    API_SERVICE.delete(`v1/courses/chapter/${courseId}/${chapterId}`, {}, (err, response) => {
       if (err) {
         MiscHelper.set_error_msg({ error: err }, req.sessionID)
       } else {
         MiscHelper.set_error_msg(
-          { info: 'Admin berhasil dihapus.' },
+          { info: 'Chapter berhasil dihapus.' },
           req.sessionID
         )
-        res.redirect('/admin')
+        res.redirect(`/courses/chapter/${courseId}`)
       }
     })
   }
