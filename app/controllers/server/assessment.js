@@ -191,3 +191,29 @@ exports.deleteAssessment = (req, res) => {
     }
   })
 }
+
+exports.getDetailAssessment = (req, res) => {
+  req.checkParams('assessmentId', 'assessmentId is required')
+
+  if (req.validationErrors()) {
+    return MiscHelper.errorCustomStatus(res, req.validationErrors(true))
+  }
+
+  // const assessmentId = req.params.assessmentId
+  const limit = _.result(req.query, 'limit', 10)
+  const offset = _.result(req.query, 'offset', 0)
+  const keyword = _.result(req.query, 'keyword')
+  const key = `assessment-detail:${limit}:${offset}:${keyword}`
+
+  async.waterfall([
+    (cb) => {
+      redisCache.get(key, assessment => {
+        if (assessment) {
+          return MiscHelper.responses(res, assessment)
+        } else {
+          cb(null)
+        }
+      })
+    }
+  ])
+}

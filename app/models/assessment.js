@@ -59,5 +59,14 @@ module.exports = {
         callback(err, { message: 'data has been deleted' })
       })
     })
+  },
+  getDetailAssessment: (conn, assessmentId, callback) => {
+    conn.getConnection((errConnection, connection) => {
+      if (errConnection) console.error(errConnection)
+
+      connection.query(`SELECT at.title, ad.* FROM assessment_detail_tab ad JOIN assessment_tab at ON ad.assessmentid = at.assessmentid WHERE ad.status = 1 AND at.assessmentid = ${assessmentId}`, (err, rows) => {
+        callback(err, rows)
+      })
+    })
   }
 }
