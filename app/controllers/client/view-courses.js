@@ -224,17 +224,17 @@ exports.delete = async (req, res) => {
   const courseId = 0 || req.params.courseId
   if (!courseId) {
     MiscHelper.set_error_msg({ error: 'courseId required !!!' }, req.sessionID)
-    res.redirect('/admin')
+    res.redirect(`/courses`)
   } else {
-    API_SERVICE.get('v1/admin/delete/' + courseId, {}, (err, response) => {
+    API_SERVICE.delete(`v1/courses/${courseId}`, {}, (err, response) => {
       if (err) {
         MiscHelper.set_error_msg({ error: err }, req.sessionID)
       } else {
         MiscHelper.set_error_msg(
-          { info: 'Admin berhasil dihapus.' },
+          { info: 'Course berhasil dihapus.' },
           req.sessionID
         )
-        res.redirect('/admin')
+        res.redirect(`/courses`)
       }
     })
   }
