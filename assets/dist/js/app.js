@@ -1025,3 +1025,31 @@ function _init() {
     ]
   })
 })(jQuery)
+
+// section: user score
+;(function($) {
+  'use strict'
+  var url = SITE_URL + $('#sTableUsersScore').attr('src')
+  $('#sTableUsersScore').DataTable({
+    processing: true,
+    serverSide: true,
+    bFilter: true,
+    ordering: false,
+    scrollX: false,
+    aaSorting: [],
+    pageLength: 10,
+    columnDefs: [],
+    pagingType: 'full_numbers',
+    ajax: url,
+    columns: [
+      { data: 'userid' },
+      { data: 'ranking' },
+      { data: 'score' },
+      { data: 'email' },
+      { data: 'fullname' },
+      { data: 'phone' },
+      { data: 'created_at' },
+      { data: 'action' }
+    ]
+  })
+})(jQuery)
