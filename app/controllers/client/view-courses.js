@@ -510,9 +510,11 @@ exports.lectureAdd = async (req, res) => {
     res.render('lecture_add', { errorMsg: errorMsg, chapterId: req.params.chapterId })
   } else {
     const name = req.body.name
-    const assessmentid = req.body.assessmentid
+    const detailid = req.body.detailid
+    const description = req.body.description
+    const file = req.body.file
 
-    if (!name || !assessmentid) {
+    if (!name || !detailid || !description || !file) {
       MiscHelper.set_error_msg(
         { error: 'Data yang anda masukkan tidak lengkap !!!' },
         req.sessionID
