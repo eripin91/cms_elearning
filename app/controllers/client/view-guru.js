@@ -141,3 +141,43 @@ exports.update = async (req, res) => {
     }
   }
 }
+
+/*
+ * GET && POST : '/add'
+ *
+ * @desc Add admin
+ *
+ * @param  {object} req - Parameters for request
+ *
+ * @return {object} Request object
+ */
+exports.add = async (req, res) => {
+  if (_.isEmpty(req.body)) {
+    const errorMsg = await MiscHelper.get_error_msg(req.sessionID)
+    res.render('guru_add', { errorMsg: errorMsg })
+  } else {
+    const fullname = req.body.fullname
+    const description = req.body.description
+
+    if (!fullname && !description) {
+      MiscHelper.set_error_msg(
+        { error: 'Data yang anda masukkan tidak lengkap !!!' },
+        req.sessionID
+      )
+      res.redirect('/guru/add')
+    } else {
+      API_SERVICE.post('v1/guru/add', req.body, (err, response) => {
+        if (!err) {
+          MiscHelper.set_error_msg(
+            { info: 'Guru berhasil ditambahkan.' },
+            req.sessionID
+          )
+          res.redirect('/guru')
+        } else {
+          MiscHelper.set_error_msg({ error: response.message }, req.sessionID)
+          res.redirect('/guru/add')
+        }
+      })
+    }
+  }
+}
