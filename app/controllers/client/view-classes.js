@@ -46,11 +46,12 @@ exports.ajaxGet = async (req, res) => {
         async.eachSeries(
           _.result(response, 'data', {}),
           (item, next) => {
-            item.action = MiscHelper.getActionButtonFull(
+            item.action = MiscHelper.getActionButtonClasses(
               'classes',
+              'users',
               item.classid
             )
-            // item.status = MiscHelper.getStatus(item.status, 1)
+
             item.created_at = moment(item.created_at).format('DD/MM/YYYY hh:mm')
             dataClasses.push(item)
             next()
