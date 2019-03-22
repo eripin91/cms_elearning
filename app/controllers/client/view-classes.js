@@ -97,28 +97,20 @@ exports.add = async (req, res) => {
     const guruid = req.body.guruid
     const name = req.body.name
     const description = req.body.description
-    const password = req.body.password
-    const confpassword = req.body.confpassword
-    // const file = req.body.file
-    // const priority = req.body.priority
+    const file = req.body.file
+    const priority = req.body.priority
 
-    if (!guruid || !name || !description) {
+    if (!guruid || !name || !description || !file || !priority) {
       MiscHelper.set_error_msg(
         { error: 'Data yang anda masukkan tidak lengkap !!!' },
         req.sessionID
       )
       res.redirect('/classes/add')
-    } else if (password !== confpassword) {
-      MiscHelper.set_error_msg(
-        { error: 'Password dan konfimasi password tidak sesuai !!!' },
-        req.sessionID
-      )
-      res.redirect('/classes/add')
     } else {
-      API_SERVICE.post('v1/classes/create', req.body, (err, response) => {
+      API_SERVICE.post('v1/classes/add', req.body, (err, response) => {
         if (!err) {
           MiscHelper.set_error_msg(
-            { info: 'Admin berhasil ditambahkan.' },
+            { info: 'Class berhasil ditambahkan.' },
             req.sessionID
           )
           res.redirect('/classes')
