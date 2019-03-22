@@ -434,3 +434,202 @@ exports.chapterDelete = async (req, res) => {
     })
   }
 }
+
+// LECTURE =====================================================
+
+exports.lectureMain = async (req, res) => {
+  const errorMsg = await MiscHelper.get_error_msg(req.sessionID)
+  res.render('lectures', { errorMsg: errorMsg, chapterId: req.params.chapterId })
+}
+
+/*
+ * GET : '/chapter/:chapterId/lecture/ajax/get'
+ *
+ * @desc Ajax get chapter list
+ *
+ * @param  {object} req - Parameters for request
+ *
+ * @return {object} Request object
+ */
+exports.lectureGetAll = async (req, res) => {
+  API_SERVICE.get(
+    `v1/courses/chapter/${req.params.chapterId}/material  `,
+    {
+      limit: _.result(req.query, 'length', 25),
+      offset: _.result(req.query, 'start', 0),
+      keyword: req.query.search['value']
+    },
+    (err, response) => {
+      const dataLectures = []
+      if (!err) {
+        async.eachSeries(
+          _.result(response.data, 'data', {}),
+          (item, next) => {
+            item.action = `<a href="update/${req.params.chapterId}/${item.detailid}"><i class="fa fa-pencil"></i></a>`
+            item.action += `  <a href="delete/${req.params.chapterId}/${item.detailid}" onclick="return confirm('Are you sure you want to delete this item?');"><i class="fa fa-times"></i></a>`
+            dataLectures.push(item)
+            next()
+          },
+          err => {
+            if (!err) {
+              const data = {
+                draw: _.result(req.query, 'draw', 1),
+                recordsTotal: _.result(response, 'total', 0),
+                recordsFiltered: _.result(response, 'total', 0)
+              }
+
+              return MiscHelper.responses(res, dataLectures, 200, data)
+            } else {
+              return MiscHelper.errorCustomStatus(res, err, 400)
+            }
+          }
+        )
+      } else {
+        return MiscHelper.errorCustomStatus(
+          res,
+          err,
+          _.result(err, 'status', 400)
+        )
+      }
+    }
+  )
+}
+
+/*
+ * GET && POST : '/add'
+ *
+ * @desc Add chapter
+ *
+ * @param  {object} req - Parameters for request
+ *
+ * @return {object} Request object
+ */
+exports.lectureAdd = async (req, res) => {
+  if (_.isEmpty(req.body)) {
+    const errorMsg = await MiscHelper.get_error_msg(req.sessionID)
+    res.render('chapter_add', { errorMsg: errorMsg, chapterId: req.params.chapterId })
+  } else {
+    const name = req.body.name
+    const assessmentid = req.body.assessmentid
+
+    if (!name || !assessmentid) {
+      MiscHelper.set_error_msg(
+        { error: 'Data yang anda masukkan tidak lengkap !!!' },
+        req.sessionID
+      )
+      res.redirect('/courses/chapter/add/' + req.params.chapterId)
+    } else {
+      API_SERVICE.post(`v1/courses/chapter/${req.params.chapterId}`, req.body, (err, response) => {
+        if (!err) {
+          MiscHelper.set_error_msg(
+            { info: 'Chapter berhasil ditambahkan.' },
+            req.sessionID
+          )
+          res.redirect(`/courses/chapter/${req.params.chapterId}`)
+        } else {
+          MiscHelper.set_error_msg({ error: response.message }, req.sessionID)
+          res.redirect('/admin/add')
+        }
+      })
+    }
+  }
+}
+
+/*
+ * GET && POST : '/chapterupdate'
+ *
+ * @desc Update admin
+ *
+ * @param  {object} req - for request
+ * @param  {object} req.body.chapterId - chapterId for identifier
+ *
+ * @return {object} Request object
+ */
+exports.lectureUpdate = async (req, res) => {
+  if (_.isEmpty(req.body)) {
+    const errorMsg = await MiscHelper.get_error_msg(req.sessionID)
+    API_SERVICE.get(
+      'v1/courses/chapter/detail/' + req.params.chapterId,
+      {},
+      (err, response) => {
+        if (err) console.error(err)
+        res.render('chapter_update', { errorMsg: errorMsg, data: response.data[0], chapterId: req.params.chapterId })
+      }
+    )
+  } else {
+    const chapterId = req.body.detailid
+    // const chapterId = req.params.chapterId
+    const name = req.body.name
+    const assessmentid = req.body.assesmentid
+
+    if (!chapterId) {
+      MiscHelper.set_error_msg(
+        { error: 'Kesalahan input data !!!' },
+        req.sessionID
+      )
+      res.redirect('/courses/chapter')
+    } else {
+      if (!name) {
+        MiscHelper.set_error_msg(
+          { error: 'Name wajib di isi !!!' },
+          req.sessionID
+        )
+        res.redirect(`/courses/chapter/update/${chapterId}/${chapterId}`)
+      } else if (!assessmentid) {
+        MiscHelper.set_error_msg(
+          { error: 'Assessment Id wajib di isi !!!' },
+          req.sessionID
+        )
+        res.redirect(`/courses/chapter/update/${chapterId}/${chapterId}`)
+      } else {
+        API_SERVICE.patch(
+          `v1/courses/chapter/${chapterId}/${chapterId}`,
+          req.body,
+          (err, response) => {
+            if (!err) {
+              MiscHelper.set_error_msg(
+                { info: 'Courses berhasil diubah.' },
+                req.sessionID
+              )
+              res.redirect(`/courses/chapter/${chapterId}`)
+            } else {
+              MiscHelper.set_error_msg({ error: err.message }, req.sessionID)
+              res.redirect(`/courses/chapter/${chapterId}/`)
+            }
+          }
+        )
+      }
+    }
+  }
+}
+
+/*
+ * GET : '/chapter/delete/:chapterId/:chapterId'
+ *
+ * @desc Get dashboard home
+ *
+ * @param  {object} req - Parameters for request
+ * @param  {object} req.params.chapterId - Parameters chapterId for identifier
+ *
+ * @return {object} Request object
+ */
+exports.lectureDelete = async (req, res) => {
+  const chapterId = 0 || req.params.chapterId
+  // const chapterId = 0 || req.params.chapterId
+  if (!chapterId || !chapterId) {
+    MiscHelper.set_error_msg({ error: 'chapterId & chapterId required !!!' }, req.sessionID)
+    res.redirect(`/courses/chapter/${chapterId}`)
+  } else {
+    API_SERVICE.delete(`v1/courses/chapter/${chapterId}/${chapterId}`, {}, (err, response) => {
+      if (err) {
+        MiscHelper.set_error_msg({ error: err }, req.sessionID)
+      } else {
+        MiscHelper.set_error_msg(
+          { info: 'Chapter berhasil dihapus.' },
+          req.sessionID
+        )
+        res.redirect(`/courses/chapter/${chapterId}`)
+      }
+    })
+  }
+}

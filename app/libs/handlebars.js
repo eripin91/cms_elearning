@@ -17,6 +17,9 @@ const register = Handlebars => {
     add_params: (str, params) => {
       return str + params
     },
+    params_inside_string: (str, params) => {
+      return 'courses/chapter/' + params + str
+    },
     implode: (sep, arr) => {
       let str = ''
       for (let i = 0; i < arr.length; ++i) {

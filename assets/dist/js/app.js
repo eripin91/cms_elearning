@@ -985,3 +985,38 @@ function _init() {
     ]
   })
 })(jQuery)
+
+// section: lecture
+;(function($) {
+  'use strict'
+  var url = SITE_URL + $('#sTableLectures').attr('src')
+  $('#sTableLectures').DataTable({
+    processing: true,
+    serverSide: true,
+    bFilter: true,
+    ordering: false,
+    scrollX: false,
+    aaSorting: [],
+    pageLength: 10,
+    columnDefs: [],
+    pagingType: 'full_numbers',
+    ajax: url,
+    columns: [
+      { data: 'materialid' },
+      { data: 'detailid' },
+      { data: 'name' },
+      { data: 'description' },
+      { data: 'video_url' },
+      {
+        data: 'thumbnails',
+        render: function(data) {
+          return '<img src="' + data + '" width="150px" />'
+        }
+      },
+      { data: 'size' },
+      { data: 'duration' },
+      { data: 'status' },
+      { data: 'action' }
+    ]
+  })
+})(jQuery)

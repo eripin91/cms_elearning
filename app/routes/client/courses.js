@@ -20,5 +20,6 @@ Route.get('/', ViewCoursesControllers.main)
   .get('/chapter/add/:courseId', ViewCoursesControllers.chapterAdd)
   .post('/chapter/add/:courseId', ViewCoursesControllers.chapterAdd)
 
-// .get('/chapter/:chapterId/lecture', ViewCoursesControllers.lectureGetAll)
+  .get('/chapter/:chapterId/lecture', ViewCoursesControllers.lectureMain)
+  .get('/chapter/:chapterId/lecture/ajax/get/', ViewCoursesControllers.lectureGetAll)
 module.exports = Route
