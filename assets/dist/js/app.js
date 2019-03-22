@@ -762,6 +762,11 @@ function _init() {
     var button = $($.AdminLTE.boxWidget.selectors.remove, this)
     $.AdminLTE.boxWidget.remove(button)
   }
+  $(document).ready(function(){
+    if ($('#editorPage').length > 0) {
+      CKEDITOR.replace( 'editorPage' )
+    }
+  })
 })(jQuery)
 
 /*
