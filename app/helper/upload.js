@@ -8,7 +8,7 @@ const path = require('path')
 aws.config.update({
   secretAccessKey: CONFIG.AWS.AWS_ACCESS_KEY_SECRET,
   accessKeyId: CONFIG.AWS.AWS_ACCESS_KEY_ID,
-  region: CONFIG.AWS.AWS_S3_REGION
+  region: CONFIG.AWS.AWS_REGION
 })
 
 const s3 = new aws.S3()

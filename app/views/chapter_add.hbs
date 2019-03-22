@@ -1,0 +1,66 @@
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+        <h1>
+
+            <small>Add New Chapter</small>
+        </h1>
+        <ol class="breadcrumb">
+            <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
+            <li><a href="#">Chapter</a></li>
+            <li class="active"><a href="#">Add New Chapter</a></li>
+        </ol>
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+        <div class="row">
+            <div class="col-xs-12">
+                {{{ errorMsg }}}
+
+                <div class="box box-info">
+                    <div class="box-header with-border">
+                        <h3 class="box-title">Add New Chapter</h3>
+                    </div>
+                    <!-- /.box-header -->
+                    <!-- form start -->
+                    <form class="form-horizontal" action="{{ site_url_params 'courses/chapter/add/' courseId }}"
+                        method="post">
+                        <input type="hidden" name="courseid" value="{{ data.courseid }}">
+                        <div class="box-body">Update
+                            <div class="form-group">
+                                <label for="Name" class="col-sm-2 control-label">Name</label>
+
+                                <div class="col-sm-10">
+                                    <input type="text" name="name" class="form-control" id="Name"
+                                        placeholder="Chapter Name">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="assessmentid" class="col-sm-2 control-label">Assessment Id</label>
+
+                                <div class="col-sm-10">
+                                    <input type="number" name="assessmentid" class="form-control" id="assessmentid"
+                                        placeholder="Assessment Id" value="0">
+                                </div>
+                            </div>
+
+                        </div>
+                        <!-- /.box-body -->
+                        <div class=" box-footer">
+                            <button type="button" onclick="javascript:history.go(-1);"
+                                class="btn btn-default">Cancel</button>
+                            <button type="submit" class="btn btn-info pull-right">Submit</button>
+                        </div>
+                        <!-- /.box-footer -->
+                    </form>
+                </div>
+                <!-- /.box -->
+            </div>
+            <!-- /.col -->
+        </div>
+        <!-- /.row -->
+    </section>
+    <!-- /.content -->
+</div>
