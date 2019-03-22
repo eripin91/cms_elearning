@@ -28,6 +28,15 @@ module.exports = {
       })
     })
   },
+  getAssessmentByCourse: (conn, courseId, callback) => {
+    conn.getConnection((errConnection, connection) => {
+      if (errConnection) console.error(errConnection)
+
+      connection.query(`SELECT at.assessmentid, at.title FROM assessment_tab at JOIN courses_tab c ON at.parentid = c.courseid WHERE at.parentid = ${courseId}`, (err, rows) => {
+        callback(err, rows)
+      })
+    })
+  },
   insertAssessment: (conn, data, callback) => {
     conn.getConnection((errConnection, connection) => {
       if (errConnection) console.error(errConnection)
@@ -60,12 +69,52 @@ module.exports = {
       })
     })
   },
-  getDetailAssessment: (conn, assessmentId, callback) => {
+  getDetailAssessment: (conn, assessmentId, limit, offset, keyword, callback) => {
     conn.getConnection((errConnection, connection) => {
       if (errConnection) console.error(errConnection)
 
-      connection.query(`SELECT at.title, ad.* FROM assessment_detail_tab ad JOIN assessment_tab at ON ad.assessmentid = at.assessmentid WHERE ad.status = 1 AND at.assessmentid = ${assessmentId}`, (err, rows) => {
+      connection.query(`SELECT at.title, ad.* FROM assessment_detail_tab ad JOIN assessment_tab at ON ad.assessmentid = at.assessmentid WHERE ad.status = 1 AND at.assessmentid = ${assessmentId} AND (question_type LIKE '%${keyword}%' OR question LIKE '%${keyword}%') ORDER BY ad.detailid DESC LIMIT ${offset}, ${limit}`, (err, rows) => {
         callback(err, rows)
+      })
+    })
+  },
+  getDetailAssessmentDetail: (conn, id, callback) => {
+    conn.getConnection((errConnection, connection) => {
+      if (errConnection) console.error(errConnection)
+
+      connection.query(`SELECT * FROM assessment_detail_tab WHERE detailid = ${id}`, (err, rows) => {
+        callback(err, rows)
+      })
+    })
+  },
+  insertDetailAssessment: (conn, data, callback) => {
+    conn.getConnection((errConnection, connection) => {
+      if (errConnection) console.error(errConnection)
+
+      connection.query(`INSERT INTO assessment_detail_tab SET ?`, [data], (err, rows) => {
+        if (err) {
+          callback(err)
+        } else {
+          callback(null, _.merge(data, { id: rows.insertId }))
+        }
+      })
+    })
+  },
+  updateDetailAssessment: (conn, id, data, callback) => {
+    conn.getConnection((errConnection, connection) => {
+      if (errConnection) console.error(errConnection)
+
+      connection.query(`UPDATE assessment_detail_tab SET ? WHERE detailid = ?`, [data, id], (err, rows) => {
+        callback(err, rows.affectedRows > 0 ? _.merge(data, { detailid: id }) : [])
+      })
+    })
+  },
+  deleteDetailAssessment: (conn, id, callback) => {
+    conn.getConnection((errConnection, connection) => {
+      if (errConnection) console.error(errConnection)
+
+      connection.query(`UPDATE assessment_detail_tab SET status = 0, updated_at = now() WHERE detailid = ?`, [id], (err) => {
+        callback(err)
       })
     })
   }
