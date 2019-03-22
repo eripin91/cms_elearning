@@ -1053,3 +1053,29 @@ function _init() {
     ]
   })
 })(jQuery)
+
+// section: Guru
+;(function($) {
+  'use strict'
+  var url = SITE_URL + $('#sTableGuru').attr('src')
+  $('#sTableGuru').DataTable({
+    processing: true,
+    serverSide: true,
+    bFilter: true,
+    ordering: false,
+    scrollX: false,
+    aaSorting: [],
+    pageLength: 10,
+    columnDefs: [],
+    pagingType: 'full_numbers',
+    ajax: url,
+    columns: [
+      { data: 'guruid' },
+      { data: 'profile_picture' },
+      { data: 'fullname' },
+      { data: 'description' },
+      { data: 'created_at' },
+      { data: 'action' }
+    ]
+  })
+})(jQuery)
