@@ -519,18 +519,18 @@ exports.lectureAdd = async (req, res) => {
         { error: 'Data yang anda masukkan tidak lengkap !!!' },
         req.sessionID
       )
-      res.redirect('/courses/chapter/add/' + req.params.chapterId)
+      res.redirect('/courses/chapter/' + req.params.chapterId + '/add/')
     } else {
-      API_SERVICE.post(`v1/courses/chapter/${req.params.chapterId}`, req.body, (err, response) => {
+      API_SERVICE.post(`v1/courses/chapter/${req.params.chapterId}/material`, req.body, (err, response) => {
         if (!err) {
           MiscHelper.set_error_msg(
-            { info: 'Chapter berhasil ditambahkan.' },
+            { info: 'Lecture berhasil ditambahkan.' },
             req.sessionID
           )
-          res.redirect(`/courses/chapter/${req.params.chapterId}`)
+          res.redirect('/courses/chapter/' + req.params.chapterId + '/lecture/')
         } else {
           MiscHelper.set_error_msg({ error: response.message }, req.sessionID)
-          res.redirect('/admin/add')
+          res.redirect('/courses/chapter/' + req.params.chapterId + '/lecture/')
         }
       })
     }
