@@ -127,5 +127,9 @@ module.exports = {
       redisCache.del(`__msg${sesId}`)
     }
     return resE
+  },
+  getPhoto: (imgUrl) => {
+    let image = `<img src="${imgUrl}" height="42" width="42">`
+    return image
   }
 }
