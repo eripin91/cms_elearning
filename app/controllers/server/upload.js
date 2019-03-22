@@ -93,3 +93,5 @@ exports.uploadAws = (req, res, next) => {
     }
   })
 }
+
+exports.upload = upload
