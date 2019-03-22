@@ -4,12 +4,12 @@
     <section class="content-header">
         <h1>
 
-            <small>Update Course</small>
+            <small>Add Course</small>
         </h1>
         <ol class="breadcrumb">
             <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
             <li><a href="#">Course</a></li>
-            <li class="active"><a href="#">Update Course</a></li>
+            <li class="active"><a href="#">Add Course</a></li>
         </ol>
     </section>
 
@@ -21,36 +21,33 @@
 
                 <div class="box box-info">
                     <div class="box-header with-border">
-                        <h3 class="box-title">Update Course</h3>
+                        <h3 class="box-title">Add Course</h3>
                     </div>
                     <!-- /.box-header -->
                     <!-- form start -->
-                    <form class="form-horizontal" action="{{ site_url 'courses/update' }}" method="post">
-                        <input type="hidden" name="courseid" value="{{ data.courseid }}">
+                    <form class="form-horizontal" action="{{ site_url 'courses/add' }}" method="post">
                         <div class="box-body">
                             <div class="form-group">
                                 <label for="classId" class="col-sm-2 control-label">Class Id</label>
 
                                 <div class="col-sm-10">
-                                    <input type="number" name="classid" class="form-control" id="classId"
-                                        placeholder="Class Id" value="{{ data.classid }}">
+                                    <input type="number" name="classId" class="form-control" id="classId"
+                                        placeholder="Class Id">
                                 </div>
                             </div>
                             <div class="form-group">
                                 <label for="Name" class="col-sm-2 control-label">Name</label>
 
                                 <div class="col-sm-10">
-                                    <input type="text" name="name" class="form-control" id="Name" placeholder="Name"
-                                        value="{{ data.name }}">
+                                    <input type="text" name="name" class="form-control" id="Name" placeholder="Name">
                                 </div>
                             </div>
                             <div class="form-group">
                                 <label for="PreAssessmentId" class="col-sm-2 control-label">Pre Assessment Id</label>
 
                                 <div class="col-sm-10">
-                                    <input type="number" name="preassessmentid" class="form-control"
-                                        id="PreAssessmentId" placeholder="Pre Assessment Id"
-                                        value="{{ data.preassessmentid }}">
+                                    <input type="number" name="preAssessmentId" class="form-control"
+                                        id="PreAssessmentId" placeholder="Pre Assessment Id" value="0">
                                 </div>
                             </div>
                             <div class="form-group">
@@ -58,9 +55,8 @@
                                     Id</label>
 
                                 <div class="col-sm-10">
-                                    <input type="number" name="finalassessmentid" class="form-control"
-                                        id="FinalAssessmentId" placeholder="Final Assessment Id"
-                                        value="{{ data.finalassessmentid }}">
+                                    <input type="number" name="finalAssessmentId" class="form-control"
+                                        id="FinalAssessmentId" placeholder="Final Assessment Id" value="0">
                                 </div>
                             </div>
 

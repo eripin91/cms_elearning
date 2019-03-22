@@ -3,8 +3,10 @@
 'use strict'
 
 const async = require('async')
-const coursesModel = require('../../models/courses')
 const redisCache = require('../../libs/RedisCache')
+const coursesModel = require('../../models/courses')
+const scoreModel = require('../../models/score')
+const discussionModel = require('../../models/discussions')
 
 /*
  * GET : '/courses/:courseId
@@ -39,6 +41,32 @@ exports.getCourse = (req, res) => {
         } else {
           cb(errCourse, resultCourse)
         }
+      })
+    },
+    (dataCourse, cb) => {
+      async.eachSeries(dataCourse, (item, next) => {
+        scoreModel.getUserTotalScore(req, item.classId, (err, result) => {
+          if (err) console.error(err)
+
+          if (_.isEmpty(result)) {
+            item.avg_score = 0
+          } else {
+            item.avg_score = result[0].total_score / result[0].score_count
+          }
+        })
+        discussionModel.getTotalThreadCourse(req, item.courseid, (err, result) => {
+          if (err) console.error(err)
+
+          if (_.isEmpty(result)) {
+            item.discussion = 0
+          } else {
+            item.discussion = result[0].discussion
+          }
+        })
+        next()
+      }, err => {
+        if (err) console.error(err)
+        cb(err, dataCourse)
       })
     },
     (dataCourse, cb) => {
@@ -97,7 +125,7 @@ exports.getCourseDetail = (req, res) => {
     (cb) => {
       coursesModel.getCourseDetail(req, courseId, (errCourse, resultCourse) => {
         if (_.isEmpty(resultCourse)) {
-          return MiscHelper.errorCustomStatus(res, { message: 'Course ini tidak tersedia' })
+          return MiscHelper.responses(res, {})
         } else {
           cb(errCourse, resultCourse[0])
         }
@@ -208,6 +236,7 @@ exports.updateCourse = (req, res) => {
       console.log(data)
       coursesModel.updateCourse(req, data, courseId, (errUpdateCourse, resultUpdateCourse) => {
         redisCache.delwild(`courses-list:*`)
+        redisCache.del(`course-detail:${courseId}`)
         cb(errUpdateCourse, resultUpdateCourse)
       })
     }
@@ -267,6 +296,8 @@ exports.deleteCourse = (req, res) => {
                 redisCache.delwild(`course-material-list:*`)
                 coursesModel.deleteAllDetail(req, courseId, (errCourse) => {
                   redisCache.delwild(`courses-detail-list:*`)
+                  redisCache.del(`course-detail:${courseId}`)
+
                   if (errCourse) console.error(errCourse)
                 })
                 cb(null)
@@ -329,7 +360,7 @@ exports.getDetail = (req, res) => {
     (cb) => {
       coursesModel.getDetail(req, courseId, limit, offset, keyword, (errDetail, resultDetail) => {
         if (_.isEmpty(resultDetail)) {
-          return MiscHelper.errorCustomStatus(res, { message: 'Tidak ada chapter untuk class ini' })
+          return MiscHelper.responses(res, {})
         } else {
           cb(errDetail, resultDetail)
         }
@@ -380,7 +411,7 @@ exports.getDetails = (req, res) => {
       coursesModel.getDetails(req, detailId, (errDetail, resultDetail) => {
         if (errDetail) console.error(errDetail)
         if (_.isEmpty(resultDetail)) {
-          return MiscHelper.notFound(res, 'Detail not Found')
+          return MiscHelper.responses(res, {})
         }
         cb(errDetail, resultDetail)
       })
@@ -477,7 +508,7 @@ exports.updateDetail = (req, res) => {
     return MiscHelper.errorCustomStatus(res, req.validationErrors(true))
   }
   const detailId = req.params.detailId
-  const courseId = req.params.courseId
+  // const courseId = req.params.courseId
   async.waterfall([
     (cb) => {
       coursesModel.checkDetail(req, detailId, (errCourse, resultCourse) => {
@@ -497,7 +528,8 @@ exports.updateDetail = (req, res) => {
       }
 
       coursesModel.updateDetail(req, data, detailId, (errUpdate, resultUpdate) => {
-        redisCache.del(`courses-detail-:${courseId}`)
+        redisCache.delwild(`courses-detail-list:*`)
+        redisCache.del(`courses-details:${detailId}`)
         cb(errUpdate, resultUpdate)
       })
     }
@@ -550,8 +582,10 @@ exports.deleteDetail = (req, res) => {
             redisCache.delwild(`course-material-list:*`)
           })
         }
-        coursesModel.updateDetail(req, detailId, (errUpdate, resultUpdate) => {
+        coursesModel.deleteDetail(req, detailId, (errUpdate, resultUpdate) => {
           redisCache.del(`courses-detail-:${courseId}`)
+          redisCache.delwild(`courses-detail-list:*`)
+
           cb(errUpdate, resultUpdate)
         })
       })
@@ -671,7 +705,7 @@ exports.getMaterialDetail = (req, res) => {
     (cb) => {
       coursesModel.getMaterialDetail(req, materialId, (errMaterialDetail, resultMaterialDetail) => {
         if (_.isEmpty(resultMaterialDetail)) {
-          return MiscHelper.errorCustomStatus(res, { message: 'Maaf lecture ini belum tersedia' })
+          return MiscHelper.responses(res, { })
         } else {
           cb(errMaterialDetail, resultMaterialDetail)
         }
@@ -810,6 +844,7 @@ exports.updateMaterial = (req, res) => {
       }
       coursesModel.updateMaterial(req, data, materialId, (errUpdateMaterial, resultUpdateMaterial) => {
         redisCache.delwild(`course-material-list:*`)
+        redisCache.del(`course-material-detail:${materialId}`)
         cb(errUpdateMaterial, resultUpdateMaterial)
       })
     }
@@ -859,8 +894,9 @@ exports.deleteMaterial = (req, res) => {
         updated_at: new Date()
       }
 
-      coursesModel.updateDetail(req, data, materialId, (errUpdateMaterial, resultUpdateMaterial) => {
+      coursesModel.deleteMaterial(req, materialId, data, (errUpdateMaterial, resultUpdateMaterial) => {
         redisCache.delwild(`course-material-list:*`)
+        redisCache.del(`course-material-detail:${materialId}`)
         cb(errUpdateMaterial, resultUpdateMaterial)
       })
     }

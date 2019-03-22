@@ -122,7 +122,7 @@ module.exports = {
     conn.getConnection((errConnection, connection) => {
       if (errConnection) console.error(errConnection)
 
-      connection.query('UPDATE courses_detail_tab SET ? WHERE detailid = ?', [id], (errUpdate) => {
+      connection.query('UPDATE courses_detail_tab SET status = 0 WHERE detailid = ?', [id], (errUpdate) => {
         callback(errUpdate, { message: 'Bab has been deleted' })
       })
     })
