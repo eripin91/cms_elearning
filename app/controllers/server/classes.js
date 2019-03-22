@@ -67,7 +67,7 @@ exports.getDetail = (req, res) => {
     return MiscHelper.errorCustomStatus(res, req.validationErrors(true))
   }
 
-  const key = `get-class-${req.params.classId}`
+  const key = `get-class-${req.params.classId}` + new Date().getTime()
 
   async.waterfall([
     (cb) => {

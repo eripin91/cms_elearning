@@ -1084,3 +1084,27 @@ function _init() {
     ]
   })
 })(jQuery)
+
+// section: pages
+;(function($) {
+  'use strict'
+  var url = SITE_URL + $('#sTablePages').attr('src')
+  $('#sTablePages').DataTable({
+    processing: true,
+    serverSide: true,
+    bFilter: true,
+    ordering: false,
+    scrollX: false,
+    aaSorting: [],
+    pageLength: 10,
+    columnDefs: [],
+    pagingType: 'full_numbers',
+    ajax: url,
+    columns: [
+      { data: 'pageid' },
+      { data: 'ptitle' },
+      { data: 'updated_date' },
+      { data: 'action' }
+    ]
+  })
+})(jQuery)
