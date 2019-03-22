@@ -3,13 +3,13 @@
   <!-- Content Header (Page header) -->
   <section class="content-header">
     <h1>
-      Admin
-      <small>Update User</small>
+
+      <small>Add Class</small>
     </h1>
     <ol class="breadcrumb">
       <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
-      <li><a href="#">Admin</a></li>
-      <li class="active"><a href="#">Update Admin</a></li>
+      <li><a href="#">Class</a></li>
+      <li class="active"><a href="#">Add Class</a></li>
     </ol>
   </section>
 
@@ -21,58 +21,57 @@
 
         <div class="box box-info">
           <div class="box-header with-border">
-            <h3 class="box-title">Update Admin</h3>
+            <h3 class="box-title">Add Class</h3>
           </div>
           <!-- /.box-header -->
           <!-- form start -->
-          <form class="form-horizontal" action="{{ site_url 'admin/update' }}" method="post">
-            <input type="hidden" name="id" value="{{ data.adminid }}">
+          <form class="form-horizontal" action="{{ site_url 'classes/add' }}" method="post"
+            enctype="multipart/form-data">
             <div class="box-body">
               <div class="form-group">
-                <label for="inputEmail3" class="col-sm-2 control-label">Email</label>
+                <label for="teacherId" class="col-sm-2 control-label">Teacher</label>
 
                 <div class="col-sm-10">
-                  <input type="text" readonly name="uemail" class="form-control" id="inputEmail3" placeholder="Email"
-                    value="{{ data.email }}">
+                  <input type="number" name="guruid" class="form-control" id="teacherId" placeholder="Teacher Id"
+                    value="{{ data.guruid }}">
                 </div>
               </div>
               <div class="form-group">
-                <label for="Nick" class="col-sm-2 control-label">Full Name</label>
+                <label for="ClassName" class="col-sm-2 control-label">Class Name</label>
 
                 <div class="col-sm-10">
-                  <input type="text" name="nick" class="form-control" id="Nick" placeholder="Full Name"
-                    value="{{ data.nick }}">
+                  <input type="text" name="name" class="form-control" id="ClassName" placeholder="Class Name"
+                    value="{{ data.class_name }}">
                 </div>
               </div>
               <div class="form-group">
-                <label for="NewPassword" class="col-sm-2 control-label">New Password</label>
+                <label for="Description" class="col-sm-2 control-label">Description</label>
 
                 <div class="col-sm-10">
-                  <input type="password" name="newpassword" class="form-control" id="NewPassword"
-                    placeholder="New Password">
+                  <input type="text" name="description" class="form-control" id="Description" placeholder="Description"
+                    value="{{ data.description }}">
                 </div>
               </div>
               <div class="form-group">
-                <label for="ConfirmPassword" class="col-sm-2 control-label">Confirm Password</label>
+                <label for="Cover" class="col-sm-2 control-label">Cover</label>
 
                 <div class="col-sm-10">
-                  <input type="password" name="confpassword" class="form-control" id="ConfirmPassword"
-                    placeholder="Confirm Password">
+                  <input type="file" accept="image/*" name="file" class="form-control" id="Cover" placeholder="Cover"
+                    value="{{ data.cover }}">
+                  <input type="text" name="oldCover" value="{{ data.cover }}" hidden="true">
                 </div>
               </div>
               <div class="form-group">
-                <label for="inputPassword3" class="col-sm-2 control-label">Status</label>
+                <label for="Priority" class="col-sm-2 control-label">Priority</label>
 
                 <div class="col-sm-10">
-                  <div class="checkbox">
-                    {{{ getStatus data.status 2 }}}
-                  </div>
+                  <input type="number" name="priority" class="form-control" id="Priority" placeholder="Priority"
+                    value="{{ data.priority }}">
                 </div>
               </div>
-
             </div>
             <!-- /.box-body -->
-            <div class="box-footer">
+            <div class=" box-footer">
               <button type="button" onclick="javascript:history.go(-1);" class="btn btn-default">Cancel</button>
               <button type="submit" class="btn btn-info pull-right">Submit</button>
             </div>

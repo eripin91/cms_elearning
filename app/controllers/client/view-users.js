@@ -84,11 +84,13 @@ exports.ajaxGet = async (req, res) => {
         } else {
           return MiscHelper.errorCustomStatus(res, err, 400)
         }
-      })
+      }
+      )
     } else {
       return MiscHelper.errorCustomStatus(res, err, _.result(err, 'status', 400))
     }
-  })
+  }
+  )
 }
 
 /*
