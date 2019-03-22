@@ -35,7 +35,7 @@ exports.ajaxGet = async (req, res) => {
     if (!err) {
       const dataGuru = []
       async.eachSeries(_.result(response, 'data', []), (item, next) => {
-        item.action = MiscHelper.getActionButtonFull('discussions', item.guruid)
+        item.action = MiscHelper.getActionButtonFull('guru', item.guruid)
         item.created_at = moment(item.created_at).format('DD/MM/YYYY hh:mm')
         item.profile_picture = MiscHelper.getPhoto(item.profile_picture)
         dataGuru.push(item)
@@ -57,4 +57,22 @@ exports.ajaxGet = async (req, res) => {
       return MiscHelper.errorCustomStatus(res, err, _.result(err, 'status', 400))
     }
   })
+}
+
+exports.delete = async (req, res) => {
+  const guruId = req.params.guruId
+  console.log(guruId)
+  if (!guruId) {
+    MiscHelper.set_error_msg({ error: 'Guru ID required !!!' }, req.sessionID)
+    res.redirect('/guru')
+  } else {
+    API_SERVICE.get('v1/guru/delete/' + guruId, {}, (err, response) => {
+      if (err) {
+        MiscHelper.set_error_msg({ error: err.message }, req.sessionID)
+      } else {
+        MiscHelper.set_error_msg({ info: 'Guru berhasil dihapus.' }, req.sessionID)
+        res.redirect('/guru')
+      }
+    })
+  }
 }
