@@ -942,6 +942,34 @@ function _init() {
 // section: courses
 ;(function($) {
   'use strict'
+  var url = SITE_URL + $('#sTableUsersScore').attr('src')
+  $('#sTableUsersScore').DataTable({
+    processing: true,
+    serverSide: true,
+    bFilter: true,
+    ordering: false,
+    scrollX: false,
+    aaSorting: [],
+    pageLength: 10,
+    columnDefs: [],
+    pagingType: 'full_numbers',
+    ajax: url,
+    columns: [
+      { data: 'userid' },
+      { data: 'ranking' },
+      { data: 'score' },
+      { data: 'email' },
+      { data: 'fullname' },
+      { data: 'phone' },
+      { data: 'created_at' },
+      { data: 'action' }
+    ]
+  })
+})(jQuery)
+
+// section: courses
+;(function($) {
+  'use strict'
   var url = SITE_URL + $('#sTableCourses').attr('src')
   $('#sTableCourses').DataTable({
     processing: true,
@@ -967,19 +995,11 @@ function _init() {
   })
 })(jQuery)
 
-<<<<<<< HEAD
-// section: courses
-;(function($) {
-  'use strict'
-  var url = SITE_URL + $('#sTableUsersScore').attr('src')
-  $('#sTableUsersScore').DataTable({
-=======
 // section: chapter
 ;(function($) {
   'use strict'
   var url = SITE_URL + $('#sTableChapters').attr('src')
   $('#sTableChapters').DataTable({
->>>>>>> course-frontend
     processing: true,
     serverSide: true,
     bFilter: true,
@@ -991,15 +1011,6 @@ function _init() {
     pagingType: 'full_numbers',
     ajax: url,
     columns: [
-<<<<<<< HEAD
-      { data: 'userid' },
-      { data: 'ranking' },
-      { data: 'score' },
-      { data: 'email' },
-      { data: 'fullname' },
-      { data: 'phone' },
-      { data: 'created_at' },
-=======
       { data: 'detailid' },
       { data: 'name' },
       { data: 'assessment_title' },
@@ -1038,7 +1049,6 @@ function _init() {
       { data: 'size' },
       { data: 'duration' },
       { data: 'status' },
->>>>>>> course-frontend
       { data: 'action' }
     ]
   })
