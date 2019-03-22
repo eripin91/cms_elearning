@@ -83,6 +83,10 @@ module.exports = {
     let action = '<a href="' + urlPrefix + '/' + 'delete/' + id + '" onclick="return confirm(\'Are you sure you want to delete this item?\');"><i class="fa fa-times"></i></a>'
     return action
   },
+  getActionButtonUpdate: (urlPrefix, id) => {
+    let action = '<a href="' + urlPrefix + '/' + 'update/' + id + '"><i class="fa fa-pencil"></i></a>'
+    return action
+  },
   getActionButtonFull: (urlPrefix, id) => {
     let action = '<a href="' + urlPrefix + '/' + 'update/' + id + '"><i class="fa fa-pencil"></i></a>'
     action += ' <a href="' + urlPrefix + '/' + 'delete/' + id + '" onclick="return confirm(\'Are you sure you want to delete this item?\');"><i class="fa fa-times"></i></a>'
