@@ -22,4 +22,6 @@ Route.get('/', ViewCoursesControllers.main)
 
   .get('/chapter/:chapterId/lecture', ViewCoursesControllers.lectureMain)
   .get('/chapter/:chapterId/lecture/ajax/get/', ViewCoursesControllers.lectureGetAll)
+  .get('/chapter/:chapterId/delete/:lectureId', ViewCoursesControllers.lectureDelete)
+  // .get('/chapter/:chapterId/delete/:lectureId', ViewCoursesControllers.lectureUpdate)
 module.exports = Route

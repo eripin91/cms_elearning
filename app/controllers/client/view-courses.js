@@ -465,8 +465,8 @@ exports.lectureGetAll = async (req, res) => {
         async.eachSeries(
           _.result(response.data, 'data', {}),
           (item, next) => {
-            item.action = `<a href="update/${req.params.chapterId}/${item.detailid}"><i class="fa fa-pencil"></i></a>`
-            item.action += `  <a href="delete/${req.params.chapterId}/${item.detailid}" onclick="return confirm('Are you sure you want to delete this item?');"><i class="fa fa-times"></i></a>`
+            item.action = `<a href="update/${item.materialid}"><i class="fa fa-pencil"></i></a>`
+            item.action += `  <a href="delete/${item.materialid}" onclick="return confirm('Are you sure you want to delete this item?');"><i class="fa fa-times"></i></a>`
             dataLectures.push(item)
             next()
           },
@@ -615,20 +615,20 @@ exports.lectureUpdate = async (req, res) => {
  */
 exports.lectureDelete = async (req, res) => {
   const chapterId = 0 || req.params.chapterId
-  // const chapterId = 0 || req.params.chapterId
-  if (!chapterId || !chapterId) {
-    MiscHelper.set_error_msg({ error: 'chapterId & chapterId required !!!' }, req.sessionID)
-    res.redirect(`/courses/chapter/${chapterId}`)
+  const lectureId = 0 || req.params.lectureId
+  if (!chapterId || !lectureId) {
+    MiscHelper.set_error_msg({ error: 'chapterId & lectureId required !!!' }, req.sessionID)
+    res.redirect(`/courses/chapter/${chapterId}/lecture`)
   } else {
-    API_SERVICE.delete(`v1/courses/chapter/${chapterId}/${chapterId}`, {}, (err, response) => {
+    API_SERVICE.delete(`v1/courses/chapter/${chapterId}/material/${lectureId}`, {}, (err, response) => {
       if (err) {
         MiscHelper.set_error_msg({ error: err }, req.sessionID)
       } else {
         MiscHelper.set_error_msg(
-          { info: 'Chapter berhasil dihapus.' },
+          { info: 'Lecture berhasil dihapus.' },
           req.sessionID
         )
-        res.redirect(`/courses/chapter/${chapterId}`)
+        res.redirect(`/courses/chapter/${chapterId}/lecture`)
       }
     })
   }
