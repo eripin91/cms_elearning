@@ -899,7 +899,12 @@ function _init() {
       { data: 'guru' },
       { data: 'class_name' },
       { data: 'description' },
-      { data: 'cover' },
+      {
+        data: 'cover',
+        render: function(data) {
+          return '<img src="' + data + '" width="150px" />'
+        }
+      },
       { data: 'priority' },
       { data: 'rating' },
       { data: 'created_at' },
