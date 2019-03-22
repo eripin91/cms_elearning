@@ -853,7 +853,7 @@ function _init() {
 })(jQuery)
 
 // section: discussions
-;(function ($) {
+(function ($) {
   'use strict';
     var url = SITE_URL + $("#sTableDiscussions").attr('src')
     $('#sTableDiscussions').DataTable({
@@ -877,10 +877,10 @@ function _init() {
         { "data": "action" }
       ]
     });
-}(jQuery))
+}(jQuery));
 
-// section: classes
-;(function($) {
+// section admin
+(function($) {
   'use strict'
   var url = SITE_URL + $('#sTableClasses').attr('src')
   $('#sTableClasses').DataTable({
@@ -935,7 +935,7 @@ function _init() {
 })(jQuery)
 
 // section: courses
-;(function($) {
+(function($) {
   'use strict'
   var url = SITE_URL + $('#sTableCourses').attr('src')
   $('#sTableCourses').DataTable({
