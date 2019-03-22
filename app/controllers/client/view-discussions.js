@@ -35,7 +35,7 @@ exports.ajaxGet = async (req, res) => {
     if (!err) {
       const dataDiscussions = []
       async.eachSeries(_.result(response, 'data', []), (item, next) => {
-        item.action = MiscHelper.getActionButtonFull('discussions', item.discussionid)
+        item.action = MiscHelper.getActionButton('discussions', item.discussionid)
         item.created_at = moment(item.created_at).format('DD/MM/YYYY hh:mm')
         dataDiscussions.push(item)
         next()
