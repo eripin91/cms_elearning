@@ -498,7 +498,7 @@ exports.lectureGetAll = async (req, res) => {
 /*
  * GET && POST : '/add'
  *
- * @desc Add chapter
+ * @desc Add lecture
  *
  * @param  {object} req - Parameters for request
  *
@@ -507,7 +507,7 @@ exports.lectureGetAll = async (req, res) => {
 exports.lectureAdd = async (req, res) => {
   if (_.isEmpty(req.body)) {
     const errorMsg = await MiscHelper.get_error_msg(req.sessionID)
-    res.render('chapter_add', { errorMsg: errorMsg, chapterId: req.params.chapterId })
+    res.render('lecture_add', { errorMsg: errorMsg, chapterId: req.params.chapterId })
   } else {
     const name = req.body.name
     const assessmentid = req.body.assessmentid

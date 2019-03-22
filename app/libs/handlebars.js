@@ -20,6 +20,9 @@ const register = Handlebars => {
     params_inside_string: (str, params) => {
       return 'courses/chapter/' + params + str
     },
+    url_params_inside_string: (params, str) => {
+      return CONFIG.SERVER.BASE_WEBHOST + 'courses/chapter/' + params + str
+    },
     implode: (sep, arr) => {
       let str = ''
       for (let i = 0; i < arr.length; ++i) {
