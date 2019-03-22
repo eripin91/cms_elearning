@@ -93,6 +93,43 @@ exports.getCourse = (req, res) => {
   })
 }
 
+exports.getAllCourses = (req, res) => {
+  const key = `courses-list-all`
+
+  async.waterfall([
+    (cb) => {
+      redisCache.get(key, courses => {
+        if (courses) {
+          return MiscHelper.responses(res, courses)
+        } else {
+          cb(null)
+        }
+      })
+    },
+    (cb) => {
+      coursesModel.getAllCourse(req, (err, result) => {
+        console.log(result)
+        if (_.isEmpty(result) || err) {
+          return MiscHelper.errorCustomStatus(res, { message: 'not courses found' })
+        } else {
+          cb(err, result)
+        }
+      })
+    },
+    (dataCourse, cb) => {
+      redisCache.setex(key, 600, dataCourse)
+      console.log('data cached')
+      cb(null, dataCourse)
+    }
+  ], (errCourse, resultCourse) => {
+    if (!errCourse) {
+      return MiscHelper.responses(res, resultCourse)
+    } else {
+      return MiscHelper.errorCustomStatus(res, errCourse, 400)
+    }
+  })
+}
+
 /*
  * GET : '/courses/:courseId/:courseId
  *
