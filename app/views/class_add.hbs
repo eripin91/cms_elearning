@@ -25,17 +25,8 @@
           </div>
           <!-- /.box-header -->
           <!-- form start -->
-          <form class="form-horizontal" action="{{ site_url 'classes/update' }}" method="post">
-            <input type="hidden" name="classid" value="{{ data.classid }}">
+          <form class="form-horizontal" action="{{ site_url 'classes/add' }}" method="post">
             <div class="box-body">
-              {{!-- <div class="form-group">
-                <label for="classId" class="col-sm-2 control-label">Class Id</label>
-
-                <div class="col-sm-10">
-                  <input type="text" readonly name="classid" class="form-control" id="classId" placeholder="Class Id"
-                    value="{{ data.classid }}">
-                </div>
-              </div> --}}
               <div class="form-group">
                 <label for="teacherId" class="col-sm-2 control-label">Teacher</label>
 
@@ -60,19 +51,11 @@
                     value="{{ data.description }}">
                 </div>
               </div>
-              {{!-- <div class="form-group">
-                <label for="Cover" class="col-sm-2 control-label">Cover</label>
-
-                <div class="col-sm-10">
-                  <input type="text" name="cover" class="form-control" id="Cover" placeholder="Cover"
-                    value="{{ data.cover }}">
-                </div>
-              </div> --}}
               <div class="form-group">
                 <label for="Cover" class="col-sm-2 control-label">Cover</label>
 
                 <div class="col-sm-10">
-                  <input type="file" accept="image/*" name="cover" class="form-control" id="Cover" placeholder="Cover"
+                  <input type="file" accept="image/*" name="file" class="form-control" id="Cover" placeholder="Cover"
                     value="{{ data.cover }}">
                   <input type="text" name="oldCover" value="{{ data.cover }}" hidden="true">
                 </div>

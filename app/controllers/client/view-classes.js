@@ -92,14 +92,17 @@ exports.ajaxGet = async (req, res) => {
 exports.add = async (req, res) => {
   if (_.isEmpty(req.body)) {
     const errorMsg = await MiscHelper.get_error_msg(req.sessionID)
-    res.render('classes_add', { errorMsg: errorMsg })
+    res.render('class_add', { errorMsg: errorMsg })
   } else {
-    const email = req.body.email
-    const nick = req.body.nick
+    const guruid = req.body.guruid
+    const name = req.body.name
+    const description = req.body.description
     const password = req.body.password
     const confpassword = req.body.confpassword
+    // const file = req.body.file
+    // const priority = req.body.priority
 
-    if (!email || !nick || !password) {
+    if (!guruid || !name || !description) {
       MiscHelper.set_error_msg(
         { error: 'Data yang anda masukkan tidak lengkap !!!' },
         req.sessionID
