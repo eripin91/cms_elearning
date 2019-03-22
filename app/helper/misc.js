@@ -99,6 +99,10 @@ module.exports = {
   getConfirm: (status) => {
     return (status === 1 ? 'Confirmed' : 'Unconfirm')
   },
+  getThreadByCourse: (urlPrefix, id, course) => {
+    let action = `<a href="${urlPrefix}/get/${id}">${course}</a>`
+    return action
+  },
   get_error_msg: async (sesId) => {
     const data = await redisCache.v2_get(`__msg${sesId}`).catch(err => console.error(err))
     if (!data) return ''
