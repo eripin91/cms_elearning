@@ -549,16 +549,15 @@ exports.lectureUpdate = async (req, res) => {
   if (_.isEmpty(req.body)) {
     const errorMsg = await MiscHelper.get_error_msg(req.sessionID)
     API_SERVICE.get(
-      'v1/courses/chapter/detail/' + req.params.chapterId,
+      `v1/courses/chapter/${req.params.chapterId}/material/${req.params.lectureId}`,
       {},
       (err, response) => {
         if (err) console.error(err)
-        res.render('chapter_update', { errorMsg: errorMsg, data: response.data[0], chapterId: req.params.chapterId })
+        res.render('lecture_update', { errorMsg: errorMsg, data: response.data[0], chapterId: req.params.chapterId, lectureId: req.params.lectureId })
       }
     )
   } else {
     const chapterId = req.body.detailid
-    // const chapterId = req.params.chapterId
     const name = req.body.name
     const assessmentid = req.body.assesmentid
 
