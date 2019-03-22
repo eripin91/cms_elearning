@@ -76,3 +76,68 @@ exports.delete = async (req, res) => {
     })
   }
 }
+
+/*
+ * GET && POST : '/update'
+ *
+ * @desc Update admin
+ *
+ * @param  {object} req - for request
+ * @param  {object} req.body.adminId - adminId for identifier
+ *
+ * @return {object} Request object
+ */
+exports.update = async (req, res) => {
+  if (_.isEmpty(req.body)) {
+    const errorMsg = await MiscHelper.get_error_msg(req.sessionID)
+    API_SERVICE.get(
+      'v1/guru/get/' + req.params.guruId,
+      {},
+      (err, response) => {
+        if (err) console.error(err)
+        res.render('guru_update', { errorMsg: errorMsg, data: response.data })
+
+        console.log(response.data)
+      }
+    )
+  } else {
+    const guruId = req.body.guruId
+    const fullname = req.body.fullname
+    const description = req.body.description
+
+    console.log(req.body)
+
+    if (!guruId) {
+      MiscHelper.set_error_msg(
+        { error: 'Kesalahan input data !!!' },
+        req.sessionID
+      )
+      res.redirect('/guru')
+    } else {
+      if (!fullname && !description) {
+        MiscHelper.set_error_msg(
+          { error: 'Fullname & Description wajib di isi !!!' },
+          req.sessionID
+        )
+        res.redirect('/guru/update/' + guruId)
+      } else {
+        API_SERVICE.patch(
+          'v1/guru/update/' + guruId,
+          req.body,
+          (err, response) => {
+            if (!err) {
+              MiscHelper.set_error_msg(
+                { info: 'Guru berhasil diubah.' },
+                req.sessionID
+              )
+              res.redirect('/guru')
+            } else {
+              MiscHelper.set_error_msg({ error: err.message }, req.sessionID)
+              res.redirect('/guru/update/' + guruId)
+            }
+          }
+        )
+      }
+    }
+  }
+}
