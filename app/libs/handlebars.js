@@ -8,6 +8,24 @@ const register = Handlebars => {
     site_url: str => {
       return CONFIG.SERVER.BASE_WEBHOST + str
     },
+    site_url_params: (str, params) => {
+      return CONFIG.SERVER.BASE_WEBHOST + str + params
+    },
+    site_url_two_params: (str, param1, param2) => {
+      return CONFIG.SERVER.BASE_WEBHOST + str + param1 + '/' + param2
+    },
+    add_params: (str, params) => {
+      return str + params
+    },
+    params_inside_string: (str, params) => {
+      return 'courses/chapter/' + params + str
+    },
+    url_params_inside_string: (params, str) => {
+      return CONFIG.SERVER.BASE_WEBHOST + 'courses/chapter/' + params + str
+    },
+    url_two_params_inside_string: (param1, str, param2) => {
+      return CONFIG.SERVER.BASE_WEBHOST + 'courses/chapter/' + param1 + str + param2
+    },
     implode: (sep, arr) => {
       let str = ''
       for (let i = 0; i < arr.length; ++i) {

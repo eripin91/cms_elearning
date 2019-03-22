@@ -83,9 +83,25 @@ module.exports = {
     let action = '<a href="' + urlPrefix + '/' + 'delete/' + id + '" onclick="return confirm(\'Are you sure you want to delete this item?\');"><i class="fa fa-times"></i></a>'
     return action
   },
+  getActionButtonUpdate: (urlPrefix, id) => {
+    let action = '<a href="' + urlPrefix + '/' + 'update/' + id + '"><i class="fa fa-pencil"></i></a>'
+    return action
+  },
   getActionButtonFull: (urlPrefix, id) => {
     let action = '<a href="' + urlPrefix + '/' + 'update/' + id + '"><i class="fa fa-pencil"></i></a>'
     action += ' <a href="' + urlPrefix + '/' + 'delete/' + id + '" onclick="return confirm(\'Are you sure you want to delete this item?\');"><i class="fa fa-times"></i></a>'
+    return action
+  },
+  getActionButtonClasses: (urlPrefix, urlPrefixUser, id) => {
+    let action = '<a href="' + urlPrefixUser + '/' + '?classes=' + id + '&ranking=true"><i class="fa fa-bar-chart-o"></i></a>'
+    action += ' <a href="' + urlPrefixUser + '/' + '?classes=' + id + '"><i class="fa fa-users"></i></a>'
+    action += ' <a href="' + urlPrefix + '/' + 'update/' + id + '"><i class="fa fa-pencil"></i></a>'
+    action += ' <a href="' + urlPrefix + '/' + 'delete/' + id + '" onclick="return confirm(\'Are you sure you want to delete this item?\');"><i class="fa fa-times"></i></a>'
+    return action
+  },
+  getActionButtonNoUrl: (id) => {
+    let action = '<a href="update/' + id + '"><i class="fa fa-pencil"></i></a>'
+    action += ' <a href="delete/' + id + '" onclick="return confirm(\'Are you sure you want to delete this item?\');"><i class="fa fa-times"></i></a>'
     return action
   },
   getStatus: (status, type) => {
@@ -93,6 +109,10 @@ module.exports = {
   },
   getConfirm: (status) => {
     return (status === 1 ? 'Confirmed' : 'Unconfirm')
+  },
+  getThreadByCourse: (urlPrefix, id, course) => {
+    let action = `<a href="${urlPrefix}/get/${id}">${course}</a>`
+    return action
   },
   get_error_msg: async (sesId) => {
     const data = await redisCache.v2_get(`__msg${sesId}`).catch(err => console.error(err))
@@ -107,5 +127,9 @@ module.exports = {
       redisCache.del(`__msg${sesId}`)
     }
     return resE
+  },
+  getPhoto: (imgUrl) => {
+    let image = `<img src="${imgUrl}" height="42" width="42">`
+    return image
   }
 }

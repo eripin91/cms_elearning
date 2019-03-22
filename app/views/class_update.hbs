@@ -4,7 +4,11 @@
   <section class="content-header">
     <h1>
 
+<<<<<<< HEAD
       <small>Update Class</small>
+=======
+      <small>Update User</small>
+>>>>>>> master
     </h1>
     <ol class="breadcrumb">
       <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
@@ -13,6 +17,11 @@
     </ol>
   </section>
 
+<<<<<<< HEAD
+=======
+  {{ showLog data }}
+
+>>>>>>> master
   <!-- Main content -->
   <section class="content">
     <div class="row">
@@ -25,6 +34,7 @@
           </div>
           <!-- /.box-header -->
           <!-- form start -->
+<<<<<<< HEAD
           <form class="form-horizontal" action="{{ site_url 'classes/update' }}" method="post">
             <input type="hidden" name="classid" value="{{ data.classid }}">
             <div class="box-body">
@@ -33,6 +43,25 @@
 
                 <div class="col-sm-10">
                   <input type="number" name="guruid" class="form-control" id="teacherId" placeholder="Teacher Id"
+=======
+          <form class="form-horizontal" action="{{ site_url 'class/update' }}" method="post"
+            enctype="multipart/form-data">
+            <input type="hidden" name="id" value="{{ data.classid }}">
+            <div class="box-body">
+              <div class="form-group">
+                <label for="classId" class="col-sm-2 control-label">Class Id</label>
+
+                <div class="col-sm-10">
+                  <input type="text" readonly name="classid" class="form-control" id="classId" placeholder="Class Id"
+                    value="{{ data.classid }}">
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="teacherId" class="col-sm-2 control-label">Teacher Id</label>
+
+                <div class="col-sm-10">
+                  <input type="number" name="teacherid" class="form-control" id="teacherId" placeholder="Teacher Id"
+>>>>>>> master
                     value="{{ data.guruid }}">
                 </div>
               </div>
@@ -40,7 +69,11 @@
                 <label for="ClassName" class="col-sm-2 control-label">Class Name</label>
 
                 <div class="col-sm-10">
+<<<<<<< HEAD
                   <input type="text" name="name" class="form-control" id="ClassName" placeholder="Class Name"
+=======
+                  <input type="text" name="class_name" class="form-control" id="ClassName" placeholder="Class Name"
+>>>>>>> master
                     value="{{ data.class_name }}">
                 </div>
               </div>
@@ -56,9 +89,14 @@
                 <label for="Cover" class="col-sm-2 control-label">Cover</label>
 
                 <div class="col-sm-10">
+<<<<<<< HEAD
                   <input type="file" accept="image/*" name="file" class="form-control" id="Cover" placeholder="Cover"
                     value="{{ data.cover }}">
                   <input type="text" name="oldCover" value="{{ data.cover }}" hidden="true">
+=======
+                  <input type="file" accept="image/*" name="cover" class="form-control" id="Cover" placeholder="Cover"
+                    value="{{ data.cover }}">
+>>>>>>> master
                 </div>
               </div>
               <div class="form-group">
@@ -77,6 +115,21 @@
                     value="{{ data.rating }}">
                 </div>
               </div>
+<<<<<<< HEAD
+=======
+
+              {{!--Status --}}
+              {{!-- <div class="form-group">
+                <label for="inputPassword3" class="col-sm-2 control-label">Status</label>
+
+                <div class="col-sm-10">
+                  <div class="checkbox">
+                    {{{ getStatus data.status 2 }}}
+                  </div>
+                </div>
+              </div> --}}
+
+>>>>>>> master
             </div>
             <!-- /.box-body -->
             <div class=" box-footer">

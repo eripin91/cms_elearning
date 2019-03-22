@@ -3,7 +3,6 @@
 'use strict'
 
 var Route = express.Router()
-// .all('/*')
 Route
   .all('/*', AuthHelper.requiresAuthorization)
   .get('/get', ClassesControllers.get)

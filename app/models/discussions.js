@@ -28,6 +28,15 @@ module.exports = {
       })
     })
   },
+  getTotalThreadCourse: (conn, courseId, callback) => {
+    conn.getConnection((errConnection, connection) => {
+      if (errConnection) console.error(errConnection)
+
+      connection.query(`SELECT COUNT(*) AS discussion FROM discussion_tab a JOIN courses_tab b ON a.courseid=b.courseid JOIN users_tab c ON a.userid = c.userid WHERE a.status = 1 AND a.parent = 0 AND a.courseid = ?`, courseId, (err, rows) => {
+        callback(err, rows)
+      })
+    })
+  },
   checkTotalReply: (conn, discussionId, callback) => {
     conn.getConnection((errConnection, connection) => {
       if (errConnection) console.error(errConnection)
@@ -80,4 +89,5 @@ module.exports = {
       })
     })
   }
+
 }

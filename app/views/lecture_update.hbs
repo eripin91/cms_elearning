@@ -4,12 +4,12 @@
     <section class="content-header">
         <h1>
 
-            <small>Update Course</small>
+            <small>Update Lecture</small>
         </h1>
         <ol class="breadcrumb">
             <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
-            <li><a href="#">Course</a></li>
-            <li class="active"><a href="#">Update Course</a></li>
+            <li><a href="#">Lecture</a></li>
+            <li class="active"><a href="#">Update Lecture</a></li>
         </ol>
     </section>
 
@@ -21,21 +21,15 @@
 
                 <div class="box box-info">
                     <div class="box-header with-border">
-                        <h3 class="box-title">Update Course</h3>
+                        <h3 class="box-title">Update Lecture</h3>
                     </div>
                     <!-- /.box-header -->
                     <!-- form start -->
-                    <form class="form-horizontal" action="{{ site_url 'courses/update' }}" method="post">
-                        <input type="hidden" name="courseid" value="{{ data.courseid }}">
+                    <form class="form-horizontal"
+                        action="{{ url_two_params_inside_string chapterId '/update/' lectureId }}" method="post">
+                        <input type="hidden" name="detailid" value="{{ data.detailid }}">
+                        <input type="hidden" name="materialid" value="{{ data.materialid }}">
                         <div class="box-body">
-                            <div class="form-group">
-                                <label for="classId" class="col-sm-2 control-label">Class Id</label>
-
-                                <div class="col-sm-10">
-                                    <input type="number" name="classid" class="form-control" id="classId"
-                                        placeholder="Class Id" value="{{ data.classid }}">
-                                </div>
-                            </div>
                             <div class="form-group">
                                 <label for="Name" class="col-sm-2 control-label">Name</label>
 
@@ -45,33 +39,27 @@
                                 </div>
                             </div>
                             <div class="form-group">
-                                <label for="PreAssessmentId" class="col-sm-2 control-label">Pre Assessment Id</label>
+                                <label for="assessmentid" class="col-sm-2 control-label">Assessment Id</label>
 
                                 <div class="col-sm-10">
-                                    <input type="number" name="preassessmentid" class="form-control"
-                                        id="PreAssessmentId" placeholder="Pre Assessment Id"
-                                        value="{{ data.preassessmentid }}">
+                                    <input type="number" name="assessmentid" class="form-control" id="assessmentid"
+                                        placeholder="Assessment Id" value="{{ data.assessmentid }}">
                                 </div>
                             </div>
                             <div class="form-group">
-                                <label for="FinalAssessmentId" class="col-sm-2 control-label">Final Assessment
-                                    Id</label>
+                                <label for="Description" class="col-sm-2 control-label">Description</label>
 
                                 <div class="col-sm-10">
-                                    <input type="number" name="finalassessmentid" class="form-control"
-                                        id="FinalAssessmentId" placeholder="Final Assessment Id"
-                                        value="{{ data.finalassessmentid }}">
+                                    <input type="text" name="description" class="form-control" id="Description"
+                                        placeholder="Description" value="{{ data.description }}">
                                 </div>
                             </div>
-
-                            {{!--Status --}}
                             <div class="form-group">
-                                <label for="Status" class="col-sm-2 control-label">Status</label>
+                                <label for="VideoURL" class="col-sm-2 control-label">Video URL</label>
 
                                 <div class="col-sm-10">
-                                    <div class="checkbox">
-                                        {{{ getStatus data.status 2 }}}
-                                    </div>
+                                    <input type="file" name="file" class="form-control" id="VideoURL"
+                                        placeholder="Video URL" value="{{ data.video_url }}">
                                 </div>
                             </div>
 

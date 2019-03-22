@@ -1,0 +1,66 @@
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper">
+  <!-- Content Header (Page header) -->
+  <section class="content-header">
+    <h1>
+      Guru
+      <small>Guru</small>
+    </h1>
+    <ol class="breadcrumb">
+      <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
+      <li class="active"><a href="#">Guru</a></li>
+    </ol>
+  </section>
+
+  <!-- Main content -->
+  <section class="content">
+    <div class="row">
+      <div class="col-xs-12">
+        <div class="box">
+          <div class="box-header">
+            <h3 class="box-title">Guru</h3>
+          </div>
+          <!-- /.box-header -->
+          <div class="box-body">
+            {{{ errorMsg }}}
+
+            <div class="box-header">
+              <h3 class="box-title">
+                <a href="{{ site_url 'guru/add' }}" class="btn btn-default"><i class="fa fa-plus"></i> Add Guru</a>
+              </h3>
+            </div>
+            <table id="sTableGuru" class="table table-bordered table-striped" src="guru/ajax/get">
+              <thead>
+                <tr>
+                  <th>Guru ID</th>
+                  <th>Profile Picture</th>
+                  <th>Fullname</th>
+                  <th>Description</th>
+                  <th>Created</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody>
+              </tbody>
+              <tfoot>
+                <tr>
+                  <th>Guru ID</th>
+                  <th>Profile Picture</th>
+                  <th>Fullname</th>
+                  <th>Description</th>
+                  <th>Created</th>
+                  <th>Action</th>
+                </tr>
+              </tfoot>
+            </table>
+          </div>
+          <!-- /.box-body -->
+        </div>
+        <!-- /.box -->
+      </div>
+      <!-- /.col -->
+    </div>
+    <!-- /.row -->
+  </section>
+  <!-- /.content -->
+</div>

@@ -4,11 +4,11 @@
     <section class="content-header">
         <h1>
 
-            <small>Class</small>
+            <small>Lectures</small>
         </h1>
         <ol class="breadcrumb">
             <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
-            <li class="active"><a href="#">Class</a></li>
+            <li class="active"><a href="#">Lectures</a></li>
         </ol>
     </section>
 
@@ -18,7 +18,7 @@
             <div class="col-xs-12">
                 <div class="box">
                     <div class="box-header">
-                        <h3 class="box-title">Class</h3>
+                        <h3 class="box-title">Lectures</h3>
                     </div>
                     <!-- /.box-header -->
                     <div class="box-body">
@@ -26,41 +26,40 @@
 
                         <div class="box-header">
                             <h3 class="box-title">
-                                <a href="{{ site_url 'classes/add' }}" class="btn btn-default"><i
+                                <a href="{{ url_params_inside_string chapterId '/add/' }}" class="btn btn-default"><i
                                         class="fa fa-plus"></i>
-                                    Add Class</a>
+                                    Add Lecture</a>
                             </h3>
                         </div>
-                        <table id="sTableClasses" class="table table-bordered table-striped" src="classes/ajax/get">
+                        <table id="sTableLectures" class="table table-bordered table-striped"
+                            src="{{ params_inside_string "/lecture/ajax/get/" chapterId}}">
                             <thead>
                                 <tr>
-                                    <th>Class Id</th>
-                                    <th>Teacher</th>
+                                    <th>Material Id</th>
+                                    <th>Chapter Id</th>
                                     <th>Name</th>
                                     <th>Description</th>
-                                    <th>Cover</th>
-                                    <th>Priority</th>
-                                    <th>Rating</th>
-                                    <th>Created Date</th>
-<<<<<<< HEAD
+                                    <th>Video URL</th>
+                                    <th>Thumbnails</th>
+                                    <th>Size</th>
+                                    <th>Duration</th>
+                                    <th>Status</th>
                                     <th>Action</th>
-=======
-                                    <th style="width: 50px">Action</th>
->>>>>>> master
                                 </tr>
                             </thead>
                             <tbody>
                             </tbody>
                             <tfoot>
                                 <tr>
-                                    <th>ClassId</th>
-                                    <th>Teacher</th>
+                                    <th>Material Id</th>
+                                    <th>Chapter Id</th>
                                     <th>Name</th>
                                     <th>Description</th>
-                                    <th>Cover</th>
-                                    <th>Priority</th>
-                                    <th>Rating</th>
-                                    <th>Created Date</th>
+                                    <th>Video URL</th>
+                                    <th>Thumbnails</th>
+                                    <th>Size</th>
+                                    <th>Duration</th>
+                                    <th>Status</th>
                                     <th>Action</th>
                                 </tr>
                             </tfoot>

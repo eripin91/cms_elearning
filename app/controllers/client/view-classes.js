@@ -46,8 +46,9 @@ exports.ajaxGet = async (req, res) => {
         async.eachSeries(
           _.result(response, 'data', {}),
           (item, next) => {
-            item.action = MiscHelper.getActionButtonFull(
+            item.action = MiscHelper.getActionButtonClasses(
               'classes',
+              'users',
               item.classid
             )
             // item.status = MiscHelper.getStatus(item.status, 1)

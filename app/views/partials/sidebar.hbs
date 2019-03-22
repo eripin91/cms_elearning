@@ -1,36 +1,38 @@
-  <!-- Left side column. contains the logo and sidebar -->
-  <aside class="main-sidebar">
-    <!-- sidebar: style can be found in sidebar.less -->
-    <section class="sidebar">
-      <!-- Sidebar user panel -->
-      <div class="user-panel">
-        <div class="pull-left image" style="padding-left:15px">
-          <img src="{{ themes_url 'dist/img/no-avatar.png' }}" class="img-circle" alt="User Image">
-          <br />
-          <div style="color:#fff">{{ global_login 'email' }}</div>
-        </div>
+<!-- Left side column. contains the logo and sidebar -->
+<aside class="main-sidebar">
+  <!-- sidebar: style can be found in sidebar.less -->
+  <section class="sidebar">
+    <!-- Sidebar user panel -->
+    <div class="user-panel">
+      <div class="pull-left image" style="padding-left:15px">
+        <img src="{{ themes_url 'dist/img/no-avatar.png' }}" class="img-circle" alt="User Image">
+        <br />
+        <div style="color:#fff">{{ global_login 'email' }}</div>
       </div>
-      <!-- /.search form -->
-      <!-- sidebar menu: : style can be found in sidebar.less -->
-      <ul class="sidebar-menu">
-        <li class="header">PANEL NAVIGATION</li>
-        <li class="active treeview">
-          <a href="{{ site_url '' }}">
-            <i class="fa fa-dashboard"></i> <span>Dashboard</span>
-          </a>
-        </li>
-        <li><a href="{{ site_url 'courses' }}"><i class="fa fa-male"></i> Courses</a></li>
-        <li><a href="{{ site_url 'classes' }}"><i class="fa fa-circle-o"></i> Classes</a></li>
-        <li><a href="{{ site_url 'discussions' }}"><i class="fa fa-comment"></i> Discussions</a></li>
-        <li><a href="{{ site_url 'guru' }}"><i class="fa fa-user-md"></i> Guru</a></li>
-        <li><a href="{{ site_url 'users' }}"><i class="fa fa-users"></i> Users</a></li>
-        <li><a href="{{ site_url 'admin' }}"><i class="fa fa-male"></i> Admin</a></li>
-        <li>
-		<a href="{{ site_url 'login/logout' }}" onclick="return confirm('{{ global_login 'email' }}, are you sure you want to logout?');">
-			<i class="fa fa-sign-in"></i> <span>Logout</span>
-		</a>
-		</li>
-      </ul>
-    </section>
-    <!-- /.sidebar -->
-  </aside>
+    </div>
+    <!-- /.search form -->
+    <!-- sidebar menu: : style can be found in sidebar.less -->
+    <ul class="sidebar-menu">
+      <li class="header">PANEL NAVIGATION</li>
+      <li class="active treeview">
+        <a href="{{ site_url '' }}">
+          <i class="fa fa-dashboard"></i> <span>Dashboard</span>
+        </a>
+      </li>
+      <li><a href="{{ site_url 'pages' }}"><i class="fa fa-pagelines"></i> Pages</a></li>
+      <li><a href="{{ site_url 'courses' }}"><i class="fa fa-book"></i> Courses</a></li>
+      <li><a href="{{ site_url 'classes' }}"><i class="fa fa-group"></i> Classes</a></li>
+      <li><a href="{{ site_url 'discussions' }}"><i class="fa fa-comment"></i> Discussions</a></li>
+      <li><a href="{{ site_url 'guru' }}"><i class="fa fa-user-md"></i> Guru</a></li>
+      <li><a href="{{ site_url 'users' }}"><i class="fa fa-users"></i> Users</a></li>
+      <li><a href="{{ site_url 'admin' }}"><i class="fa fa-male"></i> Admin</a></li>
+      <li>
+        <a href="{{ site_url 'login/logout' }}"
+          onclick="return confirm('{{ global_login 'email' }}, are you sure you want to logout?');">
+          <i class="fa fa-sign-in"></i> <span>Logout</span>
+        </a>
+      </li>
+    </ul>
+  </section>
+  <!-- /.sidebar -->
+</aside>

@@ -11,7 +11,7 @@ const gm = require('gm').subClass({ imageMagick: true })
 aws.config.update({
   secretAccessKey: CONFIG.AWS.AWS_ACCESS_KEY_SECRET,
   accessKeyId: CONFIG.AWS.AWS_ACCESS_KEY_ID,
-  region: CONFIG.AWS_S3_REGION
+  region: CONFIG.AWS_REGION
 })
 
 const s3 = new aws.S3()
@@ -360,7 +360,7 @@ exports.updateGuru = (req, res) => {
       })
     },
     (dataGuru, cb) => {
-      const fullname = _.result(req.body, 'name', dataGuru.fullname)
+      const fullname = _.result(req.body, 'fullname', dataGuru.fullname)
       const description = _.result(req.body, 'description', dataGuru.description)
 
       if (_.result(req.file, 'key')) {
