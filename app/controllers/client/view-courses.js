@@ -160,25 +160,25 @@ exports.update = async (req, res) => {
     } else {
       if (!classid) {
         MiscHelper.set_error_msg(
-          { error: 'Class Id wajib di isi !!!' },
+          { error: 'Class Id wajib diisi !!!' },
           req.sessionID
         )
         res.redirect('/courses/update/' + courseId)
       } else if (!name) {
         MiscHelper.set_error_msg(
-          { error: 'Name wajib di isi !!!' },
+          { error: 'Name wajib diisi !!!' },
           req.sessionID
         )
         res.redirect('/courses/update/' + courseId)
       } else if (!preassessmentid) {
         MiscHelper.set_error_msg(
-          { error: 'Pre Assessment Id wajib di isi !!!' },
+          { error: 'Pre Assessment Id wajib diisi !!!' },
           req.sessionID
         )
         res.redirect('/courses/update/' + courseId)
       } else if (!finalassessmentid) {
         MiscHelper.set_error_msg(
-          { error: 'Final Assessment Id wajib di isi !!!' },
+          { error: 'Final Assessment Id wajib diisi !!!' },
           req.sessionID
         )
         res.redirect('/courses/update/' + courseId)
@@ -372,13 +372,13 @@ exports.chapterUpdate = async (req, res) => {
     } else {
       if (!name) {
         MiscHelper.set_error_msg(
-          { error: 'Name wajib di isi !!!' },
+          { error: 'Name wajib diisi !!!' },
           req.sessionID
         )
         res.redirect(`/courses/chapter/update/${courseId}/${chapterId}`)
       } else if (!assessmentid) {
         MiscHelper.set_error_msg(
-          { error: 'Assessment Id wajib di isi !!!' },
+          { error: 'Assessment Id wajib diisi !!!' },
           req.sessionID
         )
         res.redirect(`/courses/chapter/update/${courseId}/${chapterId}`)
@@ -538,9 +538,9 @@ exports.lectureAdd = async (req, res) => {
 }
 
 /*
- * GET && POST : '/chapterupdate'
+ * GET && POST : '/lectureupdate'
  *
- * @desc Update admin
+ * @desc Update lecture
  *
  * @param  {object} req - for request
  * @param  {object} req.body.chapterId - chapterId for identifier
@@ -560,42 +560,57 @@ exports.lectureUpdate = async (req, res) => {
     )
   } else {
     const chapterId = req.body.detailid
+    const materialid = req.body.materialid
     const name = req.body.name
-    const assessmentid = req.body.assesmentid
+    const assessmentid = req.body.assessmentid
+    const description = req.body.description
+    const file = req.body.file
 
-    if (!chapterId) {
+    if (!chapterId || !materialid) {
       MiscHelper.set_error_msg(
         { error: 'Kesalahan input data !!!' },
         req.sessionID
       )
-      res.redirect('/courses/chapter')
+      res.redirect(`/courses/chapter/${req.params.chapterId}/lecture`)
     } else {
       if (!name) {
         MiscHelper.set_error_msg(
-          { error: 'Name wajib di isi !!!' },
+          { error: 'Name wajib diisi !!!' },
           req.sessionID
         )
-        res.redirect(`/courses/chapter/update/${chapterId}/${chapterId}`)
+        res.redirect(`/courses/chapter/${req.params.chapterId}/update/${req.params.lectureId}`)
       } else if (!assessmentid) {
         MiscHelper.set_error_msg(
-          { error: 'Assessment Id wajib di isi !!!' },
+          { error: 'Assessment Id wajib diisi !!!' },
           req.sessionID
         )
-        res.redirect(`/courses/chapter/update/${chapterId}/${chapterId}`)
+        res.redirect(`/courses/chapter/${req.params.chapterId}/update/${req.params.lectureId}`)
+      } else if (!description) {
+        MiscHelper.set_error_msg(
+          { error: 'Description wajib diisi !!!' },
+          req.sessionID
+        )
+        res.redirect(`/courses/chapter/${req.params.chapterId}/update/${req.params.lectureId}`)
+      } else if (!file) {
+        MiscHelper.set_error_msg(
+          { error: 'File wajib diisi !!!' },
+          req.sessionID
+        )
+        res.redirect(`/courses/chapter/${req.params.chapterId}/update/${req.params.lectureId}`)
       } else {
         API_SERVICE.patch(
-          `v1/courses/chapter/${chapterId}/${chapterId}`,
+          `v1/courses/chapter/${req.params.chapterId}/material/${req.params.lectureId}`,
           req.body,
           (err, response) => {
             if (!err) {
               MiscHelper.set_error_msg(
-                { info: 'Courses berhasil diubah.' },
+                { info: 'Lecture berhasil diubah.' },
                 req.sessionID
               )
-              res.redirect(`/courses/chapter/${chapterId}`)
+              res.redirect(`/courses/chapter/${req.params.chapterId}/lecture`)
             } else {
               MiscHelper.set_error_msg({ error: err.message }, req.sessionID)
-              res.redirect(`/courses/chapter/${chapterId}/`)
+              res.redirect(`/courses/chapter/${req.params.chapterId}/lecture`)
             }
           }
         )
