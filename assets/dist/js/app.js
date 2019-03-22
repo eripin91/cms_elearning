@@ -1059,11 +1059,11 @@ function _init() {
   })
 })(jQuery)
 
-// section: pages
+// section: Guru
 ;(function($) {
   'use strict'
-  var url = SITE_URL + $('#sTablePages').attr('src')
-  $('#sTablePages').DataTable({
+  var url = SITE_URL + $('#sTableGuru').attr('src')
+  $('#sTableGuru').DataTable({
     processing: true,
     serverSide: true,
     bFilter: true,
@@ -1075,9 +1075,11 @@ function _init() {
     pagingType: 'full_numbers',
     ajax: url,
     columns: [
-      { data: 'pageid' },
-      { data: 'ptitle' },
-      { data: 'updated_date' },
+      { data: 'guruid' },
+      { data: 'profile_picture' },
+      { data: 'fullname' },
+      { data: 'description' },
+      { data: 'created_at' },
       { data: 'action' }
     ]
   })
