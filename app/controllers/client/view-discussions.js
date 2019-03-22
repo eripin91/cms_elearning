@@ -57,3 +57,21 @@ exports.ajaxGet = async (req, res) => {
     }
   })
 }
+
+exports.delete = async (req, res) => {
+  const discussionId = req.params.discussionId
+  console.log(discussionId)
+  if (!discussionId) {
+    MiscHelper.set_error_msg({ error: 'Discussion ID required !!!' }, req.sessionID)
+    res.redirect('/discussions')
+  } else {
+    API_SERVICE.get('v1/discussions/delete/' + discussionId, {}, (err, response) => {
+      if (err) {
+        MiscHelper.set_error_msg({ error: err.message }, req.sessionID)
+      } else {
+        MiscHelper.set_error_msg({ info: 'Diskusi berhasil dihapus.' }, req.sessionID)
+        res.redirect('/discussions')
+      }
+    })
+  }
+}
