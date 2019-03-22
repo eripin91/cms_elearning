@@ -762,6 +762,11 @@ function _init() {
     var button = $($.AdminLTE.boxWidget.selectors.remove, this)
     $.AdminLTE.boxWidget.remove(button)
   }
+  $(document).ready(function(){
+    if ($('#editorPage').length > 0) {
+      CKEDITOR.replace( 'editorPage' )
+    }
+  })
 })(jQuery)
 
 /*
@@ -1049,6 +1054,30 @@ function _init() {
       { data: 'fullname' },
       { data: 'phone' },
       { data: 'created_at' },
+      { data: 'action' }
+    ]
+  })
+})(jQuery)
+
+// section: pages
+;(function($) {
+  'use strict'
+  var url = SITE_URL + $('#sTablePages').attr('src')
+  $('#sTablePages').DataTable({
+    processing: true,
+    serverSide: true,
+    bFilter: true,
+    ordering: false,
+    scrollX: false,
+    aaSorting: [],
+    pageLength: 10,
+    columnDefs: [],
+    pagingType: 'full_numbers',
+    ajax: url,
+    columns: [
+      { data: 'pageid' },
+      { data: 'ptitle' },
+      { data: 'updated_date' },
       { data: 'action' }
     ]
   })
