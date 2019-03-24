@@ -329,43 +329,27 @@ exports.insertSoal = (req, res) => {
     return MiscHelper.errorCustomStatus(res, req.validationErrors(true))
   }
 
+  let datas = []
   async.waterfall([
     (cb) => {
-      let data = {
-        assessmentid: req.params.assessmentId,
-        question_type: req.body.question_type,
-        question: req.body.question,
-        answer: req.body.answer,
-        status: req.body.status,
-        created_at: new Date(),
-        updated_at: new Date()
-      }
-      let option = []
-
-      for (let i = 1; i < 5; i++) {
-        let _id = _.result(req.body, '_id' + i)
-        let isAnswer = _.result(req.body, 'isAnswer' + i)
-        let label = _.result(req.body, 'label' + i)
-
-        if (isAnswer === 'false') {
-          isAnswer = undefined
+      for (let i = 0; i < req.body.soal.length; i++) {
+        let data = {
+          assessmentid: req.params.assessmentId,
+          question_type: req.body.soal[0].question_type,
+          question: req.body.soal[0].question,
+          answer: req.body.soal[0].answer,
+          status: req.body.soal[0].status,
+          options: req.body.soal[0].options,
+          created_at: new Date(),
+          updated_at: new Date()
         }
-
-        let answer = {
-          _id: Number(_id),
-          isAnswer: Boolean(isAnswer),
-          label: label
-        }
-
-        option.push(answer)
+        assessmentModel.insertDetailAssessment(req, data, (errAssessment, resultAssessment) => {
+          if (errAssessment) console.error(errAssessment)
+          redisCache.delwild('detail-assessment:*')
+          datas.push(resultAssessment)
+        })
       }
-
-      data.options = JSON.stringify(option, null, 4)
-
-      assessmentModel.insertDetailAssessment(req, data, (errAssessment, resultAssessment) => {
-        redisCache.delwild('detail-assessment:*')
-        cb(errAssessment, resultAssessment)
-      })
+      cb(null, datas)
     }
   ], (errAssessment, resultAssessment) => {
     if (!errAssessment) {
