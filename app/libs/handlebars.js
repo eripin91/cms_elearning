@@ -64,7 +64,7 @@ const register = Handlebars => {
     get_date: (unixTimestamp, format) => {
       if (!unixTimestamp) unixTimestamp = helpers.get_date_now()
       if (!format) format = 1
-      let today = new Date(unixTimestamp * 1000)
+      let today = new Date(unixTimestamp)
       let dd = today.getDate()
       let mm = today.getMonth() + 1 // January is 0!
       let yyyy = today.getFullYear()
