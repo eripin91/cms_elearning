@@ -38,6 +38,7 @@ exports.ajaxGet = async (req, res) => {
       const dataAssessment = []
       async.eachSeries(_.result(response, 'data', {}), (item, next) => {
         item.action = MiscHelper.getActionButtonFull('assessment', item.assessmentid)
+        item.course_name = item.course_name ? item.course_name : '-'
         item.created_at = moment(item.created_at).format('DD/MM/YYYY hh:mm')
         item.updated_at = moment(item.updated_at).format('DD/MM/YYYY hh:mm')
         dataAssessment.push(item)
@@ -75,7 +76,30 @@ exports.add = async (req, res) => {
     const errorMsg = await MiscHelper.get_error_msg(req.sessionID)
     res.render('assessment_add', { errorMsg: errorMsg })
   } else {
+    const title = req.body.title
+    const duration = req.body.duration
 
+    if (!title || !duration) {
+      MiscHelper.set_error_msg({ error: 'Title dan duration wajib di isi !!!' }, req.sessionID)
+      res.redirect('/assessment/add')
+    } else {
+      const dataAssessment = {
+        title: title,
+        duration: duration,
+        status: 1,
+        parentId: 0
+      }
+
+      API_SERVICE.post('v1/assessment/create', dataAssessment, (err, response) => {
+        if (!err) {
+          MiscHelper.set_error_msg({ info: 'Assessment berhasil ditambahkan.' }, req.sessionID)
+          res.redirect('/assessment')
+        } else {
+          MiscHelper.set_error_msg({ error: response.message }, req.sessionID)
+          res.redirect('/assessment/add')
+        }
+      })
+    }
   }
 }
 
@@ -97,7 +121,34 @@ exports.update = async (req, res) => {
       res.render('assessment_update', { errorMsg: errorMsg, data: response.data })
     })
   } else {
+    const assessmentId = req.body.id
+    const title = req.body.title
+    const duration = req.body.duration
 
+    if (!assessmentId) {
+      MiscHelper.set_error_msg({ error: 'Kesalahan input data !!!' }, req.sessionID)
+      res.redirect('/assessment')
+    } else {
+      if (!title || !duration) {
+        MiscHelper.set_error_msg({ error: 'Title dan duration wajib di isi !!!' }, req.sessionID)
+        res.redirect('/assessment/add')
+      } else {
+        const dataAssessment = {
+          title: title,
+          duration: duration
+        }
+
+        API_SERVICE.post('v1/assessment/update/' + assessmentId, dataAssessment, (err, response) => {
+          if (!err) {
+            MiscHelper.set_error_msg({ info: 'Assessment berhasil diubah.' }, req.sessionID)
+            res.redirect('/assessment')
+          } else {
+            MiscHelper.set_error_msg({ error: err.message }, req.sessionID)
+            res.redirect('/assessment/update/' + assessmentId)
+          }
+        })
+      }
+    }
   }
 }
 
