@@ -12,7 +12,6 @@ Route
   .post('/', AssessmentControllers.insertAssessment)
   .patch('/:assessmentId', AssessmentControllers.updateAssessment)
   .delete('/:assessmentId', AssessmentControllers.deleteAssessment)
-
   .get('/question-list/:assessmentId', AssessmentControllers.getDetailAssessment)
   .get('/question/:detailId', AssessmentControllers.getSoal)
   .post('/question/:assessmentId', AssessmentControllers.insertSoal)

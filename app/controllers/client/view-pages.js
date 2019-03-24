@@ -33,43 +33,31 @@ exports.main = async (req, res) => {
  * @return {object} Request object
  */
 exports.ajaxGet = async (req, res) => {
-  API_SERVICE.get(
-    'v1/pages/get',
-    {
-      limit: _.result(req.query, 'length', 25),
-      offset: _.result(req.query, 'start', 0),
-      keyword: req.query.search['value']
-    },
-    (err, response) => {
-      if (!err) {
-        const datePages = []
-        async.eachSeries(
-          _.result(response, 'data', {}),
-          (item, next) => {
-            item.action = MiscHelper.getActionButtonUpdate('pages', item.pageid)
-            item.updated_date = moment(item.updated_date).format('DD/MM/YYYY hh:mm')
-            datePages.push(item)
-            next()
-          },
-          err => {
-            if (!err) {
-              const data = {
-                draw: _.result(req.query, 'draw', 1),
-                recordsTotal: _.result(response, 'total', 0),
-                recordsFiltered: _.result(response, 'total', 0)
-              }
-
-              return MiscHelper.responses(res, datePages, 200, data)
-            } else {
-              return MiscHelper.errorCustomStatus(res, err, 400)
-            }
+  API_SERVICE.get('v1/pages/get', { limit: _.result(req.query, 'length', 25), offset: _.result(req.query, 'start', 0), keyword: req.query.search['value'] }, (err, response) => {
+    if (!err) {
+      const datePages = []
+      async.eachSeries(_.result(response, 'data', {}), (item, next) => {
+        item.action = MiscHelper.getActionButtonUpdate('pages', item.pageid)
+        item.updated_date = moment(item.updated_date).format('DD/MM/YYYY hh:mm')
+        datePages.push(item)
+        next()
+      }, err => {
+        if (!err) {
+          const data = {
+            draw: _.result(req.query, 'draw', 1),
+            recordsTotal: _.result(response, 'total', 0),
+            recordsFiltered: _.result(response, 'total', 0)
           }
-        )
-      } else {
-        return MiscHelper.errorCustomStatus(res, err, _.result(err, 'status', 400))
-      }
+
+          return MiscHelper.responses(res, datePages, 200, data)
+        } else {
+          return MiscHelper.errorCustomStatus(res, err, 400)
+        }
+      })
+    } else {
+      return MiscHelper.errorCustomStatus(res, err, _.result(err, 'status', 400))
     }
-  )
+  })
 }
 
 /*
