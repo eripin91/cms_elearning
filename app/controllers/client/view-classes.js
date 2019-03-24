@@ -38,7 +38,7 @@ exports.ajaxGet = async (req, res) => {
     {
       limit: _.result(req.query, 'length', 25),
       offset: _.result(req.query, 'start', 0),
-      keyword: _.result(req.query, 'search[value]')
+      keyword: req.query.search['value']
     },
     (err, response) => {
       if (!err) {
@@ -46,8 +46,9 @@ exports.ajaxGet = async (req, res) => {
         async.eachSeries(
           _.result(response, 'data', {}),
           (item, next) => {
-            item.action = MiscHelper.getActionButtonFull(
+            item.action = MiscHelper.getActionButtonClasses(
               'classes',
+              'users',
               item.classid
             )
             // item.status = MiscHelper.getStatus(item.status, 1)
@@ -92,30 +93,25 @@ exports.ajaxGet = async (req, res) => {
 exports.add = async (req, res) => {
   if (_.isEmpty(req.body)) {
     const errorMsg = await MiscHelper.get_error_msg(req.sessionID)
-    res.render('classes_add', { errorMsg: errorMsg })
+    res.render('class_add', { errorMsg: errorMsg })
   } else {
-    const email = req.body.email
-    const nick = req.body.nick
-    const password = req.body.password
-    const confpassword = req.body.confpassword
+    const guruid = req.body.guruid
+    const name = req.body.name
+    const description = req.body.description
+    const file = req.body.file
+    const priority = req.body.priority
 
-    if (!email || !nick || !password) {
+    if (!guruid || !name || !description || !file || !priority) {
       MiscHelper.set_error_msg(
         { error: 'Data yang anda masukkan tidak lengkap !!!' },
         req.sessionID
       )
       res.redirect('/classes/add')
-    } else if (password !== confpassword) {
-      MiscHelper.set_error_msg(
-        { error: 'Password dan konfimasi password tidak sesuai !!!' },
-        req.sessionID
-      )
-      res.redirect('/classes/add')
     } else {
-      API_SERVICE.post('v1/classes/create', req.body, (err, response) => {
+      API_SERVICE.post('v1/classes/add', req.body, (err, response) => {
         if (!err) {
           MiscHelper.set_error_msg(
-            { info: 'Admin berhasil ditambahkan.' },
+            { info: 'Class berhasil ditambahkan.' },
             req.sessionID
           )
           res.redirect('/classes')
@@ -146,8 +142,6 @@ exports.update = async (req, res) => {
       {},
       (err, response) => {
         if (err) console.error(err)
-        console.log('BODY CLASS UPDATE ===========')
-        console.log(req.body)
         res.render('class_update', {
           errorMsg: errorMsg,
           data: response.data[0]
@@ -155,16 +149,22 @@ exports.update = async (req, res) => {
       }
     )
   } else {
-    const classId = req.body.id
+    const classId = req.body.classid
+    const guruid = req.body.guruid
     const name = req.body.name
-    // const teacherId = req.body.id
-    // const description = req.body.description
-    // const cover = req.body.cover
-    // const priority = req.body.priority
-    // const rating = req.body.rating
-    // const nick = req.body.nick
-    // const password = req.body.newpassword
-    // const confpassword = req.body.confpassword
+    const description = req.body.description
+    const cover = req.body.cover
+    const oldCover = req.body.oldCover
+    const priority = req.body.priority
+    const rating = req.body.rating
+
+    if (!cover) {
+      console.log('Changing cover to oldCover in view-classess')
+      req.body.cover = oldCover
+    } else {
+      console.log('Not changing cover in view-classess')
+      req.body.file = cover
+    }
 
     if (!classId) {
       MiscHelper.set_error_msg(
@@ -173,25 +173,38 @@ exports.update = async (req, res) => {
       )
       res.redirect('/classes')
     } else {
-      if (!name) {
+      if (!guruid) {
+        MiscHelper.set_error_msg(
+          { error: 'Guru id wajib di isi !!!' },
+          req.sessionID
+        )
+        res.redirect('/classes/update/' + classId)
+      } else if (!name) {
         MiscHelper.set_error_msg(
           { error: 'Nama wajib di isi !!!' },
           req.sessionID
         )
         res.redirect('/classes/update/' + classId)
+      } else if (!description) {
+        MiscHelper.set_error_msg(
+          { error: 'Description wajib di isi !!!' },
+          req.sessionID
+        )
+        res.redirect('/classes/update/' + classId)
+      } else if (!priority) {
+        MiscHelper.set_error_msg(
+          { error: 'Priority wajib di isi !!!' },
+          req.sessionID
+        )
+        res.redirect('/classes/update/' + classId)
+      } else if (!rating) {
+        MiscHelper.set_error_msg(
+          { error: 'Rating wajib di isi !!!' },
+          req.sessionID
+        )
+        res.redirect('/classes/update/' + classId)
       } else {
-        // if (teacherId) {
-        //   if (password !== confpassword) {
-        //     MiscHelper.set_error_msg(
-        //       { error: 'Password dan konfimasi password tidak sesuai !!!' },
-        //       req.sessionID
-        //     )
-        //     res.redirect('/classes/update/' + classId)
-        //   }
-        //   delete req.body.confpassword
-        // }
-
-        API_SERVICE.post(
+        API_SERVICE.patch(
           'v1/classes/update/' + classId,
           req.body,
           (err, response) => {
