@@ -54,7 +54,8 @@ exports.getCourse = (req, res) => {
             item.avg_score = result[0].total_score / result[0].score_count
           }
         })
-        discussionModel.getTotalThreadCourse(req, item.courseid, (err, result) => {
+
+        discussionModel.getTotalThreadCourse(req, item.courseid, '', (err, result) => {
           if (err) console.error(err)
 
           if (_.isEmpty(result)) {

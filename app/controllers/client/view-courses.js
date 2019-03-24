@@ -46,8 +46,9 @@ exports.ajaxGet = async (req, res) => {
         async.eachSeries(
           _.result(response.data, 'data', {}),
           (item, next) => {
-            item.action = MiscHelper.getActionButtonFull(
+            item.action = MiscHelper.getActionButtonCourse(
               'courses',
+              'discussions',
               item.courseid
             )
             item.name = `<a href="courses/chapter/${item.courseid}">${item.name}</a>`

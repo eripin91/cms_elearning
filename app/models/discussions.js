@@ -1,11 +1,15 @@
 'use strict'
 
 module.exports = {
-  get: (conn, limit, offset, keyword, callback) => {
+  get: (conn, limit, offset, keyword, discussionId, callback) => {
     conn.getConnection((errConnection, connection) => {
       if (errConnection) console.error(errConnection)
 
-      connection.query(`SELECT a.discussionid, a.userid, a.courseid, c.fullname, b.name AS course, a.post_content, a.created_at, a.updated_at FROM discussion_tab a JOIN courses_tab b ON a.courseid=b.courseid JOIN users_tab c ON a.userid = c.userid WHERE a.status = 1 AND a.parent = 0 AND (b.name LIKE '%${keyword}%' OR c.fullname LIKE '%${keyword}%' OR a.post_content LIKE '%${keyword}%') ORDER BY a.discussionid DESC LIMIT ${offset},${limit}`, (err, rows) => {
+      let sql = ' AND a.parent = 0'
+      if (discussionId > 0) {
+        sql = ` AND a.parent=${discussionId}`
+      }
+      connection.query(`SELECT a.discussionid, a.userid, a.courseid, c.fullname, b.name AS course, a.post_content, a.created_at, a.updated_at FROM discussion_tab a LEFT JOIN courses_tab b ON a.courseid=b.courseid JOIN users_tab c ON a.userid = c.userid WHERE a.status = 1 AND (b.name LIKE '%${keyword}%' OR c.fullname LIKE '%${keyword}%' OR a.post_content LIKE '%${keyword}%') ${sql} ORDER BY a.discussionid DESC LIMIT ${offset},${limit}`, (err, rows) => {
         callback(err, rows)
       })
     })
@@ -59,7 +63,7 @@ module.exports = {
     conn.getConnection((errConnection, connection) => {
       if (errConnection) console.error(errConnection)
 
-      connection.query(`SELECT a.discussionid, a.userid, a.courseid, c.fullname, b.name AS course, a.post_content, a.created_at, a.updated_at FROM discussion_tab a JOIN courses_tab b ON a.courseid=b.courseid JOIN users_tab c ON a.userid = c.userid WHERE a.status = 1 AND a.parent = ?`, parentId, (err, rows) => {
+      connection.query(`SELECT a.discussionid, a.userid, a.courseid, c.fullname, b.name AS course, a.post_content, a.created_at, a.updated_at FROM discussion_tab a LEFT JOIN courses_tab b ON a.courseid=b.courseid JOIN users_tab c ON a.userid = c.userid WHERE a.status = 1 AND a.parent = ?`, parentId, (err, rows) => {
         callback(err, rows)
       })
     })
