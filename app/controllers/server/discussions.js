@@ -7,7 +7,7 @@ const redisCache = require('../../libs/RedisCache')
 exports.get = (req, res) => {
   const limit = _.result(req.query, 'limit', 10)
   const offset = _.result(req.query, 'offset', 0)
-  const keyword = _.result(req.query, 'keyword')
+  const keyword = _.result(req.query, 'keyword', '')
 
   const key = `get-thread-list-${limit}-${offset}-${keyword}`
 
@@ -68,20 +68,24 @@ exports.getThreadCourse = (req, res) => {
     return MiscHelper.errorCustomStatus(res, req.validationErrors(true))
   }
 
+  const limit = _.result(req.query, 'limit', 10)
+  const offset = _.result(req.query, 'offset', 0)
+  const keyword = _.result(req.query, 'keyword', '')
+
   const key = `get-thread-list-${req.params.courseId}`
 
   async.waterfall([
     (cb) => {
       redisCache.get(key, thread => {
-        if (thread) {
-          return MiscHelper.responses(res, thread)
+        if (_.result(thread, 'data')) {
+          return MiscHelper.responses(res, thread.data, 200, { total: thread.total })
         } else {
           cb(null)
         }
       })
     },
     (cb) => {
-      discussionsModel.getThreadCourse(req, req.params.courseId, (errThread, resultThread) => {
+      discussionsModel.getThreadCourse(req, req.params.courseId, limit, offset, keyword, (errThread, resultThread) => {
         cb(errThread, resultThread)
       })
     },
@@ -97,6 +101,15 @@ exports.getThreadCourse = (req, res) => {
         cb(err, dataThread)
       })
     },
+    (thread, cb) => {
+      discussionsModel.getTotalThreadCourse(req, req.params.courseId, keyword, (errThread, total) => {
+        const dataResult = {
+          data: thread,
+          total: total[0].total
+        }
+        cb(errThread, dataResult)
+      })
+    },
     (dataThread, cb) => {
       redisCache.setex(key, 600, dataThread)
       console.log('proccess cached')
@@ -104,7 +117,7 @@ exports.getThreadCourse = (req, res) => {
     }
   ], (errThreads, resultThreads) => {
     if (!errThreads) {
-      return MiscHelper.responses(res, resultThreads)
+      return MiscHelper.responses(res, resultThreads.data, 200, { total: resultThreads.total })
     } else {
       return MiscHelper.errorCustomStatus(res, errThreads)
     }
