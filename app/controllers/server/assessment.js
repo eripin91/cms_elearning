@@ -10,7 +10,7 @@ exports.getAssessment = (req, res) => {
   const limit = _.result(req.query, 'limit', 10)
   const offset = _.result(req.query, 'offset', 0)
   const keyword = _.result(req.query, 'keyword')
-  const key = `assessment-list:${limit}:${offset}:${keyword}`
+  const key = `assessment-list:${limit}:${offset}:${keyword}` + new Date().getTime()
 
   async.waterfall([
     (cb) => {
@@ -49,7 +49,7 @@ exports.getAssessment = (req, res) => {
     }
   ], (errAssessment, resultAssessmnet) => {
     if (!errAssessment) {
-      return MiscHelper.responses(res, resultAssessmnet)
+      return MiscHelper.responses(res, resultAssessmnet.data, 200, { total: resultAssessmnet.total })
     } else {
       return MiscHelper.errorCustomStatus(res, errAssessment, 400)
     }
@@ -81,13 +81,12 @@ exports.getAssessmentDetail = (req, res) => {
         if (_.isEmpty(resultAssessment)) {
           return MiscHelper.errorCustomStatus(res, { message: 'Assessment not found' })
         } else {
-          cb(errAssessment, resultAssessment)
+          cb(errAssessment, _.result(resultAssessment, '[0]', {}))
         }
       })
     },
     (dataAssessment, cb) => {
       redisCache.setex(key, 600, dataAssessment)
-      console.log('data cached')
       cb(null, dataAssessment)
     }
   ], (errAssessment, resultAssessment) => {

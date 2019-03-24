@@ -5,7 +5,7 @@ module.exports = {
     conn.getConnection((errConnection, connection) => {
       if (errConnection) console.error(errConnection)
 
-      connection.query(`SELECT at.assessmentid, at.parentid, c.name AS course_name, at.title, at.duration FROM assessment_tab at JOIN courses_tab c ON at.parentid = c.courseid WHERE (at.title LIKE '%${keyword}%' OR c.name LIKE '%${keyword}%') AND at.status = 1 ORDER BY at.assessmentid LIMIT ${offset}, ${limit}`, (err, rows) => {
+      connection.query(`SELECT at.assessmentid, at.parentid, c.name AS course_name, at.title, at.duration, at.created_at, at.updated_at FROM assessment_tab at LEFT JOIN courses_tab c ON at.parentid = c.courseid WHERE (at.title LIKE '%${keyword}%' OR c.name LIKE '%${keyword}%') AND at.status = 1 ORDER BY at.assessmentid LIMIT ${offset}, ${limit}`, (err, rows) => {
         callback(err, rows)
       })
     })
@@ -14,7 +14,7 @@ module.exports = {
     conn.getConnection((errConnection, connection) => {
       if (errConnection) console.error(errConnection)
 
-      connection.query(`SELECT COUNT(*) AS total FROM assessment_tab at JOIN courses_tab c ON at.parentid = c.courseid WHERE (at.title LIKE '%${keyword}%' OR c.name LIKE '%${keyword}%')`, (err, rows) => {
+      connection.query(`SELECT COUNT(*) AS total FROM assessment_tab at LEFT JOIN courses_tab c ON at.parentid = c.courseid WHERE (at.title LIKE '%${keyword}%' OR c.name LIKE '%${keyword}%')`, (err, rows) => {
         callback(err, rows)
       })
     })
@@ -23,7 +23,7 @@ module.exports = {
     conn.getConnection((errConnection, connection) => {
       if (errConnection) console.error(errConnection)
 
-      connection.query(`SELECT c.name AS course_name, at.* FROM assessment_tab at JOIN courses_tab c ON at.parentid = c.courseid WHERE assessmentid = ${assessmentId} AND at.status = 1`, (err, rows) => {
+      connection.query(`SELECT c.name AS course_name, at.* FROM assessment_tab at LEFT JOIN courses_tab c ON at.parentid = c.courseid WHERE assessmentid = ${assessmentId} AND at.status = 1`, (err, rows) => {
         callback(err, rows)
       })
     })
@@ -32,7 +32,7 @@ module.exports = {
     conn.getConnection((errConnection, connection) => {
       if (errConnection) console.error(errConnection)
 
-      connection.query(`SELECT at.assessmentid, at.title FROM assessment_tab at JOIN courses_tab c ON at.parentid = c.courseid WHERE at.parentid = ${courseId}`, (err, rows) => {
+      connection.query(`SELECT at.assessmentid, at.title FROM assessment_tab at LEFT JOIN courses_tab c ON at.parentid = c.courseid WHERE at.parentid = ${courseId}`, (err, rows) => {
         callback(err, rows)
       })
     })
