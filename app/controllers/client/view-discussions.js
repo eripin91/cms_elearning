@@ -20,6 +20,19 @@ exports.main = async (req, res) => {
 }
 
 /*
+*   GET : '/detail/:discussionId'
+*
+*   @desc Get Discussion
+*/
+exports.detail = async (req, res) => {
+  const discussionId = req.params.discussionId
+  API_SERVICE.get('v1/discussions/get/detail/' + discussionId, { }, (err, response) => {
+    if (err) console.error(err)
+    res.render('discussions_detail', { discussionId: discussionId, dataDiscussions: _.result(response, 'data', {}) })
+  })
+}
+
+/*
 * GET : '/ajax/get'
 *
 * @desc Ajax get thread list
@@ -31,11 +44,17 @@ exports.main = async (req, res) => {
 */
 
 exports.ajaxGet = async (req, res) => {
-  API_SERVICE.get('v1/discussions/get', { limit: _.result(req.query, 'length', 25), offset: _.result(req.query, 'start', 0), keyword: req.query.search['value'] }, (err, response) => {
+  const limit = parseFloat(_.result(req.query, 'length')) === -1 ? 1000 : _.result(req.query, 'length', 25)
+
+  API_SERVICE.get('v1/discussions/get', { limit: limit, offset: _.result(req.query, 'start', 0), keyword: req.query.search['value'], discussionId: req.query.detail }, (err, response) => {
     if (!err) {
       const dataDiscussions = []
       async.eachSeries(_.result(response, 'data', []), (item, next) => {
-        item.action = MiscHelper.getActionButton('discussions', item.discussionid)
+        if (limit === 1000) {
+          item.action = MiscHelper.getActionButton('discussions', item.discussionid)
+        } else {
+          item.action = MiscHelper.getActionButtonDiscussion('discussions', item.discussionid)
+        }
         item.created_at = moment(item.created_at).format('DD/MM/YYYY hh:mm')
         dataDiscussions.push(item)
         next()

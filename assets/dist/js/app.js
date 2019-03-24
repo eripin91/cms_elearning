@@ -884,6 +884,32 @@ function _init() {
   })
 })(jQuery)
 
+// section: discussions
+;(function($) {
+  'use strict'
+  var url = SITE_URL + $('#sTableDiscussionsDetail').attr('src')
+  $('#sTableDiscussionsDetail').DataTable({
+    processing: true,
+    serverSide: true,
+    bFilter: true,
+    ordering: false,
+    scrollX: false,
+    paging: false,
+    info: false,
+    ordering: false,
+    aaSorting: [],
+    columnDefs: [],
+    ajax: url,
+    columns: [
+      { data: 'discussionid' },
+      { data: 'fullname' },
+      { data: 'post_content' },
+      { data: 'created_at' },
+      { data: 'action' }
+    ]
+  })
+})(jQuery)
+
 // section: classes
 ;(function($) {
   'use strict'

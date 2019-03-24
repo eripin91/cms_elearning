@@ -8,8 +8,9 @@ exports.get = (req, res) => {
   const limit = _.result(req.query, 'limit', 10)
   const offset = _.result(req.query, 'offset', 0)
   const keyword = _.result(req.query, 'keyword', '')
+  const discussionId = parseInt(_.result(req.query, 'discussionId', 0))
 
-  const key = `get-thread-list-${limit}-${offset}-${keyword}`
+  const key = `get-thread-list-${limit}-${offset}-${keyword}-${discussionId}` + new Date().getTime()
 
   async.waterfall([
     (cb) => {
@@ -22,7 +23,7 @@ exports.get = (req, res) => {
       })
     },
     (cb) => {
-      discussionsModel.get(req, limit, offset, keyword, (errThread, resultThread) => {
+      discussionsModel.get(req, limit, offset, keyword, discussionId, (errThread, resultThread) => {
         cb(errThread, resultThread)
       })
     },
