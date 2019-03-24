@@ -1134,3 +1134,30 @@ function _init() {
     ]
   })
 })(jQuery)
+
+// section: assessment
+;(function($) {
+  'use strict'
+  var url = SITE_URL + $('#sTableAssessment').attr('src')
+  $('#sTableAssessment').DataTable({
+    processing: true,
+    serverSide: true,
+    bFilter: true,
+    ordering: false,
+    scrollX: false,
+    aaSorting: [],
+    pageLength: 10,
+    columnDefs: [],
+    pagingType: 'full_numbers',
+    ajax: url,
+    columns: [
+      { data: 'assessmentid' },
+      { data: 'title' },
+      { data: 'duration' },
+      { data: 'course_name' },
+      { data: 'created_at' },
+      { data: 'updated_at' },
+      { data: 'action' }
+    ]
+  })
+})(jQuery)
