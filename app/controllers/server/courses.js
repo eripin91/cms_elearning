@@ -816,6 +816,7 @@ exports.insertMaterialDetail = (req, res) => {
         created_at: new Date(),
         updated_at: new Date()
       }
+
       coursesModel.insertMaterial(req, data, (errMaterial, resultMaterial) => {
         const key = `course-material-list:*`
         redisCache.delwild(key)
@@ -866,12 +867,11 @@ exports.updateMaterial = (req, res) => {
       })
     },
     (cb) => {
-      let data = {
+      const data = {
+        name: req.body.name,
+        description: req.body.description,
+        assessmentid: req.body.assessmentid,
         updated_at: new Date()
-      }
-
-      for (let key in req.body) {
-        data[key] = req.body[key]
       }
 
       if (!_.isEmpty(dataUpload)) {
@@ -880,6 +880,7 @@ exports.updateMaterial = (req, res) => {
         data.duration = dataUpload.duration
         data.thumbnails = dataUpload.thumbnail
       }
+
       coursesModel.updateMaterial(req, data, materialId, (errUpdateMaterial, resultUpdateMaterial) => {
         redisCache.delwild(`course-material-list:*`)
         redisCache.del(`course-material-detail:${materialId}`)
