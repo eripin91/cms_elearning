@@ -344,6 +344,13 @@ exports.insertSoal = (req, res) => {
           created_at: new Date(),
           updated_at: new Date()
         }
+
+        async.eachSeries(data.options, item => {
+          if (_.isEmpty(item.isAnswer)) {
+            item.isAnswer = false
+          }
+        })
+
         assessmentModel.insertDetailAssessment(req, data, (errAssessment, resultAssessment) => {
           if (errAssessment) console.error(errAssessment)
           redisCache.delwild('detail-assessment:*')
@@ -386,6 +393,12 @@ exports.updateSoal = (req, res) => {
       for (let key in req.body) {
         data[key] = req.body[key]
       }
+
+      async.eachSeries(data.options, item => {
+        if (_.isEmpty(item.isAnswer)) {
+          item.isAnswer = false
+        }
+      })
 
       assessmentModel.updateDetailAssessment(req, detailId, data, (err, result) => {
         redisCache.delwild('detail-assessment:*')
