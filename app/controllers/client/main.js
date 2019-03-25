@@ -1,7 +1,6 @@
 'use strict'
 
 const ApiLibs = require('../../libs/API')
-const async = require('async')
 
 const API_SERVICE = ApiLibs.client({
   baseUrl: CONFIG.SERVER.BASE_WEBHOST,
