@@ -7,6 +7,7 @@ const redisCache = require('../../libs/RedisCache')
 const coursesModel = require('../../models/courses')
 const scoreModel = require('../../models/score')
 const discussionModel = require('../../models/discussions')
+const assessmentModel = require('../../models/assessment')
 
 /*
  * GET : '/courses/:courseId
@@ -46,24 +47,35 @@ exports.getCourse = (req, res) => {
     (dataCourse, cb) => {
       async.eachSeries(dataCourse, (item, next) => {
         scoreModel.getUserTotalScore(req, item.classId, (err, result) => {
-          if (err) console.error(err)
-
-          if (_.isEmpty(result)) {
+          if (_.isEmpty(result) || err) {
             item.avg_score = 0
           } else {
             item.avg_score = result[0].total_score / result[0].score_count
           }
         })
-
         discussionModel.getTotalThreadCourse(req, item.courseid, '', (err, result) => {
-          if (err) console.error(err)
-
-          if (_.isEmpty(result)) {
+          if (_.isEmpty(result) || err) {
             item.discussion = 0
           } else {
-            item.discussion = result[0].discussion
+            item.discussion = result[0].total
           }
         })
+        assessmentModel.getAssessmentDetail(req, item.preassessmentid, (err, result) => {
+          if (_.isEmpty(result) || err) {
+            item.preassessment = 'no assessment yet'
+          } else {
+            item.preassessment = result[0].title
+          }
+        })
+
+        assessmentModel.getAssessmentDetail(req, item.finalassessmentid, (err, result) => {
+          if (_.isEmpty(result) || err) {
+            item.finalassessment = 'no assessment yet'
+          } else {
+            item.finalassessment = result[0].title
+          }
+        })
+
         next()
       }, err => {
         if (err) console.error(err)
