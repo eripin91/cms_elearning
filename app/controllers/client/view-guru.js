@@ -15,7 +15,7 @@ const API_SERVICE = ApiLibs.client({
 *   @desc Get Discussion
 */
 exports.main = async (req, res) => {
-  const errorMsg = await MiscHelper.get_error_msg(req.sessionId)
+  const errorMsg = await MiscHelper.get_error_msg(req.sessionID).catch(err => console.error(err))
   res.render('guru', { errorMsg: errorMsg })
 }
 
@@ -61,7 +61,6 @@ exports.ajaxGet = async (req, res) => {
 
 exports.delete = async (req, res) => {
   const guruId = req.params.guruId
-  console.log(guruId)
   if (!guruId) {
     MiscHelper.set_error_msg({ error: 'Guru ID required !!!' }, req.sessionID)
     res.redirect('/guru')
@@ -69,6 +68,7 @@ exports.delete = async (req, res) => {
     API_SERVICE.get('v1/guru/delete/' + guruId, {}, (err, response) => {
       if (err) {
         MiscHelper.set_error_msg({ error: err.message }, req.sessionID)
+        res.redirect('/guru')
       } else {
         MiscHelper.set_error_msg({ info: 'Guru berhasil dihapus.' }, req.sessionID)
         res.redirect('/guru')
@@ -89,54 +89,37 @@ exports.delete = async (req, res) => {
  */
 exports.update = async (req, res) => {
   if (_.isEmpty(req.body)) {
-    const errorMsg = await MiscHelper.get_error_msg(req.sessionID)
-    API_SERVICE.get(
-      'v1/guru/get/' + req.params.guruId,
-      {},
-      (err, response) => {
-        if (err) console.error(err)
-        res.render('guru_update', { errorMsg: errorMsg, data: response.data })
-
-        console.log(response.data)
-      }
-    )
+    const errorMsg = await MiscHelper.get_error_msg(req.sessionID).catch(err => console.error(err))
+    API_SERVICE.get('v1/guru/get/' + req.params.guruId, {}, (err, response) => {
+      if (err) console.error(err)
+      res.render('guru_update', { errorMsg: errorMsg, data: response.data })
+    })
   } else {
     const guruId = req.body.guruId
     const fullname = req.body.fullname
     const description = req.body.description
-
-    console.log(req.body)
+    const profilePicture = req.body.profile_picture
 
     if (!guruId) {
-      MiscHelper.set_error_msg(
-        { error: 'Kesalahan input data !!!' },
-        req.sessionID
-      )
+      MiscHelper.set_error_msg({ error: 'Kesalahan input data !!!' }, req.sessionID)
       res.redirect('/guru')
     } else {
       if (!fullname && !description) {
-        MiscHelper.set_error_msg(
-          { error: 'Fullname & Description wajib di isi !!!' },
-          req.sessionID
-        )
+        MiscHelper.set_error_msg({ error: 'Fullname & Description wajib di isi !!!' }, req.sessionID)
+        res.redirect('/guru/update/' + guruId)
+      } else if (!profilePicture) {
+        MiscHelper.set_error_msg({ error: 'Foto wajib di isi !!!' }, req.sessionID)
         res.redirect('/guru/update/' + guruId)
       } else {
-        API_SERVICE.patch(
-          'v1/guru/update/' + guruId,
-          req.body,
-          (err, response) => {
-            if (!err) {
-              MiscHelper.set_error_msg(
-                { info: 'Guru berhasil diubah.' },
-                req.sessionID
-              )
-              res.redirect('/guru')
-            } else {
-              MiscHelper.set_error_msg({ error: err.message }, req.sessionID)
-              res.redirect('/guru/update/' + guruId)
-            }
+        API_SERVICE.patch('v1/guru/update/' + guruId, req.body, (err, response) => {
+          if (!err) {
+            MiscHelper.set_error_msg({ info: 'Guru berhasil diubah.' }, req.sessionID)
+            res.redirect('/guru')
+          } else {
+            MiscHelper.set_error_msg({ error: err.message }, req.sessionID)
+            res.redirect('/guru/update/' + guruId)
           }
-        )
+        })
       }
     }
   }
@@ -153,28 +136,27 @@ exports.update = async (req, res) => {
  */
 exports.add = async (req, res) => {
   if (_.isEmpty(req.body)) {
-    const errorMsg = await MiscHelper.get_error_msg(req.sessionID)
+    const errorMsg = await MiscHelper.get_error_msg(req.sessionID).catch(err => console.error(err))
     res.render('guru_add', { errorMsg: errorMsg })
   } else {
     const fullname = req.body.fullname
     const description = req.body.description
+    const profilePicture = req.body.profile_picture
 
     if (!fullname && !description) {
-      MiscHelper.set_error_msg(
-        { error: 'Data yang anda masukkan tidak lengkap !!!' },
-        req.sessionID
-      )
+      MiscHelper.set_error_msg({ error: 'Data yang anda masukkan tidak lengkap !!!' }, req.sessionID)
+      res.redirect('/guru/add')
+    } else if (!profilePicture) {
+      MiscHelper.set_error_msg({ error: 'Foto wajib di isi !!!' }, req.sessionID)
       res.redirect('/guru/add')
     } else {
+      delete req.body.file
       API_SERVICE.post('v1/guru/add', req.body, (err, response) => {
         if (!err) {
-          MiscHelper.set_error_msg(
-            { info: 'Guru berhasil ditambahkan.' },
-            req.sessionID
-          )
+          MiscHelper.set_error_msg({ info: 'Guru berhasil ditambahkan.' }, req.sessionID)
           res.redirect('/guru')
         } else {
-          MiscHelper.set_error_msg({ error: response.message }, req.sessionID)
+          MiscHelper.set_error_msg({ error: _.result(response, 'message') }, req.sessionID)
           res.redirect('/guru/add')
         }
       })

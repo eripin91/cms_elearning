@@ -23,7 +23,7 @@ module.exports = {
     conn.getConnection((errConnection, connection) => {
       if (errConnection) console.error(errConnection)
 
-      connection.query(`SELECT a.classid, a.guruid, b.courseid, c.fullname As guru, a.name AS class_name, b.name AS course_name, a.description, a.cover, a.priority, a.rating, a.created_at, b.updated_at FROM classes_tab a LEFT JOIN courses_tab b on a.classid=b.classid LEFT JOIN guru_tab c on a.guruid=c.guruid WHERE a.status = 1 AND a.classid = ?`, classId, (err, rows) => {
+      connection.query(`SELECT a.classid, a.guruid, b.courseid, c.fullname As guru, a.name AS class_name, b.name AS course_name, a.description, a.cover, a.cover_medium, a.cover_thumb, a.priority, a.rating, a.created_at, b.updated_at FROM classes_tab a LEFT JOIN courses_tab b on a.classid=b.classid LEFT JOIN guru_tab c on a.guruid=c.guruid WHERE a.status = 1 AND a.classid = ?`, classId, (err, rows) => {
         callback(err, rows)
       })
     })
