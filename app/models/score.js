@@ -15,7 +15,7 @@ module.exports = {
       if (errConnection) console.error('course not found')
 
       connection.query(`SELECT COUNT(*) AS score_count, (SELECT SUM(score) FROM users_scores_tab WHERE type = 'class' AND parentid = ${classId}) AS total_score FROM users_scores_tab WHERE type = 'class' AND parentid = ${classId}`, (err, rows) => {
-        if (err) console.error('course not found')
+        if (err) err = 0
         callback(null, rows)
       })
     })

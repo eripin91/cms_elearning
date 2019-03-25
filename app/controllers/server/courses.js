@@ -7,6 +7,7 @@ const redisCache = require('../../libs/RedisCache')
 const coursesModel = require('../../models/courses')
 const scoreModel = require('../../models/score')
 const discussionModel = require('../../models/discussions')
+const assessmentModel = require('../../models/assessment')
 
 /*
  * GET : '/courses/:courseId
@@ -46,23 +47,35 @@ exports.getCourse = (req, res) => {
     (dataCourse, cb) => {
       async.eachSeries(dataCourse, (item, next) => {
         scoreModel.getUserTotalScore(req, item.classId, (err, result) => {
-          if (err) console.error(err)
-
-          if (_.isEmpty(result)) {
+          if (_.isEmpty(result) || err) {
             item.avg_score = 0
           } else {
             item.avg_score = result[0].total_score / result[0].score_count
           }
         })
         discussionModel.getTotalThreadCourse(req, item.courseid, (err, result) => {
-          if (err) console.error(err)
-
-          if (_.isEmpty(result)) {
+          if (_.isEmpty(result) || err) {
             item.discussion = 0
           } else {
             item.discussion = result[0].discussion
           }
         })
+        assessmentModel.getAssessmentDetail(req, item.preassessmentid, (err, result) => {
+          if (_.isEmpty(result) || err) {
+            item.preassessment = 'no assessment yet'
+          } else {
+            item.preassessment = result[0].title
+          }
+        })
+
+        assessmentModel.getAssessmentDetail(req, item.finalassessmentid, (err, result) => {
+          if (_.isEmpty(result) || err) {
+            item.finalassessment = 'no assessment yet'
+          } else {
+            item.finalassessment = result[0].title
+          }
+        })
+
         next()
       }, err => {
         if (err) console.error(err)
@@ -77,6 +90,43 @@ exports.getCourse = (req, res) => {
           total: total[0].total
         }
         cb(errCourse, data)
+      })
+    },
+    (dataCourse, cb) => {
+      redisCache.setex(key, 600, dataCourse)
+      console.log('data cached')
+      cb(null, dataCourse)
+    }
+  ], (errCourse, resultCourse) => {
+    if (!errCourse) {
+      return MiscHelper.responses(res, resultCourse)
+    } else {
+      return MiscHelper.errorCustomStatus(res, errCourse, 400)
+    }
+  })
+}
+
+exports.getAllCourses = (req, res) => {
+  const key = `courses-list-all`
+
+  async.waterfall([
+    (cb) => {
+      redisCache.get(key, courses => {
+        if (courses) {
+          return MiscHelper.responses(res, courses)
+        } else {
+          cb(null)
+        }
+      })
+    },
+    (cb) => {
+      coursesModel.getAllCourse(req, (err, result) => {
+        console.log(result)
+        if (_.isEmpty(result) || err) {
+          return MiscHelper.errorCustomStatus(res, { message: 'not courses found' })
+        } else {
+          cb(err, result)
+        }
       })
     },
     (dataCourse, cb) => {

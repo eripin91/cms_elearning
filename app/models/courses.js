@@ -18,6 +18,16 @@ module.exports = {
       })
     })
   },
+  getAllCourse: (conn, callback) => {
+    conn.getConnection((errConnection, connection) => {
+      if (errConnection) console.error(errConnection)
+
+      connection.query(`SELECT courseid, name FROM courses_tab WHERE status = 1`, (err, rows) => {
+        console.log(rows)
+        callback(err, rows)
+      })
+    })
+  },
   getCourseDetail: (conn, id, callback) => {
     conn.getConnection((errConnection, connection) => {
       if (errConnection) console.error(errConnection)
