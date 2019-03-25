@@ -383,36 +383,10 @@ exports.updateSoal = (req, res) => {
       let data = {
         updated_at: new Date()
       }
-      let option = []
       for (let key in req.body) {
         data[key] = req.body[key]
       }
-      console.log(data)
-      for (let i = 1; i < 5; i++) {
-        let _id = _.result(data, '_id' + i)
-        let isAnswer = _.result(data, 'isAnswer' + i)
-        let label = _.result(data, 'label' + i)
 
-        if (!_.isEmpty(_id) && !_.isEmpty(isAnswer) && !_.isEmpty(label)) {
-          if (isAnswer === 'false') {
-            isAnswer = undefined
-          }
-
-          let answer = {
-            _id: Number(_id),
-            isAnswer: Boolean(isAnswer),
-            label: label
-          }
-
-          option.push(answer)
-        }
-      }
-      data = _.pick(data, ['question', 'answer', 'status', 'question_type', 'updated_at'])
-      if (!_.isEmpty(option)) {
-        data.options = JSON.stringify(option, null, 4)
-      }
-
-      console.log(data)
       assessmentModel.updateDetailAssessment(req, detailId, data, (err, result) => {
         redisCache.delwild('detail-assessment:*')
         redisCache.del(`detail-assessment:${detailId}`)
