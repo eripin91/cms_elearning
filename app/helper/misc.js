@@ -136,6 +136,19 @@ module.exports = {
     }
     return res
   },
+  convertDuration: (duration) => {
+    let minutes = Math.floor(duration / 60)
+    let second = duration - (minutes * 60)
+    duration = minutes + ':' + second
+    return duration
+  },
+  sizeCount: (bytes) => {
+    var sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB']
+    if (bytes === 0) return 'n/a'
+    var i = parseInt(Math.floor(Math.log(bytes) / Math.log(1024)))
+    if (i === 0) return bytes + ' ' + sizes[i]
+    return (bytes / Math.pow(1024, i)).toFixed(1) + ' ' + sizes[i]
+  },
   get_error_msg: async (sesId) => {
     const data = await redisCache.v2_get(`__msg${sesId}`).catch(err => console.error(err))
     if (!data) return ''

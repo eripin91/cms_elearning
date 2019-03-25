@@ -54,7 +54,7 @@ exports.uploadAws = (req, res, next) => {
       },
       (dataUpload, cb) => {
         if (_.isEmpty(dataUpload)) {
-          return MiscHelper.errorCustomStatus('Tidak ada file upload')
+          return MiscHelper.errorCustomStatus(res, 'Tidak ada file upload', 400)
         } else {
           dataUpload.thumbnail = dataUpload.key + 'screenshot.jpg'
           ffmpeg(dataUpload.fileUrl)
