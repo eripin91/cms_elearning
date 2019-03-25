@@ -25,24 +25,15 @@
                     </div>
                     <!-- /.box-header -->
                     <!-- form start -->
-                    <form class="form-horizontal"
-                        action="{{ site_url_two_params 'courses/chapter/update/' courseId chapterId }}" method="post">
-                        <input type="hidden" name="detailid" value="{{ data.detailid }}">
+                    <form class="form-horizontal" action="{{ url_params_inside_string chapterId '/add' }}" method="post"
+                        enctype="multipart/form-data">
+                        <input type="hidden" name="detailid" value="{{ chapterId }}">
                         <div class="box-body">
                             <div class="form-group">
                                 <label for="Name" class="col-sm-2 control-label">Name</label>
 
                                 <div class="col-sm-10">
-                                    <input type="text" name="name" class="form-control" id="Name" placeholder="Name"
-                                        value="{{ data.name }}">
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label for="assessmentid" class="col-sm-2 control-label">Assessment Id</label>
-
-                                <div class="col-sm-10">
-                                    <input type="number" name="assessmentid" class="form-control" id="assessmentid"
-                                        placeholder="Assessment Id" value="{{ data.assessmentid }}">
+                                    <input type="text" name="name" class="form-control" id="Name" placeholder="Name">
                                 </div>
                             </div>
                             <div class="form-group">
@@ -50,26 +41,16 @@
 
                                 <div class="col-sm-10">
                                     <input type="text" name="description" class="form-control" id="Description"
-                                        placeholder="Description" value="{{ data.description }}">
+                                        placeholder="Description">
                                 </div>
                             </div>
                             <div class="form-group">
-                                <label for="VideoURL" class="col-sm-2 control-label">Video URL</label>
+                                <label for="Video" class="col-sm-2 control-label">Video</label>
 
                                 <div class="col-sm-10">
-                                    <input type="text" name="video_url" class="form-control" id="VideoURL"
-                                        placeholder="Video URL" value="{{ data.video_url }}">
+                                    <input type="file" name="file" class="form-control" id="Video">
                                 </div>
                             </div>
-                            <div class="form-group">
-                                <label for="Thumbnails" class="col-sm-2 control-label">Thumbnails</label>
-
-                                <div class="col-sm-10">
-                                    <input type="text" name="thumbnails" class="form-control" id="Thumbnails"
-                                        placeholder="Thumbnails" value="{{ data.thumbnails }}">
-                                </div>
-                            </div>
-
                         </div>
                         <!-- /.box-body -->
                         <div class=" box-footer">

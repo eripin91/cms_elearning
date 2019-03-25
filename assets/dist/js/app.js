@@ -762,6 +762,11 @@ function _init() {
     var button = $($.AdminLTE.boxWidget.selectors.remove, this)
     $.AdminLTE.boxWidget.remove(button)
   }
+  $(document).ready(function(){
+    if ($('#editorPage').length > 0) {
+      CKEDITOR.replace( 'editorPage' )
+    }
+  })
 })(jQuery)
 
 /*
@@ -879,6 +884,32 @@ function _init() {
   })
 })(jQuery)
 
+// section: discussions
+;(function($) {
+  'use strict'
+  var url = SITE_URL + $('#sTableDiscussionsDetail').attr('src')
+  $('#sTableDiscussionsDetail').DataTable({
+    processing: true,
+    serverSide: true,
+    bFilter: true,
+    ordering: false,
+    scrollX: false,
+    paging: false,
+    info: false,
+    ordering: false,
+    aaSorting: [],
+    columnDefs: [],
+    ajax: url,
+    columns: [
+      { data: 'discussionid' },
+      { data: 'fullname' },
+      { data: 'post_content' },
+      { data: 'created_at' },
+      { data: 'action' }
+    ]
+  })
+})(jQuery)
+
 // section: classes
 ;(function($) {
   'use strict'
@@ -934,34 +965,6 @@ function _init() {
       { data: 'nick' },
       { data: 'created_at' },
       { data: 'status' },
-      { data: 'action' }
-    ]
-  })
-})(jQuery)
-
-// section: courses
-;(function($) {
-  'use strict'
-  var url = SITE_URL + $('#sTableUsersScore').attr('src')
-  $('#sTableUsersScore').DataTable({
-    processing: true,
-    serverSide: true,
-    bFilter: true,
-    ordering: false,
-    scrollX: false,
-    aaSorting: [],
-    pageLength: 10,
-    columnDefs: [],
-    pagingType: 'full_numbers',
-    ajax: url,
-    columns: [
-      { data: 'userid' },
-      { data: 'ranking' },
-      { data: 'score' },
-      { data: 'email' },
-      { data: 'fullname' },
-      { data: 'phone' },
-      { data: 'created_at' },
       { data: 'action' }
     ]
   })
@@ -1077,6 +1080,83 @@ function _init() {
       { data: 'fullname' },
       { data: 'phone' },
       { data: 'created_at' },
+      { data: 'action' }
+    ]
+  })
+})(jQuery)
+
+// section: Guru
+;(function($) {
+  'use strict'
+  var url = SITE_URL + $('#sTableGuru').attr('src')
+  $('#sTableGuru').DataTable({
+    processing: true,
+    serverSide: true,
+    bFilter: true,
+    ordering: false,
+    scrollX: false,
+    aaSorting: [],
+    pageLength: 10,
+    columnDefs: [],
+    pagingType: 'full_numbers',
+    ajax: url,
+    columns: [
+      { data: 'guruid' },
+      { data: 'profile_picture' },
+      { data: 'fullname' },
+      { data: 'description' },
+      { data: 'created_at' },
+      { data: 'action' }
+    ]
+  })
+})(jQuery)
+
+// section: pages
+;(function($) {
+  'use strict'
+  var url = SITE_URL + $('#sTablePages').attr('src')
+  $('#sTablePages').DataTable({
+    processing: true,
+    serverSide: true,
+    bFilter: true,
+    ordering: false,
+    scrollX: false,
+    aaSorting: [],
+    pageLength: 10,
+    columnDefs: [],
+    pagingType: 'full_numbers',
+    ajax: url,
+    columns: [
+      { data: 'pageid' },
+      { data: 'ptitle' },
+      { data: 'updated_date' },
+      { data: 'action' }
+    ]
+  })
+})(jQuery)
+
+// section: assessment
+;(function($) {
+  'use strict'
+  var url = SITE_URL + $('#sTableAssessment').attr('src')
+  $('#sTableAssessment').DataTable({
+    processing: true,
+    serverSide: true,
+    bFilter: true,
+    ordering: false,
+    scrollX: false,
+    aaSorting: [],
+    pageLength: 10,
+    columnDefs: [],
+    pagingType: 'full_numbers',
+    ajax: url,
+    columns: [
+      { data: 'assessmentid' },
+      { data: 'title' },
+      { data: 'duration' },
+      { data: 'course_name' },
+      { data: 'created_at' },
+      { data: 'updated_at' },
       { data: 'action' }
     ]
   })

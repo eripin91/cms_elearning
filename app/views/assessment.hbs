@@ -3,12 +3,12 @@
   <!-- Content Header (Page header) -->
   <section class="content-header">
     <h1>
-      Users
-      <small>Users</small>
+      Assessment
+      <small>Assessment</small>
     </h1>
     <ol class="breadcrumb">
       <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
-      <li class="active"><a href="#">Users</a></li>
+      <li class="active"><a href="#">Assessment</a></li>
     </ol>
   </section>
 
@@ -18,24 +18,26 @@
       <div class="col-xs-12">
         <div class="box">
           <div class="box-header">
-            <h3 class="box-title">Users</h3>
+            <h3 class="box-title">Assessment</h3>
           </div>
           <!-- /.box-header -->
           <div class="box-body">
             {{{ errorMsg }}}
 
             <div class="box-header">
+              <h3 class="box-title">
+                <a href="{{ site_url 'assessment/add' }}" class="btn btn-default"><i class="fa fa-plus"></i> Add Assessment</a>
+              </h3>
             </div>
-            <table id="sTableUsers" class="table table-bordered table-striped"
-              src="users/ajax/get?classid={{data.classid}}">
+            <table id="sTableAssessment" class="table table-bordered table-striped" src="assessment/ajax/get">
               <thead>
                 <tr>
-                  <th>UserId</th>
-                  <th>Email</th>
-                  <th>Full Name</th>
-                  <th>Phone</th>
-                  <th>Confirmation</th>
-                  <th>Register Date</th>
+                  <th>AssessmentId</th>
+                  <th>Title</th>
+                  <th>Duration</th>
+                  <th>Course</th>
+                  <th>Created Date</th>
+                  <th>Updated Date</th>
                   <th>Action</th>
                 </tr>
               </thead>
@@ -43,12 +45,12 @@
               </tbody>
               <tfoot>
                 <tr>
-                  <th>UserId</th>
-                  <th>Email</th>
-                  <th>Full Name</th>
-                  <th>Phone</th>
-                  <th>Confirmation</th>
-                  <th>Register Date</th>
+                  <th>AssessmentId</th>
+                  <th>Title</th>
+                  <th>Duration</th>
+                  <th>Couse</th>
+                  <th>Created Date</th>
+                  <th>Updated Date</th>
                   <th>Action</th>
                 </tr>
               </tfoot>

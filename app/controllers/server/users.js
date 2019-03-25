@@ -20,7 +20,7 @@ exports.get = (req, res) => {
   const offset = _.result(req.query, 'offset', 0)
   const keyword = _.result(req.query, 'keyword', '')
   const classId = parseInt(_.result(req.query, 'classId', 0))
-  const ranking = parseInt(_.result(req.query, 'ranking', false))
+  const ranking = _.result(req.query, 'ranking', false)
 
   const key = `get-user:${limit}:${offset}:${keyword}:${classId}:${ranking}` + new Date().getTime()
 
