@@ -151,9 +151,9 @@ exports.deleteGuru = (req, res) => {
 exports.insertGuru = (req, res) => {
   req.checkBody('fullname', 'fullname is required').notEmpty()
   req.checkBody('description', 'description is required').notEmpty()
-  req.checkBody('profile_picture', 'profile_picture is required').notEmpty()
-  req.checkBody('medium', 'medium is required').notEmpty()
-  req.checkBody('thumbnail', 'thumbnail is required').notEmpty()
+  req.checkBody('profile_picture', 'foto is required').notEmpty()
+  req.checkBody('profile_picture_medium', 'foto medium is required').notEmpty()
+  req.checkBody('profile_picture_thumb', 'foto thumbnail is required').notEmpty()
 
   if (req.validationErrors()) {
     return MiscHelper.errorCustomStatus(res, req.validationErrors(true))
@@ -164,8 +164,8 @@ exports.insertGuru = (req, res) => {
       const data = {
         fullname: req.body.fullname,
         profile_picture: req.body.profile_picture,
-        medium: req.body.medium,
-        thumbnail: req.body.thumbnail,
+        profile_picture_medium: req.body.profile_picture_medium,
+        profile_picture_thumb: req.body.profile_picture_thumb,
         description: req.body.description,
         status: 1,
         created_at: new Date(),
@@ -221,11 +221,12 @@ exports.updateGuru = (req, res) => {
     },
     (cb) => {
       let data = {
+        fullname: req.body.fullname,
+        profile_picture: req.body.profile_picture,
+        profile_picture_medium: req.body.profile_picture_medium,
+        profile_picture_thumb: req.body.profile_picture_thumb,
+        description: req.body.description,
         updated_at: new Date()
-      }
-
-      for (let key in req.body) {
-        data[key] = req.body[key]
       }
 
       guruModel.updateGuru(req, data, req.params.guruId, (errUpdate, resultUpdate) => {

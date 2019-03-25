@@ -3,7 +3,7 @@
     <!-- Content Header (Page header) -->
     <section class="content-header">
       <h1>
-        Admin
+        Guru
         <small>Add Guru</small>
       </h1>
       <ol class="breadcrumb">
@@ -26,12 +26,15 @@
             <!-- /.box-header -->
             <!-- form start -->
             <form class="form-horizontal" action="{{ site_url 'guru/add' }}" method="post">
+            <input type="hidden" name="profile_picture" value="">
+            <input type="hidden" name="profile_picture_medium" value="">
+            <input type="hidden" name="profile_picture_thumb" value="">
             
               <div class="box-body">
                
 
                 <div class="form-group">
-                  <label for="Nick" class="col-sm-2 control-label">Full Name</label>
+                  <label for="fullname" class="col-sm-2 control-label">Full Name</label>
 
                   <div class="col-sm-10">
                     <input type="text" name="fullname" class="form-control" id="fullname" placeholder="Full Name">
@@ -39,10 +42,17 @@
                 </div>
 
                 <div class="form-group">
-                  <label for="Nick" class="col-sm-2 control-label">Description</label>
+                  <label for="Description" class="col-sm-2 control-label">Description</label>
 
                   <div class="col-sm-10">
-                    <input type="text" name="description" class="form-control" id="description" placeholder="Description">
+                    <textarea rows="4" class="form-control" id="description" name="description"></textarea>
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label for="Photo" class="col-sm-2 control-label">Photo</label>
+                  <div class="col-sm-10"><input id="uploadPhoto" name="file" type="file" url-upload="/v1/upload/photo" accept="image/*" />
+                  <img id="imageUpload" style="width: 200px" />
                   </div>
                 </div>
 
