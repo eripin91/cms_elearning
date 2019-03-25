@@ -50,6 +50,15 @@ module.exports = {
       })
     })
   },
+  getAllClass: (conn, callback) => {
+    conn.getConnection((errConnection, connection) => {
+      if (errConnection) console.error(errConnection)
+
+      connection.query(`SELECT classid, name FROM classes_tab WHERE status = 1`, (err, rows) => {
+        callback(err, rows)
+      })
+    })
+  },
   updateClass: (conn, data, classId, callback) => {
     conn.getConnection((errConnection, connection) => {
       if (errConnection) console.error(errConnection)
