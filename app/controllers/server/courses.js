@@ -53,11 +53,11 @@ exports.getCourse = (req, res) => {
             item.avg_score = result[0].total_score / result[0].score_count
           }
         })
-        discussionModel.getTotalThreadCourse(req, item.courseid, (err, result) => {
+        discussionModel.getTotalThreadCourse(req, item.courseid, '', (err, result) => {
           if (_.isEmpty(result) || err) {
             item.discussion = 0
           } else {
-            item.discussion = result[0].discussion
+            item.discussion = result[0].total
           }
         })
         assessmentModel.getAssessmentDetail(req, item.preassessmentid, (err, result) => {
