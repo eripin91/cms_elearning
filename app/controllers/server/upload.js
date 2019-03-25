@@ -101,6 +101,7 @@ exports.uploadAws = (req, res, next) => {
 }
 
 exports.uploadImage = (req, res) => {
+  console.log(req.file)
   async.waterfall([
     (cb) => {
       singleUpload(req, res, err => {
@@ -187,7 +188,7 @@ exports.uploadImage = (req, res) => {
                       fs.unlinkSync(filePath)
                       dataImage.thumbnail = result.Location
                       const data = {
-                        cover: dataImage.location,
+                        original: dataImage.location,
                         medium: dataImage.medium,
                         thumbnail: dataImage.thumbnail
                       }

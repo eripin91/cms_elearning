@@ -119,6 +119,11 @@ exports.getDetail = (req, res) => {
 
 exports.updateClass = (req, res) => {
   req.checkParams('classId', 'classId is required').notEmpty().isInt()
+  req.checkBody('name', 'name is required').notEmpty()
+  req.checkBody('description', 'description is required').notEmpty()
+  req.checkBody('cover', 'cover is required').notEmpty()
+  req.checkBody('cover_medium', 'over medium is required').notEmpty()
+  req.checkBody('cover_thumb', 'cover thumbnail is required').notEmpty()
 
   if (req.validationErrors()) {
     return MiscHelper.errorCustomStatus(res, req.validationErrors(true))
@@ -135,12 +140,14 @@ exports.updateClass = (req, res) => {
       })
     },
     (cb) => {
-      let data = {
+      const data = {
+        name: req.body.name,
+        description: req.body.description,
+        cover: req.body.cover,
+        cover_medium: req.body.cover_medium,
+        cover_thumb: req.body.cover_thumb,
+        priority: req.body.priority,
         updated_at: new Date()
-      }
-
-      for (let key in req.body) {
-        data[key] = req.body[key]
       }
 
       classesModel.updateClass(req, data, req.params.classId, (err, result) => {
@@ -175,12 +182,12 @@ exports.deleteClass = (req, res) => {
 }
 
 exports.insertClassUltimate = (req, res) => {
-  req.checkBody('guruId', 'guruId is required').notEmpty().isInt()
+  req.checkBody('guruid', 'guruId is required').notEmpty().isInt()
   req.checkBody('name', 'name is required').notEmpty()
   req.checkBody('description', 'description is required').notEmpty()
   req.checkBody('cover', 'cover is required').notEmpty()
-  req.checkBody('medium', 'medium is required').notEmpty()
-  req.checkBody('thumbnail', 'thumbnail is required').notEmpty()
+  req.checkBody('cover_medium', 'over medium is required').notEmpty()
+  req.checkBody('cover_thumb', 'cover thumbnail is required').notEmpty()
   req.checkBody('priority', 'priority is required').notEmpty().isInt()
 
   if (req.validationErrors()) {
@@ -188,14 +195,14 @@ exports.insertClassUltimate = (req, res) => {
   }
 
   async.waterfall([
-    (dataFile, cb) => {
+    (cb) => {
       const data = {
-        guruid: req.body.guruId,
+        guruid: req.body.guruid,
         name: req.body.name,
         description: req.body.description,
         cover: req.body.cover,
-        medium: req.body.medium,
-        thumbnail: req.body.thumbnail,
+        cover_medium: req.body.cover_medium,
+        cover_thumb: req.body.cover_thumb,
         priority: req.body.priority,
         rating: 0,
         status: 1,

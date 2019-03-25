@@ -125,6 +125,17 @@ module.exports = {
     let action = `<a href="${urlPrefix}/get/${id}">${course}</a>`
     return action
   },
+  getGuru: (data, guruId) => {
+    let res = '<option value=""></option>'
+    for (let i = 0; i < data.length; ++i) {
+      if (guruId === data[i].guruid) {
+        res += `<option value="${data[i].guruid}" selected>${data[i].fullname}</option>`
+      } else {
+        res += `<option value="${data[i].guruid}">${data[i].fullname}</option>`
+      }
+    }
+    return res
+  },
   get_error_msg: async (sesId) => {
     const data = await redisCache.v2_get(`__msg${sesId}`).catch(err => console.error(err))
     if (!data) return ''
