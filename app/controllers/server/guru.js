@@ -4,7 +4,6 @@
 
 const async = require('async')
 const guruModel = require('../../models/guru')
-
 /*
  * GET : '/guru/get'
  *
@@ -106,6 +105,62 @@ exports.getDetail = (req, res) => {
     }
   })
 }
+
+/*
+ * PUT : '/update/:guruId
+ *
+ * @desc Update guru detail
+ *
+ * @param  {object} req - Parameters for request
+ * @param  {objectId} req.params.guruId - Id guru master
+ *
+ * @body  {object} req - body for request
+ * @body  {objectId} req.body.fullname - Guru fullname
+ * @body  {objectId} req.body.profile_picture - Guru picture
+ * @body  {objectId} req.body.description - Guru description
+ *
+ * @return {object} Request object
+ */
+
+// exports.updateGuru = (req, res) => {
+//   req.checkParams('guruId', 'guruId is required').notEmpty().isInt()
+
+//   if (req.validationErrors()) {
+//     return MiscHelper.errorCustomStatus(res, req.validationErrors(true))
+//   }
+
+//   async.waterfall([
+//     (cb) => {
+//       guruModel.checkDetailGuru(req, req.params.guruId, (errCheck, resultCheck) => {
+//         if (_.isEmpty(resultCheck) || errCheck) {
+//           return MiscHelper.errorCustomStatus(res, { message: 'Guru isn\'t Exist' })
+//         } else {
+//           cb(null)
+//         }
+//       })
+//     },
+//     (cb) => {
+//       let data = {
+//         updated_at: new Date()
+//       }
+
+//       for (let key in req.body) {
+//         data[key] = req.body[key]
+//       }
+
+//       guruModel.updateGuru(req, data, req.params.guruId, (err, result) => {
+//         redisCache.delwild(`get-guru-*`)
+//         cb(err, result)
+//       })
+//     }
+//   ], (errUpdate, resultUpdate) => {
+//     if (!errUpdate) {
+//       return MiscHelper.responses(res, resultUpdate)
+//     } else {
+//       return MiscHelper.errorCustomStatus(res, errUpdate)
+//     }
+//   })
+// }
 
 /*
  * DEL : '/delete/:guruId'

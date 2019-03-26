@@ -4,6 +4,8 @@ const ApiLibs = require('../../libs/API')
 const async = require('async')
 const moment = require('moment')
 const request = require('request')
+const fs = require('fs')
+
 const API_SERVICE = ApiLibs.client({
   baseUrl: CONFIG.SERVER.BASE_WEBHOST,
   headers: CONFIG.REQUEST_HEADERS

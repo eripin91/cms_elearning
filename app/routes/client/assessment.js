@@ -1,3 +1,4 @@
+
 /* global ViewAssessmentControllers */
 
 'use strict'

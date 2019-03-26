@@ -192,7 +192,7 @@ exports.update = async (req, res) => {
         API_SERVICE.post('v1/assessment/update/' + assessmentId, dataAssessment, (err, response) => {
           if (!err) {
             MiscHelper.set_error_msg({ info: 'Assessment berhasil diubah.' }, req.sessionID)
-            // res.redirect('/assessment')
+            res.redirect('/assessment')
           } else {
             MiscHelper.set_error_msg({ error: err.message }, req.sessionID)
             res.redirect('/assessment/update/' + assessmentId)

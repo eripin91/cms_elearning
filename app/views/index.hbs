@@ -21,7 +21,7 @@
           <!-- small box -->
           <div class="small-box bg-aqua">
             <div class="inner">
-              <h3>0</h3>
+              <h3>{{data.user}}</h3>
 
               <p>Users</p>
             </div>
@@ -36,7 +36,7 @@
           <!-- small box -->
           <div class="small-box bg-green">
             <div class="inner">
-              <h3>0</h3>
+              <h3>{{data.class}}</h3>
 
               <p>Classes</p>
             </div>
@@ -51,7 +51,7 @@
           <!-- small box -->
           <div class="small-box bg-yellow">
             <div class="inner">
-              <h3>0</h3>
+              <h3>{{data.course}}</h3>
 
               <p>Courses</p>
             </div>
@@ -62,22 +62,24 @@
           </div>
         </div>
         <!-- ./col -->
+
         <div class="col-lg-3 col-xs-6">
           <!-- small box -->
           <div class="small-box bg-red">
             <div class="inner">
-              <h3>0</h3>
+              <h3>{{data.discussion}}</h3>
 
-              <p>Forum</p>
+              <p>Discussion</p>
             </div>
             <div class="icon">
-              <i class="ion ion-pricetags"></i>
+              <i class="ion ion-android-forums"></i>
             </div>
-            <a href="{{ site_url 'forum' }}" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
+            <a href="{{ site_url 'discussions' }}" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
           </div>
         </div>
         <!-- ./col -->
       </div>
+      
       <!-- /.row -->
       <!-- Main row -->
       <div class="row">
