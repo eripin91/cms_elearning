@@ -828,16 +828,21 @@ function _init() {
       }
     })
   }
+})(jQuery)
 
+$(document).ready(function() {
    $("#uploadPhoto").change(function(evt){
-      evt.preventDefault();
+    evt.stopPropagation();
+    $('#loading img').show()
+    var file = $(this)
+    setTimeout(function(){
       var formData = new FormData();
-        formData.append('file', $(this).prop('files')[0]);
+        formData.append('file', file.prop('files')[0]);
        $.ajax({
           beforeSend: function(xhr) {
             xhr.setRequestHeader("Authorization", "X-COURSES-API");
           },
-           url: $(this).attr('url-upload'),
+           url: file.attr('url-upload'),
            type: 'POST',
            data: formData,
            async: false,
@@ -851,15 +856,16 @@ function _init() {
               $('input[name="profile_picture_medium"], input[name="cover_medium"]').val(response.data.medium)
               $('input[name="profile_picture_thumb"], input[name="cover_thumb"]').val(response.data.thumbnail)
               $('#imageUpload').attr('src', response.data.original)
+              $('#loading img').hide()
             } else {
               alert('Failed upload file !!!')
+              $('#loading img').hide()
             }
            }
        });
-   return false;
- });
-})(jQuery)
-
+      }, 3000);
+    });
+})
 // section: users
 ;(function($) {
   'use strict'

@@ -52,6 +52,7 @@
                 <div class="form-group">
                   <label for="Photo" class="col-sm-2 control-label">Photo</label>
                   <div class="col-sm-10"><input id="uploadPhoto" url-upload="/v1/upload/photo" type="file" name="file" accept="image/*" />
+                  <div id="loading"><img style="width: 70px;display: none" src="{{ themes_url 'img/preloader.gif' }}"></div>
                   <img id="imageUpload" style="width: 200px" src="{{ data.profile_picture }}" />
                   </div>
                 </div>
