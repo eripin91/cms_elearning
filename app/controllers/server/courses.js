@@ -395,7 +395,7 @@ exports.getDetail = (req, res) => {
   const offset = _.result(req.query, 'offset', 0)
   const keyword = _.result(req.query, 'keyword')
   const courseId = req.params.courseId
-  const key = `courses-detail-list:${limit}:${offset}:${keyword}`
+  const key = `courses-detail-list:${limit}:${offset}:${keyword}:${courseId}`
 
   async.waterfall([
     (cb) => {
@@ -670,7 +670,7 @@ exports.getMaterialList = (req, res) => {
   const offset = _.result(req.query, 'offset', 0)
   const keyword = _.result(req.query, 'keyword')
   const detailId = req.params.detailId
-  const key = `course-material-list:${limit}:${offset}:${keyword}`
+  const key = `course-material-list:${limit}:${offset}:${keyword}:${detailId}`
 
   async.waterfall([
     (cb) => {
