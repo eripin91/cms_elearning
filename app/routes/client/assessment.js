@@ -12,5 +12,7 @@ Route
   .post('/add', ViewAssessmentControllers.add)
   .get('/update/:assessmentId', ViewAssessmentControllers.update)
   .post('/update', ViewAssessmentControllers.update)
+  .get('/question/:assessmentId', ViewAssessmentControllers.questionsList)
+  .post('/question/add', ViewAssessmentControllers.questionsList)
 
 module.exports = Route

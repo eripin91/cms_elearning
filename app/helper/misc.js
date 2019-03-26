@@ -97,6 +97,12 @@ module.exports = {
     action += ' <a href="' + urlPrefix + '/' + 'delete/' + id + '" onclick="return confirm(\'Are you sure you want to delete this item?\');"><i class="fa fa-times"></i></a>'
     return action
   },
+  getActionButtonAssessment: (urlPrefix, urlQuestion, id) => {
+    let action = '<a href="' + urlPrefix + '/' + 'update/' + id + '"><i class="fa fa-pencil"></i></a>'
+    action += ' <a href="' + urlPrefix + '/' + 'delete/' + id + '" onclick="return confirm(\'Are you sure you want to delete this item?\');"><i class="fa fa-times"></i></a>'
+    action += ` <a href="${urlPrefix}/${urlQuestion}/${id}" alt="Add Question"><i class="fa fa-clipboard"></i></a>`
+    return action
+  },
   getActionButtonCourse: (urlPrefix, urlThread, id) => {
     let action = '<a href="' + urlPrefix + '/' + 'update/' + id + '"><i class="fa fa-pencil"></i></a>'
     action += ' <a href="' + urlPrefix + '/' + 'delete/' + id + '" onclick="return confirm(\'Are you sure you want to delete this item?\');"><i class="fa fa-times"></i></a>'
@@ -164,7 +170,7 @@ module.exports = {
     return resE
   },
   getPhoto: (imgUrl) => {
-    let image = `<img src="${imgUrl}" height="42" width="42">`
+    let image = `<img src="${imgUrl}" height="150" width="150">`
     return image
   }
 }
