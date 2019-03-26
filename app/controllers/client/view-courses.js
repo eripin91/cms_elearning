@@ -3,6 +3,8 @@
 const ApiLibs = require('../../libs/API')
 const async = require('async')
 const moment = require('moment')
+const request = require('request')
+// const rp = require('request-promise')
 
 const API_SERVICE = ApiLibs.client({
   baseUrl: CONFIG.SERVER.BASE_WEBHOST,
@@ -137,14 +139,36 @@ exports.add = async (req, res) => {
 exports.update = async (req, res) => {
   if (_.isEmpty(req.body)) {
     const errorMsg = await MiscHelper.get_error_msg(req.sessionID)
-    API_SERVICE.get(
-      'v1/courses/' + req.params.courseId,
-      {},
-      (err, response) => {
-        if (err) console.error(err)
-        res.render('course_update', { errorMsg: errorMsg, data: response.data })
+    // url: CONFIG.SERVER.BASE_WEBHOST + '/v1/courses?keyword',
+    const options = {
+      url: CONFIG.SERVER.BASE_WEBHOST + 'v1/classes/get?keyword=&limit=50',
+      headers: CONFIG.REQUEST_HEADERS
+    }
+    async.waterfall([
+      cb => {
+        request(options, function (error, response, body) {
+          if (error) {
+            console.log('ERROR GET SINGLE COURSE')
+          }
+          // console.log('BODY RESPONSE')
+          // console.log(typeof body)
+          // console.log(JSON.parse(body).data)
+          cb(null, JSON.parse(body).data)
+        })
+      },
+      (classList, cb) => {
+        API_SERVICE.get(
+          'v1/courses/' + req.params.courseId,
+          {},
+          (err, response) => {
+            if (err) console.error(err)
+            console.log('RESPONSE : ')
+            console.log(response.data)
+            res.render('course_update', { errorMsg: errorMsg, data: response.data, classList, prevClassId: response.data.classid })
+          }
+        )
       }
-    )
+    ])
   } else {
     const courseId = req.body.courseid
     const classid = req.body.classid

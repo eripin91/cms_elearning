@@ -29,11 +29,17 @@
                         <input type="hidden" name="courseid" value="{{ data.courseid }}">
                         <div class="box-body">
                             <div class="form-group">
-                                <label for="classId" class="col-sm-2 control-label">Class Id</label>
-
+                                <label for="classId" class="col-sm-2 control-label">Class</label>
                                 <div class="col-sm-10">
-                                    <input type="number" name="classid" class="form-control" id="classId"
-                                        placeholder="Class Id" value="{{ data.classid }}">
+
+                                    <select name="classid" id="classId" class="form-control">
+                                        {{#each classList}}
+                                        <option value="{{ classid }}" {{#if_cond classid ../prevClassId}} selected
+                                            {{ else }} {{/if_cond}}>
+                                            {{ class_name }}
+                                        </option>
+                                        {{/each}}
+                                    </select>
                                 </div>
                             </div>
                             <div class="form-group">
@@ -45,7 +51,8 @@
                                 </div>
                             </div>
                             <div class="form-group">
-                                <label for="PreAssessmentId" class="col-sm-2 control-label">Pre Assessment Id</label>
+                                <label for="PreAssessmentId" class="col-sm-2 control-label">Pre Assessment
+                                    Id</label>
 
                                 <div class="col-sm-10">
                                     <input type="number" name="preassessmentid" class="form-control"
