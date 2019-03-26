@@ -5,7 +5,16 @@ module.exports = {
     conn.getConnection((errConnection, connection) => {
       if (errConnection) console.error(errConnection)
 
-      connection.query(`SELECT at.assessmentid, at.parentid, c.name AS course_name, at.title, at.duration FROM assessment_tab at JOIN courses_tab c ON at.parentid = c.courseid WHERE (at.title LIKE '%${keyword}%' OR c.name LIKE '%${keyword}%') AND at.status = 1 ORDER BY at.assessmentid LIMIT ${offset}, ${limit}`, (err, rows) => {
+      connection.query(`SELECT at.assessmentid, at.parentid, c.name AS course_name, at.title, at.duration, at.created_at, at.updated_at FROM assessment_tab at LEFT JOIN courses_tab c ON at.parentid = c.courseid WHERE (at.title LIKE '%${keyword}%' OR c.name LIKE '%${keyword}%') AND at.status = 1 ORDER BY at.assessmentid LIMIT ${offset}, ${limit}`, (err, rows) => {
+        callback(err, rows)
+      })
+    })
+  },
+  getAssessmentSelect: (conn, callback) => {
+    conn.getConnection((errConnection, connection) => {
+      if (errConnection) console.error(errConnection)
+
+      connection.query(`SELECT assessmentid as id, title FROM assessment_tab WHERE status=1 AND parentid=0`, (err, rows) => {
         callback(err, rows)
       })
     })
@@ -14,7 +23,7 @@ module.exports = {
     conn.getConnection((errConnection, connection) => {
       if (errConnection) console.error(errConnection)
 
-      connection.query(`SELECT COUNT(*) AS total FROM assessment_tab at JOIN courses_tab c ON at.parentid = c.courseid WHERE (at.title LIKE '%${keyword}%' OR c.name LIKE '%${keyword}%')`, (err, rows) => {
+      connection.query(`SELECT COUNT(*) AS total FROM assessment_tab at LEFT JOIN courses_tab c ON at.parentid = c.courseid WHERE (at.title LIKE '%${keyword}%' OR c.name LIKE '%${keyword}%')`, (err, rows) => {
         callback(err, rows)
       })
     })
@@ -23,7 +32,7 @@ module.exports = {
     conn.getConnection((errConnection, connection) => {
       if (errConnection) console.error(errConnection)
 
-      connection.query(`SELECT c.name AS course_name, at.* FROM assessment_tab at JOIN courses_tab c ON at.parentid = c.courseid WHERE assessmentid = ${assessmentId} AND at.status = 1`, (err, rows) => {
+      connection.query(`SELECT c.name AS course_name, at.* FROM assessment_tab at LEFT JOIN courses_tab c ON at.parentid = c.courseid WHERE assessmentid = ${assessmentId} AND at.status = 1`, (err, rows) => {
         callback(err, rows)
       })
     })
@@ -32,7 +41,7 @@ module.exports = {
     conn.getConnection((errConnection, connection) => {
       if (errConnection) console.error(errConnection)
 
-      connection.query(`SELECT at.assessmentid, at.title FROM assessment_tab at JOIN courses_tab c ON at.parentid = c.courseid WHERE at.parentid = ${courseId}`, (err, rows) => {
+      connection.query(`SELECT at.assessmentid, at.title FROM assessment_tab at LEFT JOIN courses_tab c ON at.parentid = c.courseid WHERE at.parentid = ${courseId}`, (err, rows) => {
         callback(err, rows)
       })
     })
@@ -40,9 +49,7 @@ module.exports = {
   insertAssessment: (conn, data, callback) => {
     conn.getConnection((errConnection, connection) => {
       if (errConnection) console.error(errConnection)
-      console.log(data)
       connection.query(`INSERT INTO assessment_tab SET ?`, [data], (err, rows) => {
-        console.log(rows)
         if (err) {
           callback(err)
         } else {
@@ -74,6 +81,15 @@ module.exports = {
       if (errConnection) console.error(errConnection)
 
       connection.query(`SELECT at.title, ad.* FROM assessment_detail_tab ad JOIN assessment_tab at ON ad.assessmentid = at.assessmentid WHERE ad.status = 1 AND at.assessmentid = ${assessmentId} AND (question_type LIKE '%${keyword}%' OR question LIKE '%${keyword}%') ORDER BY ad.detailid DESC LIMIT ${offset}, ${limit}`, (err, rows) => {
+        callback(err, rows)
+      })
+    })
+  },
+  getQuestions: (conn, assessmentId, callback) => {
+    conn.getConnection((errConnection, connection) => {
+      if (errConnection) console.error(errConnection)
+
+      connection.query(`SELECT * FROM assessment_detail_tab WHERE assessmentid = ${assessmentId} AND status=1`, (err, rows) => {
         callback(err, rows)
       })
     })

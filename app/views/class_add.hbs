@@ -1,0 +1,88 @@
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper">
+  <!-- Content Header (Page header) -->
+  <section class="content-header">
+    <h1>
+
+      <small>Add Class</small>
+    </h1>
+    <ol class="breadcrumb">
+      <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
+      <li><a href="#">Class</a></li>
+      <li class="active"><a href="#">Add Class</a></li>
+    </ol>
+  </section>
+
+  <!-- Main content -->
+  <section class="content">
+    <div class="row">
+      <div class="col-xs-12">
+        {{{ errorMsg }}}
+
+        <div class="box box-info">
+          <div class="box-header with-border">
+            <h3 class="box-title">Add Class</h3>
+          </div>
+          <!-- /.box-header -->
+          <!-- form start -->
+          <form class="form-horizontal" action="{{ site_url 'classes/add' }}" method="post">
+            <input type="hidden" name="cover" value="">
+            <input type="hidden" name="cover_medium" value="">
+            <input type="hidden" name="cover_thumb" value="">
+            <div class="box-body">
+              <div class="form-group">
+                <label for="teacherId" class="col-sm-2 control-label">Teacher</label>
+
+                <div class="col-sm-10">
+                    <select name="guruid" class="form-control">
+                      {{{ selectGuru }}}
+                    </select>
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="ClassName" class="col-sm-2 control-label">Class Name</label>
+
+                <div class="col-sm-10">
+                  <input type="text" name="name" class="form-control" id="ClassName" placeholder="Class Name"
+                    value="{{ data.class_name }}">
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="Description" class="col-sm-2 control-label">Description</label>
+
+                <div class="col-sm-10">
+                    <textarea rows="4" class="form-control" id="description" name="description"></textarea>
+                </div>
+              </div>
+                <div class="form-group">
+                  <label for="Nick" class="col-sm-2 control-label">Cover</label>
+                  <div class="col-sm-10"><input id="uploadPhoto" name="file" type="file" url-upload="/v1/upload/photo" accept="image/*" />
+                  <div id="loading"><img style="width: 70px;display: none" src="{{ themes_url 'img/preloader.gif' }}"></div>
+                  <img id="imageUpload" style="width: 200px" />
+                  </div>
+                </div>
+              <div class="form-group">
+                <label for="Priority" class="col-sm-2 control-label">Priority</label>
+
+                <div class="col-sm-2">
+                  <input type="number" name="priority" class="form-control" id="Priority" placeholder="Priority"
+                    value="{{ data.priority }}">
+                </div>
+              </div>
+            </div>
+            <!-- /.box-body -->
+            <div class=" box-footer">
+              <button type="button" onclick="javascript:history.go(-1);" class="btn btn-default">Cancel</button>
+              <button type="submit" class="btn btn-info pull-right">Submit</button>
+            </div>
+            <!-- /.box-footer -->
+          </form>
+        </div>
+        <!-- /.box -->
+      </div>
+      <!-- /.col -->
+    </div>
+    <!-- /.row -->
+  </section>
+  <!-- /.content -->
+</div>

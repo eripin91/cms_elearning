@@ -1,0 +1,184 @@
+  <!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+      <h1>
+        Assessment
+        <small>Update Assessment</small>
+      </h1>
+      <ol class="breadcrumb">
+        <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
+        <li><a href="#">Assessment</a></li>
+        <li class="active"><a href="#">Update Assessment</a></li>
+      </ol>
+    </section>
+    <!-- Main content -->
+    <section class="content">
+      <div class="row">
+        <div class="col-xs-12">
+            {{{ errorMsg }}}
+            
+           <div class="box box-info">
+            <div class="box-header with-border">
+              <h3 class="box-title">Update Assessment</h3>
+            </div>
+            <!-- /.box-header -->
+            <!-- form start -->
+            <form class="form-horizontal" action="{{ site_url 'assessment/update' }}" method="post">
+            <input type="hidden" name="id" value="{{ data.assessmentid }}">
+              <div class="box-body">
+                <div class="form-group">
+                  <label for="Title" class="col-sm-2 control-label">Course</label>
+
+                  <div class="col-sm-10">
+                    <input type="text" readonly name="course" class="form-control" id="course" placeholder="Course" value="{{ data.course_name }}">
+                  </div>
+                </div>
+              <div class="box-body">
+                <div class="form-group">
+                  <label for="Title" class="col-sm-2 control-label">Title</label>
+
+                  <div class="col-sm-10">
+                    <input type="text" name="title" class="form-control" id="Title" placeholder="Title" value="{{ data.title }}">
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label for="Duration" class="col-sm-2 control-label">Duration (seconds)</label>
+
+                  <div class="col-sm-2">
+                    <input type="number" name="duration" class="form-control" id="Duration" placeholder="Duration" value="{{ data.duration }}">
+                  </div>
+                </div>
+              </div>
+              <div class="box-body">
+                <hr />
+                <div class="form-group">
+                  <label for="Duration" class="col-sm-2 control-label"><h3>Questions</h3></label>
+                </div>
+                <div class="questions">
+                  {{#each data.question as |parent parentIndex|}}
+                  <input type="hidden" name="detailid[{{inc @parentIndex}}]" value="{{ detailid }}">
+                  <div class="question">
+                    <div class="form-group">
+                      <label class="col-sm-2 control-label">#{{inc @parentIndex}}</label>
+                      <div class="col-sm-10" style="padding-top: 7px">
+                      <a href="{{ site_url 'assessment/delete/question/' }}{{ assessmentid }}/{{ detailid }}"><i class="fa fa-times"></i></a>
+                      </div>
+                    </div>
+                    <div class="form-group">
+                      <label class="col-sm-2 control-label">Question</label>
+                      <div class="col-sm-10">
+                        <input type="text" name="question[{{inc @parentIndex}}]" value="{{ question }}" class="form-control" placeholder="Question">
+                      </div>
+                    </div>
+                    {{#each options}}
+                      <div class="form-group">
+                        <label class="col-sm-2 control-label">Options</label>
+                        <div class="col-sm-6">
+                          <div class="col-sm-9" style="padding-left: 0">
+                            <input type="text" value="{{ label }}" name="options[{{inc @parentIndex}}][]" class="form-control" placeholder="Options">
+                          </div>
+                          <div class="col-sm-3">
+                            <input type="radio" name="answer[{{inc @parentIndex}}]" {{ checkRadioAnswer isAnswer }} value="{{inc @index}}"> is answer {{ isAnswer }}
+                          </div>
+                        </div>
+                      </div>
+                    {{/each}}
+                  </div>
+                  {{/each}}
+                </div>
+                  <hr />
+                  <div class="form-group">
+                    <label class="col-sm-2 control-label"></label>
+
+                    <div class="col-sm-10">
+                      <button type="button" class="btn btn-default add-question">Add Question</button>
+                    </div>
+                  </div>
+              </div>
+              <!-- /.box-body -->
+              <div class="box-footer">
+                <button type="button" onclick="javascript:history.go(-1);" class="btn btn-default">Cancel</button>
+                <button type="submit" class="btn btn-info pull-right">Submit</button>
+              </div>
+              <!-- /.box-footer -->
+            </form>
+          </div>
+          <!-- /.box -->
+        </div>
+        <!-- /.col -->
+      </div>
+      <!-- /.row -->
+    </section>
+    <!-- /.content -->
+</div>
+
+<script>
+var no = {{ totalIncQuestion }}
+$('.add-question').click(function() {
+  var domQuestion = '<div class="question-'+(no+1)+'">';
+      domQuestion += '<div class="form-group">';
+      domQuestion += '<label class="col-sm-2 control-label">#'+(no+1)+'</label>';
+      domQuestion += '<div class="col-sm-10" style="padding-top: 7px">';
+      domQuestion += '<a data-id="'+(no+1)+'" class="delete-question-dom"><i class="fa fa-times"></i></a>';
+      domQuestion += '</div>';
+      domQuestion += '</div>';
+      domQuestion += '<div class="form-group">';
+      domQuestion += '<label class="col-sm-2 control-label">Question</label>';
+      domQuestion += '<div class="col-sm-10">';
+      domQuestion += '<input type="text" name="question['+(no+1)+']" class="form-control" placeholder="Question">';
+      domQuestion += '</div>';
+      domQuestion += '</div>';
+      domQuestion += '<div class="form-group">'
+      domQuestion += '<label class="col-sm-2 control-label"></label>'
+      domQuestion += '<div class="col-sm-6">'
+      domQuestion += '<div class="col-sm-9" style="padding-left: 0">'
+      domQuestion += '<input type="text" name="options['+(no+1)+'][]" class="form-control" placeholder="Options">'
+      domQuestion += '</div>'
+      domQuestion += '<div class="col-sm-3">'
+      domQuestion += '<input type="radio" name="answer['+(no+1)+']" value="1"> is answer'
+      domQuestion += '</div>'
+      domQuestion += '</div>'
+      domQuestion += '</div>'
+      domQuestion += '<div class="form-group">'
+      domQuestion += '<label class="col-sm-2 control-label"></label>'
+      domQuestion += '<div class="col-sm-6">'
+      domQuestion += '<div class="col-sm-9" style="padding-left: 0">'
+      domQuestion += '<input type="text" name="options['+(no+1)+'][]" class="form-control" placeholder="Options">'
+      domQuestion += '</div>'
+      domQuestion += '<div class="col-sm-3">'
+      domQuestion += '<input type="radio" name="answer['+(no+1)+']" value="2"> is answer'
+      domQuestion += '</div>'
+      domQuestion += '</div>'
+      domQuestion += '</div>'
+      domQuestion += '<div class="form-group">'
+      domQuestion += '<label class="col-sm-2 control-label"></label>'
+      domQuestion += '<div class="col-sm-6">'
+      domQuestion += '<div class="col-sm-9" style="padding-left: 0">'
+      domQuestion += '<input type="text" name="options['+(no+1)+'][]" class="form-control" placeholder="Options">'
+      domQuestion += '</div>'
+      domQuestion += '<div class="col-sm-3">'
+      domQuestion += '<input type="radio" name="answer['+(no+1)+']" value="3"> is answer'
+      domQuestion += '</div>'
+      domQuestion += '</div>'
+      domQuestion += '</div>'
+      domQuestion += '<div class="form-group">'
+      domQuestion += '<label class="col-sm-2 control-label"></label>'
+      domQuestion += '<div class="col-sm-6">'
+      domQuestion += '<div class="col-sm-9" style="padding-left: 0">'
+      domQuestion += '<input type="text" name="options['+(no+1)+'][]" class="form-control" placeholder="Options">'
+      domQuestion += '</div>'
+      domQuestion += '<div class="col-sm-3">'
+      domQuestion += '<input type="radio" name="answer['+(no+1)+']" value="4"> is answer'
+      domQuestion += '</div>'
+      domQuestion += '</div>'
+      domQuestion += '</div>'
+      domQuestion += '</div>'
+      no++
+      $('.questions').append(domQuestion)
+
+      $('.delete-question-dom').click(function() {
+        $('.question-' + $(this).attr('data-id')).remove()
+      })
+})
+</script>

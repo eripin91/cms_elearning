@@ -762,6 +762,11 @@ function _init() {
     var button = $($.AdminLTE.boxWidget.selectors.remove, this)
     $.AdminLTE.boxWidget.remove(button)
   }
+  $(document).ready(function(){
+    if ($('#editorPage').length > 0) {
+      CKEDITOR.replace( 'editorPage' )
+    }
+  })
 })(jQuery)
 
 /*
@@ -825,6 +830,42 @@ function _init() {
   }
 })(jQuery)
 
+$(document).ready(function() {
+   $("#uploadPhoto").change(function(evt){
+    evt.stopPropagation();
+    $('#loading img').show()
+    var file = $(this)
+    setTimeout(function(){
+      var formData = new FormData();
+        formData.append('file', file.prop('files')[0]);
+       $.ajax({
+          beforeSend: function(xhr) {
+            xhr.setRequestHeader("Authorization", "X-COURSES-API");
+          },
+           url: file.attr('url-upload'),
+           type: 'POST',
+           data: formData,
+           async: false,
+           cache: false,
+           contentType: false,
+           enctype: 'multipart/form-data',
+           processData: false,
+           success: function (response) {
+            if (response.status === 200) {
+              $('input[name="profile_picture"], input[name="cover"]').val(response.data.original)
+              $('input[name="profile_picture_medium"], input[name="cover_medium"]').val(response.data.medium)
+              $('input[name="profile_picture_thumb"], input[name="cover_thumb"]').val(response.data.thumbnail)
+              $('#imageUpload').attr('src', response.data.original)
+              $('#loading img').hide()
+            } else {
+              alert('Failed upload file !!!')
+              $('#loading img').hide()
+            }
+           }
+       });
+      }, 3000);
+    });
+})
 // section: users
 ;(function($) {
   'use strict'
@@ -873,6 +914,32 @@ function _init() {
       { data: 'fullname' },
       { data: 'post_content' },
       { data: 'total_replied' },
+      { data: 'created_at' },
+      { data: 'action' }
+    ]
+  })
+})(jQuery)
+
+// section: discussions
+;(function($) {
+  'use strict'
+  var url = SITE_URL + $('#sTableDiscussionsDetail').attr('src')
+  $('#sTableDiscussionsDetail').DataTable({
+    processing: true,
+    serverSide: true,
+    bFilter: true,
+    ordering: false,
+    scrollX: false,
+    paging: false,
+    info: false,
+    ordering: false,
+    aaSorting: [],
+    columnDefs: [],
+    ajax: url,
+    columns: [
+      { data: 'discussionid' },
+      { data: 'fullname' },
+      { data: 'post_content' },
       { data: 'created_at' },
       { data: 'action' }
     ]
@@ -1049,6 +1116,83 @@ function _init() {
       { data: 'fullname' },
       { data: 'phone' },
       { data: 'created_at' },
+      { data: 'action' }
+    ]
+  })
+})(jQuery)
+
+// section: Guru
+;(function($) {
+  'use strict'
+  var url = SITE_URL + $('#sTableGuru').attr('src')
+  $('#sTableGuru').DataTable({
+    processing: true,
+    serverSide: true,
+    bFilter: true,
+    ordering: false,
+    scrollX: false,
+    aaSorting: [],
+    pageLength: 10,
+    columnDefs: [],
+    pagingType: 'full_numbers',
+    ajax: url,
+    columns: [
+      { data: 'guruid' },
+      { data: 'profile_picture' },
+      { data: 'fullname' },
+      { data: 'description' },
+      { data: 'created_at' },
+      { data: 'action' }
+    ]
+  })
+})(jQuery)
+
+// section: pages
+;(function($) {
+  'use strict'
+  var url = SITE_URL + $('#sTablePages').attr('src')
+  $('#sTablePages').DataTable({
+    processing: true,
+    serverSide: true,
+    bFilter: true,
+    ordering: false,
+    scrollX: false,
+    aaSorting: [],
+    pageLength: 10,
+    columnDefs: [],
+    pagingType: 'full_numbers',
+    ajax: url,
+    columns: [
+      { data: 'pageid' },
+      { data: 'ptitle' },
+      { data: 'updated_date' },
+      { data: 'action' }
+    ]
+  })
+})(jQuery)
+
+// section: assessment
+;(function($) {
+  'use strict'
+  var url = SITE_URL + $('#sTableAssessment').attr('src')
+  $('#sTableAssessment').DataTable({
+    processing: true,
+    serverSide: true,
+    bFilter: true,
+    ordering: false,
+    scrollX: false,
+    aaSorting: [],
+    pageLength: 10,
+    columnDefs: [],
+    pagingType: 'full_numbers',
+    ajax: url,
+    columns: [
+      { data: 'assessmentid' },
+      { data: 'title' },
+      { data: 'duration' },
+      { data: 'course_name' },
+      { data: 'created_at' },
+      { data: 'updated_at' },
       { data: 'action' }
     ]
   })

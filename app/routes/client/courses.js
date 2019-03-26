@@ -2,7 +2,27 @@
 
 'use strict'
 
-var Route = express.Router()
+const Route = express.Router()
+const multer = require('multer')
+const storage = multer.diskStorage({
+  destination: './tmp/',
+  filename: (req, file, cb) => {
+    cb(null, Date.now() + '-' + file.originalname)
+  }
+})
+
+const fileFilter = (req, file, cb) => {
+  if (file.mimetype === 'video/mp4') {
+    cb(null, true)
+  } else {
+    cb(null, false)
+  }
+}
+
+const upload = multer({
+  storage: storage,
+  fileFilter: fileFilter
+})
 
 Route.get('/', ViewCoursesControllers.main)
   .get('/ajax/get', ViewCoursesControllers.ajaxGet)
@@ -24,7 +44,7 @@ Route.get('/', ViewCoursesControllers.main)
   .get('/chapter/:chapterId/lecture/ajax/get/', ViewCoursesControllers.lectureGetAll)
   .get('/chapter/:chapterId/delete/:lectureId', ViewCoursesControllers.lectureDelete)
   .get('/chapter/:chapterId/update/:lectureId', ViewCoursesControllers.lectureUpdate)
-  .post('/chapter/:chapterId/update/:lectureId', ViewCoursesControllers.lectureUpdate)
+  .post('/chapter/:chapterId/update/:lectureId', upload.single('file'), ViewCoursesControllers.lectureUpdate)
   .get('/chapter/:chapterId/add', ViewCoursesControllers.lectureAdd)
-  .post('/chapter/:chapterId/add', ViewCoursesControllers.lectureAdd)
+  .post('/chapter/:chapterId/add', upload.single('file'), ViewCoursesControllers.lectureAdd)
 module.exports = Route

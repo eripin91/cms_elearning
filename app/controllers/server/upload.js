@@ -10,6 +10,7 @@ const multer = require('multer')
 const multerS3 = require('multer-s3')
 const AWS = require('aws-sdk')
 const fs = require('fs')
+const gm = require('gm').subClass({ imageMagick: true })
 
 AWS.config.update({
   secretAccessKey: CONFIG.AWS.AWS_ACCESS_KEY_SECRET,
@@ -53,7 +54,7 @@ exports.uploadAws = (req, res, next) => {
       },
       (dataUpload, cb) => {
         if (_.isEmpty(dataUpload)) {
-          return MiscHelper.errorCustomStatus('Tidak ada file upload')
+          return MiscHelper.errorCustomStatus(res, 'Tidak ada file upload', 400)
         } else {
           dataUpload.thumbnail = dataUpload.key + 'screenshot.jpg'
           ffmpeg(dataUpload.fileUrl)
@@ -97,6 +98,115 @@ exports.uploadAws = (req, res, next) => {
       }
     }
   )
+}
+
+exports.uploadImage = (req, res) => {
+  async.waterfall([
+    (cb) => {
+      singleUpload(req, res, err => {
+        if (!_.result(req.file, 'key')) {
+          return MiscHelper.errorCustomStatus(res, err, 400)
+        } else {
+          if (err) {
+            return MiscHelper.errorCustomStatus(res, err, 400)
+          } else {
+            cb(null, req.file)
+          }
+        }
+      })
+    },
+    (dataImage, cb) => {
+      let getParams = {
+        Bucket: dataImage.bucket,
+        Key: dataImage.key
+      }
+
+      s3.getObject(getParams, (err, image) => {
+        if (err) console.error(err)
+
+        gm(image.Body)
+          .resize(500, 500, '^')
+          .gravity('Center')
+          .crop(500, 500)
+          .write(`./assets/img/medium-${getParams.Key}`, (err) => {
+            if (!err) {
+              const filePath = `./assets/img/medium-${getParams.Key}`
+
+              fs.readFile(filePath, (err, data) => {
+                if (!err) {
+                  let base64Data = Buffer.from(data, 'binary')
+                  let params = {
+                    Bucket: dataImage.bucket,
+                    Key: `medium-${dataImage.key}`,
+                    Body: base64Data,
+                    ACL: 'public-read'
+                  }
+
+                  s3.upload(params, (err, result) => {
+                    if (!err) {
+                      fs.unlinkSync(filePath)
+                      dataImage.medium = result.Location
+                      cb(null, dataImage)
+                    }
+                  })
+                }
+              })
+            }
+          })
+      })
+    },
+    (dataImage, cb) => {
+      let getParams = {
+        Bucket: dataImage.bucket,
+        Key: dataImage.key
+      }
+
+      s3.getObject(getParams, (err, image) => {
+        if (err) console.error(err)
+
+        gm(image.Body)
+          .resize(120, 120, '^')
+          .gravity('Center')
+          .crop(120, 120)
+          .write(`./assets/img/thumbnail-${getParams.Key}`, (err) => {
+            if (!err) {
+              const filePath = `./assets/img/thumbnail-${getParams.Key}`
+
+              fs.readFile(filePath, (err, data) => {
+                if (!err) {
+                  let base64Data = Buffer.from(data, 'binary')
+                  let params = {
+                    Bucket: dataImage.bucket,
+                    Key: `thumbnail-${dataImage.key}`,
+                    Body: base64Data,
+                    ACL: 'public-read'
+                  }
+
+                  s3.upload(params, (err, result) => {
+                    if (!err) {
+                      fs.unlinkSync(filePath)
+                      dataImage.thumbnail = result.Location
+                      const data = {
+                        original: dataImage.location,
+                        medium: dataImage.medium,
+                        thumbnail: dataImage.thumbnail
+                      }
+                      cb(null, data)
+                    }
+                  })
+                }
+              })
+            }
+          })
+      })
+    }
+  ], (errUpload, dataUpload) => {
+    if (!errUpload) {
+      return MiscHelper.responses(res, dataUpload)
+    } else {
+      return MiscHelper.errorCustomStatus(res, errUpload)
+    }
+  })
 }
 
 const fileFilter = (req, file, cb) => {
