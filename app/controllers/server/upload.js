@@ -101,7 +101,6 @@ exports.uploadAws = (req, res, next) => {
 }
 
 exports.uploadImage = (req, res) => {
-  console.log(req.file)
   async.waterfall([
     (cb) => {
       singleUpload(req, res, err => {

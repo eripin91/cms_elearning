@@ -335,11 +335,11 @@ exports.insertSoal = (req, res) => {
       for (let i = 0; i < req.body.soal.length; i++) {
         let data = {
           assessmentid: req.params.assessmentId,
-          question_type: req.body.soal[0].question_type,
-          question: req.body.soal[0].question,
-          answer: req.body.soal[0].answer,
-          status: req.body.soal[0].status,
-          options: req.body.soal[0].options,
+          question_type: req.body.soal[i].question_type,
+          question: req.body.soal[i].question,
+          answer: req.body.soal[i].answer,
+          status: 1,
+          options: req.body.soal[i].options,
           created_at: new Date(),
           updated_at: new Date()
         }
