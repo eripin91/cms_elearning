@@ -9,6 +9,6 @@ Route
   .get('/get', DiscussionsControllers.get)
   .get('/get/:courseId', DiscussionsControllers.getThreadCourse)
   .get('/get/detail/:discussionId', DiscussionsControllers.getDetail)
-  .delete('/delete/:discussionId', DiscussionsControllers.deleteThread)
+  .get('/delete/:discussionId', DiscussionsControllers.deleteThread)
 
 module.exports = Route

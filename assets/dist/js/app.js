@@ -762,6 +762,11 @@ function _init() {
     var button = $($.AdminLTE.boxWidget.selectors.remove, this)
     $.AdminLTE.boxWidget.remove(button)
   }
+  $(document).ready(function(){
+    if ($('#editorPage').length > 0) {
+      CKEDITOR.replace( 'editorPage' )
+    }
+  })
 })(jQuery)
 
 /*
@@ -825,6 +830,42 @@ function _init() {
   }
 })(jQuery)
 
+$(document).ready(function() {
+   $("#uploadPhoto").change(function(evt){
+    evt.stopPropagation();
+    $('#loading img').show()
+    var file = $(this)
+    setTimeout(function(){
+      var formData = new FormData();
+        formData.append('file', file.prop('files')[0]);
+       $.ajax({
+          beforeSend: function(xhr) {
+            xhr.setRequestHeader("Authorization", "X-COURSES-API");
+          },
+           url: file.attr('url-upload'),
+           type: 'POST',
+           data: formData,
+           async: false,
+           cache: false,
+           contentType: false,
+           enctype: 'multipart/form-data',
+           processData: false,
+           success: function (response) {
+            if (response.status === 200) {
+              $('input[name="profile_picture"], input[name="cover"]').val(response.data.original)
+              $('input[name="profile_picture_medium"], input[name="cover_medium"]').val(response.data.medium)
+              $('input[name="profile_picture_thumb"], input[name="cover_thumb"]').val(response.data.thumbnail)
+              $('#imageUpload').attr('src', response.data.original)
+              $('#loading img').hide()
+            } else {
+              alert('Failed upload file !!!')
+              $('#loading img').hide()
+            }
+           }
+       });
+      }, 3000);
+    });
+})
 // section: users
 ;(function($) {
   'use strict'
@@ -853,31 +894,57 @@ function _init() {
 })(jQuery)
 
 // section: discussions
-;(function ($) {
-  'use strict';
-    var url = SITE_URL + $("#sTableDiscussions").attr('src')
-    $('#sTableDiscussions').DataTable({
-      "processing": true,
-      "serverSide": true,
-      "bFilter": true,
-      "ordering": false,
-      "scrollX": false,
-      "aaSorting": [],
-      "pageLength": 25,
-      "columnDefs": [],
-      "pagingType": "full_numbers",
-      "ajax": url,
-      columns: [
-        { "data": "discussionid" },
-        { "data": "course" },
-        { "data": "fullname" },
-        { "data": "post_content" },
-        { "data": "total_replied" },
-        { "data": "created_at" },
-        { "data": "action" }
-      ]
-    });
-}(jQuery))
+;(function($) {
+  'use strict'
+  var url = SITE_URL + $('#sTableDiscussions').attr('src')
+  $('#sTableDiscussions').DataTable({
+    processing: true,
+    serverSide: true,
+    bFilter: true,
+    ordering: false,
+    scrollX: false,
+    aaSorting: [],
+    pageLength: 25,
+    columnDefs: [],
+    pagingType: 'full_numbers',
+    ajax: url,
+    columns: [
+      { data: 'discussionid' },
+      { data: 'course' },
+      { data: 'fullname' },
+      { data: 'post_content' },
+      { data: 'total_replied' },
+      { data: 'created_at' },
+      { data: 'action' }
+    ]
+  })
+})(jQuery)
+
+// section: discussions
+;(function($) {
+  'use strict'
+  var url = SITE_URL + $('#sTableDiscussionsDetail').attr('src')
+  $('#sTableDiscussionsDetail').DataTable({
+    processing: true,
+    serverSide: true,
+    bFilter: true,
+    ordering: false,
+    scrollX: false,
+    paging: false,
+    info: false,
+    ordering: false,
+    aaSorting: [],
+    columnDefs: [],
+    ajax: url,
+    columns: [
+      { data: 'discussionid' },
+      { data: 'fullname' },
+      { data: 'post_content' },
+      { data: 'created_at' },
+      { data: 'action' }
+    ]
+  })
+})(jQuery)
 
 // section: classes
 ;(function($) {
@@ -895,15 +962,20 @@ function _init() {
     pagingType: 'full_numbers',
     ajax: url,
     columns: [
-      { "data": "classid" },
-      { "data": "guru" },
-      { "data": "class_name" },
-      { "data": "description" },
-      { "data": "cover" },
-      { "data": "priority" },
-      { "data": "rating" },
-      { "data": "created_at" },
-      { "data": "action" }
+      { data: 'classid' },
+      { data: 'guru' },
+      { data: 'class_name' },
+      { data: 'description' },
+      {
+        data: 'cover',
+        render: function(data) {
+          return '<img src="' + data + '" width="150px" />'
+        }
+      },
+      { data: 'priority' },
+      { data: 'rating' },
+      { data: 'created_at' },
+      { data: 'action' }
     ]
   })
 })(jQuery)
@@ -953,10 +1025,176 @@ function _init() {
       { data: 'courseid' },
       { data: 'classid' },
       { data: 'name' },
-      { data: 'preassessmentid' },
-      { data: 'finalassessmentid' },
+      { data: 'preassessment' },
+      { data: 'finalassessment' },
+      { data: 'avg_score'},
+      { data: 'discussion'},
       { data: 'status' },
       { data: 'created_at' },
+      { data: 'action' }
+    ]
+  })
+})(jQuery)
+
+// section: chapter
+;(function($) {
+  'use strict'
+  var url = SITE_URL + $('#sTableChapters').attr('src')
+  $('#sTableChapters').DataTable({
+    processing: true,
+    serverSide: true,
+    bFilter: true,
+    ordering: false,
+    scrollX: false,
+    aaSorting: [],
+    pageLength: 10,
+    columnDefs: [],
+    pagingType: 'full_numbers',
+    ajax: url,
+    columns: [
+      { data: 'detailid' },
+      { data: 'name' },
+      { data: 'assessment_title' },
+      { data: 'action' }
+    ]
+  })
+})(jQuery)
+
+// section: lecture
+;(function($) {
+  'use strict'
+  var url = SITE_URL + $('#sTableLectures').attr('src')
+  $('#sTableLectures').DataTable({
+    processing: true,
+    serverSide: true,
+    bFilter: true,
+    ordering: false,
+    scrollX: false,
+    aaSorting: [],
+    pageLength: 10,
+    columnDefs: [],
+    pagingType: 'full_numbers',
+    ajax: url,
+    columns: [
+      { data: 'materialid' },
+      { data: 'detailid' },
+      { data: 'name' },
+      { data: 'description' },
+      { data: 'video_url' },
+      {
+        data: 'thumbnails',
+        render: function(data) {
+          return '<img src="' + data + '" width="150px" />'
+        }
+      },
+      { data: 'size' },
+      { data: 'duration' },
+      { data: 'status' },
+      { data: 'action' }
+    ]
+  })
+})(jQuery)
+
+// section: user score
+;(function($) {
+  'use strict'
+  var url = SITE_URL + $('#sTableUsersScore').attr('src')
+  $('#sTableUsersScore').DataTable({
+    processing: true,
+    serverSide: true,
+    bFilter: true,
+    ordering: false,
+    scrollX: false,
+    aaSorting: [],
+    pageLength: 10,
+    columnDefs: [],
+    pagingType: 'full_numbers',
+    ajax: url,
+    columns: [
+      { data: 'userid' },
+      { data: 'ranking' },
+      { data: 'score' },
+      { data: 'email' },
+      { data: 'fullname' },
+      { data: 'phone' },
+      { data: 'created_at' },
+      { data: 'action' }
+    ]
+  })
+})(jQuery)
+
+// section: Guru
+;(function($) {
+  'use strict'
+  var url = SITE_URL + $('#sTableGuru').attr('src')
+  $('#sTableGuru').DataTable({
+    processing: true,
+    serverSide: true,
+    bFilter: true,
+    ordering: false,
+    scrollX: false,
+    aaSorting: [],
+    pageLength: 10,
+    columnDefs: [],
+    pagingType: 'full_numbers',
+    ajax: url,
+    columns: [
+      { data: 'guruid' },
+      { data: 'profile_picture' },
+      { data: 'fullname' },
+      { data: 'description' },
+      { data: 'created_at' },
+      { data: 'action' }
+    ]
+  })
+})(jQuery)
+
+// section: pages
+;(function($) {
+  'use strict'
+  var url = SITE_URL + $('#sTablePages').attr('src')
+  $('#sTablePages').DataTable({
+    processing: true,
+    serverSide: true,
+    bFilter: true,
+    ordering: false,
+    scrollX: false,
+    aaSorting: [],
+    pageLength: 10,
+    columnDefs: [],
+    pagingType: 'full_numbers',
+    ajax: url,
+    columns: [
+      { data: 'pageid' },
+      { data: 'ptitle' },
+      { data: 'updated_date' },
+      { data: 'action' }
+    ]
+  })
+})(jQuery)
+
+// section: assessment
+;(function($) {
+  'use strict'
+  var url = SITE_URL + $('#sTableAssessment').attr('src')
+  $('#sTableAssessment').DataTable({
+    processing: true,
+    serverSide: true,
+    bFilter: true,
+    ordering: false,
+    scrollX: false,
+    aaSorting: [],
+    pageLength: 10,
+    columnDefs: [],
+    pagingType: 'full_numbers',
+    ajax: url,
+    columns: [
+      { data: 'assessmentid' },
+      { data: 'title' },
+      { data: 'duration' },
+      { data: 'course_name' },
+      { data: 'created_at' },
+      { data: 'updated_at' },
       { data: 'action' }
     ]
   })

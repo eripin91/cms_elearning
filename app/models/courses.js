@@ -18,6 +18,16 @@ module.exports = {
       })
     })
   },
+  getAllCourse: (conn, callback) => {
+    conn.getConnection((errConnection, connection) => {
+      if (errConnection) console.error(errConnection)
+
+      connection.query(`SELECT courseid, name FROM courses_tab WHERE status = 1`, (err, rows) => {
+        console.log(rows)
+        callback(err, rows)
+      })
+    })
+  },
   getCourseDetail: (conn, id, callback) => {
     conn.getConnection((errConnection, connection) => {
       if (errConnection) console.error(errConnection)
@@ -122,7 +132,7 @@ module.exports = {
     conn.getConnection((errConnection, connection) => {
       if (errConnection) console.error(errConnection)
 
-      connection.query('UPDATE courses_detail_tab SET ? WHERE detailid = ?', [id], (errUpdate) => {
+      connection.query('UPDATE courses_detail_tab SET status = 0 WHERE detailid = ?', [id], (errUpdate) => {
         callback(errUpdate, { message: 'Bab has been deleted' })
       })
     })

@@ -4,8 +4,10 @@
 
 var Route = express.Router()
 
+// Route.all('/*')
 Route
   .all('/*', AuthHelper.requiresAuthorization)
+  .get('/list', CoursesControllers.getAllCourses)
   .get('/', CoursesControllers.getCourse)
   .get('/:courseId', CoursesControllers.getCourseDetail)
   .post('/', CoursesControllers.insertCourse)
@@ -21,24 +23,6 @@ Route
   .get('/chapter/:detailId/material', CoursesControllers.getMaterialList)
   .get('/chapter/:detailId/material/:materialId', CoursesControllers.getMaterialDetail)
   .post('/chapter/:detailId/material', UploadControllers.uploadAws, CoursesControllers.insertMaterialDetail)
-  .patch('/chapter/:detailId/material/:materialId', UploadControllers.uploadAws, CoursesControllers.updateMaterial)
+  .post('/chapter/:detailId/material/:materialId', UploadControllers.uploadAws, CoursesControllers.updateMaterial)
   .delete('/chapter/:detailId/material/:materialId', CoursesControllers.deleteMaterial)
-  .get(
-    '/chapter/:detailId/material/:materialId',
-    CoursesControllers.getMaterialDetail
-  )
-  .post(
-    '/chapter/:detailId/material',
-    UploadControllers.uploadAws,
-    CoursesControllers.insertMaterialDetail
-  )
-  .patch(
-    '/chapter/:detailId/material/:materialId',
-    UploadControllers.uploadAws,
-    CoursesControllers.updateMaterial
-  )
-  .delete(
-    '/chapter/:detailId/material/:materialId',
-    CoursesControllers.deleteMaterial
-  )
 module.exports = Route

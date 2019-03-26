@@ -4,18 +4,6 @@
 
 const async = require('async')
 const guruModel = require('../../models/guru')
-const fs = require('fs')
-const aws = require('aws-sdk')
-const gm = require('gm').subClass({ imageMagick: true })
-
-aws.config.update({
-  secretAccessKey: CONFIG.AWS.AWS_ACCESS_KEY_SECRET,
-  accessKeyId: CONFIG.AWS.AWS_ACCESS_KEY_ID,
-  region: CONFIG.AWS_REGION
-})
-
-const s3 = new aws.S3()
-
 /*
  * GET : '/guru/get'
  *
@@ -216,121 +204,32 @@ exports.deleteGuru = (req, res) => {
  */
 
 exports.insertGuru = (req, res) => {
-  // req.checkBody('fullname', 'fullname is required').notEmpty()
-  // req.checkBody('description', 'description is required').notEmpty()
-  // req.checkBody('file', 'file is required').notEmpty()
+  req.checkBody('fullname', 'fullname is required').notEmpty()
+  req.checkBody('description', 'description is required').notEmpty()
+  req.checkBody('profile_picture', 'foto is required').notEmpty()
+  req.checkBody('profile_picture_medium', 'foto medium is required').notEmpty()
+  req.checkBody('profile_picture_thumb', 'foto thumbnail is required').notEmpty()
 
-  // if (req.validationErrors()) {
-  //   return MiscHelper.errorCustomStatus(res, req.validationErrors(true))
-  // }
+  if (req.validationErrors()) {
+    return MiscHelper.errorCustomStatus(res, req.validationErrors(true))
+  }
 
   async.waterfall([
     (cb) => {
-      if (!_.result(req.file, 'key')) {
-        return MiscHelper.errorCustomStatus(res, 'Invalid file upload.', 400)
-      } else {
-        cb(null, req.file)
-      }
-    },
-    (dataImage, cb) => {
-      let getParams = {
-        Bucket: dataImage.bucket,
-        Key: dataImage.key
-      }
-
-      s3.getObject(getParams, (err, image) => {
-        if (err) console.error(err)
-
-        gm(image.Body)
-          .resize(120, 120, '^')
-          .gravity('Center')
-          .crop(120, 120)
-          // .stream((err, stdout, stderr) => {
-          //   stdout.pipe(res)
-          // })
-          .write(`./assets/img/thumbnail-${getParams.Key}`, (err) => {
-            if (!err) {
-              const filePath = `./assets/img/thumbnail-${getParams.Key}`
-
-              fs.readFile(filePath, (err, data) => {
-                if (!err) {
-                  let base64Data = Buffer.from(data, 'binary')
-                  let params = {
-                    Bucket: dataImage.bucket,
-                    Key: `thumbnail-${dataImage.key}`,
-                    Body: base64Data,
-                    ACL: 'public-read'
-                  }
-
-                  s3.upload(params, (err, result) => {
-                    if (!err) {
-                      fs.unlinkSync(filePath)
-                      dataImage.thumbnail = result.Location
-                      cb(null, dataImage)
-                    }
-                  })
-                }
-              })
-            }
-          })
-      })
-    },
-    (dataImage, cb) => {
-      let getParams = {
-        Bucket: dataImage.bucket,
-        Key: dataImage.key
-      }
-
-      s3.getObject(getParams, (err, image) => {
-        if (err) console.error(err)
-
-        gm(image.Body)
-          .resize(500, 500, '^')
-          .gravity('Center')
-          .crop(500, 500)
-          .write(`./assets/img/medium-${getParams.Key}`, (err) => {
-            if (!err) {
-              const filePath = `./assets/img/medium-${getParams.Key}`
-
-              fs.readFile(filePath, (err, data) => {
-                if (!err) {
-                  let base64Data = Buffer.from(data, 'binary')
-                  let params = {
-                    Bucket: dataImage.bucket,
-                    Key: `medium-${dataImage.key}`,
-                    Body: base64Data,
-                    ACL: 'public-read'
-                  }
-
-                  s3.upload(params, (err, result) => {
-                    if (!err) {
-                      fs.unlinkSync(filePath)
-                      dataImage.medium = result.Location
-                      cb(null, dataImage)
-                    }
-                  })
-                }
-              })
-            }
-          })
-      })
-    },
-    (dataFile, cb) => {
-      console.log(dataFile)
       const data = {
         fullname: req.body.fullname,
-        profile_picture: dataFile.location,
-        medium: dataFile.medium,
-        thumbnail: dataFile.thumbnail,
+        profile_picture: req.body.profile_picture,
+        profile_picture_medium: req.body.profile_picture_medium,
+        profile_picture_thumb: req.body.profile_picture_thumb,
         description: req.body.description,
         status: 1,
         created_at: new Date(),
         updated_at: new Date()
       }
 
-      guruModel.insertGuru(req, data, (err, result) => {
+      guruModel.insertGuru(req, data, (errInsert, resultInsert) => {
         redisCache.delwild(`get-guru-*`)
-        cb(err, result)
+        cb(errInsert, resultInsert)
       })
     }
   ], (errInsert, resultInsert) => {
@@ -341,6 +240,22 @@ exports.insertGuru = (req, res) => {
     }
   })
 }
+
+/*
+ * PATCH : '/update/:guruId
+ *
+ * @desc Update guru detail
+ *
+ * @param  {object} req - Parameters for request
+ * @param  {objectId} req.params.guruId - Id guru master
+ *
+ * @body  {object} req - body for request
+ * @body  {objectId} req.body.fullname - Guru fullname
+ * @body  {objectId} req.body.profile_picture - Guru picture
+ * @body  {objectId} req.body.description - Guru description
+ *
+ * @return {object} Request object
+ */
 
 exports.updateGuru = (req, res) => {
   req.checkParams('guruId', 'guruId is required').notEmpty().isInt()
@@ -359,126 +274,19 @@ exports.updateGuru = (req, res) => {
         }
       })
     },
-    (dataGuru, cb) => {
-      const fullname = _.result(req.body, 'name', dataGuru.fullname)
-      const description = _.result(req.body, 'description', dataGuru.description)
-
-      if (_.result(req.file, 'key')) {
-        const data = _.assign({}, dataGuru, req.file)
-        cb(null, data)
-      } else {
-        const data = {
-          fullname: fullname,
-          description: description,
-          updated_at: new Date()
-        }
-
-        guruModel.updateGuru(req, data, req.params.guruId, (err, result) => {
-          redisCache.delwild(`get-guru-*`)
-          if (!err) {
-            return MiscHelper.responses(res, result)
-          } else {
-            return MiscHelper.errorCustomStatus(res, err, 400)
-          }
-        })
-      }
-    },
-    (dataGuru, cb) => {
-      let getParams = {
-        Bucket: dataGuru.bucket,
-        Key: dataGuru.key
-      }
-
-      s3.getObject(getParams, (err, image) => {
-        if (err) console.error(err)
-
-        gm(image.Body)
-          .resize(500, 500, '^')
-          .gravity('Center')
-          .crop(500, 500)
-          .write(`./assets/img/medium-${getParams.Key}`, (err) => {
-            if (!err) {
-              const filePath = `./assets/img/medium-${getParams.Key}`
-
-              fs.readFile(filePath, (err, data) => {
-                if (!err) {
-                  let base64Data = Buffer.from(data, 'binary')
-                  let params = {
-                    Bucket: dataGuru.bucket,
-                    Key: `medium-${dataGuru.key}`,
-                    Body: base64Data,
-                    ACL: 'public-read'
-                  }
-
-                  s3.upload(params, (err, result) => {
-                    if (!err) {
-                      fs.unlinkSync(filePath)
-                      dataGuru.mediumEdit = result.Location
-                      cb(null, dataGuru)
-                    }
-                  })
-                }
-              })
-            }
-          })
-      })
-    },
-    (dataGuru, cb) => {
-      let getParams = {
-        Bucket: dataGuru.bucket,
-        Key: dataGuru.key
-      }
-
-      s3.getObject(getParams, (err, image) => {
-        if (err) console.error(err)
-
-        gm(image.Body)
-          .resize(120, 120, '^')
-          .gravity('Center')
-          .crop(120, 120)
-          .write(`./assets/img/medium-${getParams.Key}`, (err) => {
-            if (!err) {
-              const filePath = `./assets/img/medium-${getParams.Key}`
-
-              fs.readFile(filePath, (err, data) => {
-                if (!err) {
-                  let base64Data = Buffer.from(data, 'binary')
-                  let params = {
-                    Bucket: dataGuru.bucket,
-                    Key: `medium-${dataGuru.key}`,
-                    Body: base64Data,
-                    ACL: 'public-read'
-                  }
-
-                  s3.upload(params, (err, result) => {
-                    if (!err) {
-                      fs.unlinkSync(filePath)
-                      dataGuru.thumbnailEdit = result.Location
-                      cb(null, dataGuru)
-                    }
-                  })
-                }
-              })
-            }
-          })
-      })
-    },
-    (dataGuru, cb) => {
-      const fullname = _.result(req.body, 'fullname', dataGuru.fullname)
-      const description = _.result(req.body, 'description', dataGuru.description)
-
-      const data = {
-        fullname: fullname,
-        description: description,
-        profile_picture: dataGuru.location,
-        medium: dataGuru.mediumEdit,
-        thumbnail: dataGuru.thumbnailEdit,
+    (cb) => {
+      let data = {
+        fullname: req.body.fullname,
+        profile_picture: req.body.profile_picture,
+        profile_picture_medium: req.body.profile_picture_medium,
+        profile_picture_thumb: req.body.profile_picture_thumb,
+        description: req.body.description,
         updated_at: new Date()
       }
 
-      guruModel.updateGuru(req, data, req.params.guruId, (err, result) => {
+      guruModel.updateGuru(req, data, req.params.guruId, (errUpdate, resultUpdate) => {
         redisCache.delwild(`get-guru-*`)
-        cb(err, result)
+        cb(errUpdate, resultUpdate)
       })
     }
   ], (errUpdate, resultUpdate) => {

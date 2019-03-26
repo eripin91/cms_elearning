@@ -3,7 +3,7 @@
 const request = require('request')
 const { assignIn, result } = require('lodash')
 
-const createClient = (config) => {
+const createClient = config => {
   const api = {}
 
   if (!config) {
@@ -37,7 +37,7 @@ const createClient = (config) => {
       method: 'GET',
       url: api.baseUrl + url,
       qs: data,
-      headers: assignIn(api.defaultHeaders, (headers || {}))
+      headers: assignIn(api.defaultHeaders, headers || {})
     }
 
     request(options, (err, response, body) => {
@@ -48,7 +48,10 @@ const createClient = (config) => {
           if (result(err, 'code') === 'ECONNREFUSED') {
             return callback(err || body, null)
           } else {
-            return callback(new Error('Thats an error \n Please try again later.'), null)
+            return callback(
+              new Error('Thats an error \n Please try again later.'),
+              null
+            )
           }
         } else if (statusCode === 404) {
           return callback(new Error('page not found'), null)
@@ -75,7 +78,7 @@ const createClient = (config) => {
     })
   }
 
-  api.post = (url, data, headers, callback) => {
+  api.postFormData = (url, data, headers, callback) => {
     if (typeof data === 'function') {
       callback = data
       headers = {}
@@ -90,8 +93,8 @@ const createClient = (config) => {
     const options = {
       url: api.baseUrl + url,
       method: 'POST',
-      form: data,
-      headers: assignIn(api.defaultHeaders, (headers || {}))
+      formData: data,
+      headers: assignIn(api.defaultHeaders, headers || {})
     }
 
     request(options, (err, response, body) => {
@@ -125,7 +128,9 @@ const createClient = (config) => {
             return callback(null, output)
           }
         } catch (err) {
-          if (typeof callback === 'function') return callback(errorMessage, null)
+          if (typeof callback === 'function') {
+            return callback(errorMessage, null)
+          }
         }
 
         return true
@@ -133,6 +138,185 @@ const createClient = (config) => {
     })
   }
 
+  api.post = (url, data, headers, callback) => {
+    if (typeof data === 'function') {
+      callback = data
+      headers = {}
+      data = {}
+    }
+
+    if (typeof headers === 'function') {
+      callback = headers
+      headers = {}
+    }
+
+    const options = {
+      url: api.baseUrl + url,
+      method: 'POST',
+      form: data,
+      headers: assignIn(api.defaultHeaders, headers || {})
+    }
+
+    request(options, (err, response, body) => {
+      const statusCode = result(response, 'statusCode')
+      let errorMessage = {
+        status: 503,
+        message: 'The server is currently unavailable because it is overloaded or down for maintenance'
+      }
+
+      if (err || statusCode !== 200) {
+        try {
+          const errorOutput = JSON.parse(body)
+          if (typeof callback === 'function') {
+            return callback(errorOutput, null)
+          } else {
+            return true
+          }
+        } catch (err) {
+          if (typeof callback === 'function') {
+            return callback(errorMessage, null)
+          } else {
+            return true
+          }
+        }
+      } else {
+        try {
+          const output = JSON.parse(body)
+          if (output && output.data && typeof callback === 'function') {
+            return callback(null, output)
+          } else {
+            return callback(null, output)
+          }
+        } catch (err) {
+          if (typeof callback === 'function') {
+            return callback(errorMessage, null)
+          }
+        }
+
+        return true
+      }
+    })
+  }
+
+  api.patch = (url, data, headers, callback) => {
+    if (typeof data === 'function') {
+      callback = data
+      headers = {}
+      data = {}
+    }
+
+    if (typeof headers === 'function') {
+      callback = headers
+      headers = {}
+    }
+
+    const options = {
+      url: api.baseUrl + url,
+      method: 'PATCH',
+      form: data,
+      headers: assignIn(api.defaultHeaders, headers || {})
+    }
+
+    request(options, (err, response, body) => {
+      const statusCode = result(response, 'statusCode')
+      let errorMessage = {
+        status: 503,
+        message: 'The server is currently unavailable because it is overloaded or down for maintenance'
+      }
+
+      if (err || statusCode !== 200) {
+        try {
+          const errorOutput = JSON.parse(body)
+          if (typeof callback === 'function') {
+            return callback(errorOutput, null)
+          } else {
+            return true
+          }
+        } catch (err) {
+          if (typeof callback === 'function') {
+            return callback(errorMessage, null)
+          } else {
+            return true
+          }
+        }
+      } else {
+        try {
+          const output = JSON.parse(body)
+          if (output && output.data && typeof callback === 'function') {
+            return callback(null, output)
+          } else {
+            return callback(null, output)
+          }
+        } catch (err) {
+          if (typeof callback === 'function') {
+            return callback(errorMessage, null)
+          }
+        }
+
+        return true
+      }
+    })
+  }
+
+  api.delete = (url, data, headers, callback) => {
+    if (typeof data === 'function') {
+      callback = data
+      headers = {}
+      data = {}
+    }
+
+    if (typeof headers === 'function') {
+      callback = headers
+      headers = {}
+    }
+
+    const options = {
+      url: api.baseUrl + url,
+      method: 'DELETE',
+      form: data,
+      headers: assignIn(api.defaultHeaders, headers || {})
+    }
+
+    request(options, (err, response, body) => {
+      const statusCode = result(response, 'statusCode')
+      let errorMessage = {
+        status: 503,
+        message: 'The server is currently unavailable because it is overloaded or down for maintenance'
+      }
+
+      if (err || statusCode !== 200) {
+        try {
+          const errorOutput = JSON.parse(body)
+          if (typeof callback === 'function') {
+            return callback(errorOutput, null)
+          } else {
+            return true
+          }
+        } catch (err) {
+          if (typeof callback === 'function') {
+            return callback(errorMessage, null)
+          } else {
+            return true
+          }
+        }
+      } else {
+        try {
+          const output = JSON.parse(body)
+          if (output && output.data && typeof callback === 'function') {
+            return callback(null, output)
+          } else {
+            return callback(null, output)
+          }
+        } catch (err) {
+          if (typeof callback === 'function') {
+            return callback(errorMessage, null)
+          }
+        }
+
+        return true
+      }
+    })
+  }
   return api
 }
 

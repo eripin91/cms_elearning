@@ -51,6 +51,16 @@ exports.get = (req, res) => {
       })
     },
     (data, cb) => {
+      dashboardModel.getDiscussion(req, (errDiscussion, resultDiscussion) => {
+        if (_.isEmpty(resultDiscussion)) {
+          data.discussion = 0
+        } else {
+          data.discussion = resultDiscussion[0].discussion
+        }
+        cb(errDiscussion, data)
+      })
+    },
+    (data, cb) => {
       redisCache.setex(key, 600, data)
       console.log('data cached')
       cb(null, data)

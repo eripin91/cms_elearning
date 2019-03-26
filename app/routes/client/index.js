@@ -5,6 +5,6 @@
 var Route = express.Router()
 
 Route
-  .get('/', MainControllers.main, MainControllers.getData)
+  .get('/', MainControllers.main)
 
 module.exports = Route

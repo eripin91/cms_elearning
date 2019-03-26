@@ -8,6 +8,28 @@ const register = Handlebars => {
     site_url: str => {
       return CONFIG.SERVER.BASE_WEBHOST + str
     },
+    site_url_params: (str, params) => {
+      return CONFIG.SERVER.BASE_WEBHOST + str + params
+    },
+    site_url_two_params: (str, param1, param2) => {
+      return CONFIG.SERVER.BASE_WEBHOST + str + param1 + '/' + param2
+    },
+    add_params: (str, params) => {
+      return str + params
+    },
+    params_inside_string: (str, params) => {
+      return 'courses/chapter/' + params + str
+    },
+    url_params_inside_string: (params, str) => {
+      return CONFIG.SERVER.BASE_WEBHOST + 'courses/chapter/' + params + str
+    },
+    url_two_params_inside_string: (param1, str, param2) => {
+      return CONFIG.SERVER.BASE_WEBHOST + 'courses/chapter/' + param1 + str + param2
+    },
+    if_cond: (a, b, options) => {
+      if (a === b) { return options.fn(this) }
+      return options.inverse(this)
+    },
     implode: (sep, arr) => {
       let str = ''
       for (let i = 0; i < arr.length; ++i) {
@@ -46,7 +68,7 @@ const register = Handlebars => {
     get_date: (unixTimestamp, format) => {
       if (!unixTimestamp) unixTimestamp = helpers.get_date_now()
       if (!format) format = 1
-      let today = new Date(unixTimestamp * 1000)
+      let today = new Date(unixTimestamp)
       let dd = today.getDate()
       let mm = today.getMonth() + 1 // January is 0!
       let yyyy = today.getFullYear()
@@ -147,6 +169,12 @@ const register = Handlebars => {
     showLog: log => {
       console.log('LOG HELPER')
       console.log(log)
+    },
+    inc: (value) => {
+      return parseInt(value) + 1
+    },
+    checkRadioAnswer: (answer) => {
+      return answer === true ? 'checked' : ''
     }
   }
 

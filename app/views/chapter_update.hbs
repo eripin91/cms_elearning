@@ -1,0 +1,68 @@
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+        <h1>
+
+            <small>Update Chapter</small>
+        </h1>
+        <ol class="breadcrumb">
+            <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
+            <li><a href="#">Chapter</a></li>
+            <li class="active"><a href="#">Update Chapter</a></li>
+        </ol>
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+        <div class="row">
+            <div class="col-xs-12">
+                {{{ errorMsg }}}
+
+                <div class="box box-info">
+                    <div class="box-header with-border">
+                        <h3 class="box-title">Update Chapter</h3>
+                    </div>
+                    <!-- /.box-header -->
+                    <!-- form start -->
+                    <form class="form-horizontal"
+                        action="{{ site_url_two_params 'courses/chapter/update/' courseId chapterId }}" method="post">
+                        <input type="hidden" name="courseid" value="{{ data.courseid }}">
+                        <input type="hidden" name="detailid" value="{{ data.detailid }}">
+                        <div class="box-body">
+                            <div class="form-group">
+                                <label for="Name" class="col-sm-2 control-label">Name</label>
+
+                                <div class="col-sm-10">
+                                    <input type="text" name="name" class="form-control" id="Name" placeholder="Name"
+                                        value="{{ data.name }}">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="assessmentid" class="col-sm-2 control-label">Assessment Id</label>
+
+                                <div class="col-sm-10">
+                                    <select name="assesmentid" class="form-control">
+                                      {{{ selectData }}}
+                                    </select>
+                                </div>
+                            </div>
+
+                        </div>
+                        <!-- /.box-body -->
+                        <div class=" box-footer">
+                            <button type="button" onclick="javascript:history.go(-1);"
+                                class="btn btn-default">Cancel</button>
+                            <button type="submit" class="btn btn-info pull-right">Submit</button>
+                        </div>
+                        <!-- /.box-footer -->
+                    </form>
+                </div>
+                <!-- /.box -->
+            </div>
+            <!-- /.col -->
+        </div>
+        <!-- /.row -->
+    </section>
+    <!-- /.content -->
+</div>

@@ -27,5 +27,14 @@ module.exports = {
         callback(err, rows)
       })
     })
+  },
+  getDiscussion: (conn, callback) => {
+    conn.getConnection((errConnection, connection) => {
+      if (errConnection) console.error(errConnection)
+
+      connection.query(`SELECT COUNT(*) AS discussion FROM discussion_tab WHERE parent=0 AND status = 1`, (err, rows) => {
+        callback(err, rows)
+      })
+    })
   }
 }
