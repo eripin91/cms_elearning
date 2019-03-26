@@ -28,11 +28,19 @@
                     <form class="form-horizontal" action="{{ site_url 'courses/add' }}" method="post">
                         <div class="box-body">
                             <div class="form-group">
-                                <label for="classId" class="col-sm-2 control-label">Class Id</label>
+                                <label for="classId" class="col-sm-2 control-label">Class</label>
 
                                 <div class="col-sm-10">
-                                    <input type="number" name="classId" class="form-control" id="classId"
-                                        placeholder="Class Id">
+                                    {{!-- <input type="number" name="classId" class="form-control" id="classId"
+                                        placeholder="Class Id"> --}}
+
+                                    <select name="classId" id="classId" class="form-control">
+                                        {{#each classList}}
+                                        <option value="{{ classid }}">
+                                            {{ class_name }}
+                                        </option>
+                                        {{/each}}
+                                    </select>
                                 </div>
                             </div>
                             <div class="form-group">

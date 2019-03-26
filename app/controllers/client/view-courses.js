@@ -96,7 +96,16 @@ exports.ajaxGet = async (req, res) => {
 exports.add = async (req, res) => {
   if (_.isEmpty(req.body)) {
     const errorMsg = await MiscHelper.get_error_msg(req.sessionID)
-    res.render('course_add', { errorMsg: errorMsg })
+
+    API_SERVICE.get(
+      'v1/classes/get?keyword=&limit=50',
+      {},
+      (err, response) => {
+        if (err) console.error(err)
+        res.render('course_add', { errorMsg: errorMsg, classList: response.data })
+        // res.render('course_add', { errorMsg: errorMsg })
+      }
+    )
   } else {
     const classId = req.body.classId
     const name = req.body.name
@@ -150,9 +159,6 @@ exports.update = async (req, res) => {
           if (error) {
             console.log('ERROR GET SINGLE COURSE')
           }
-          // console.log('BODY RESPONSE')
-          // console.log(typeof body)
-          // console.log(JSON.parse(body).data)
           cb(null, JSON.parse(body).data)
         })
       },
@@ -162,8 +168,6 @@ exports.update = async (req, res) => {
           {},
           (err, response) => {
             if (err) console.error(err)
-            console.log('RESPONSE : ')
-            console.log(response.data)
             res.render('course_update', { errorMsg: errorMsg, data: response.data, classList, prevClassId: response.data.classid })
           }
         )
