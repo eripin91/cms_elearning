@@ -165,6 +165,12 @@ const register = Handlebars => {
     showLog: log => {
       console.log('LOG HELPER')
       console.log(log)
+    },
+    inc: (value) => {
+      return parseInt(value) + 1
+    },
+    checkRadioAnswer: (answer) => {
+      return answer === true ? 'checked' : ''
     }
   }
 
