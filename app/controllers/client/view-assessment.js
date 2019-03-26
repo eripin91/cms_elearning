@@ -37,7 +37,7 @@ exports.ajaxGet = async (req, res) => {
     if (!err) {
       const dataAssessment = []
       async.eachSeries(_.result(response, 'data', {}), (item, next) => {
-        item.action = MiscHelper.getActionButtonAssessment('assessment', 'question', item.assessmentid)
+        item.action = MiscHelper.getActionButtonFull('assessment', item.assessmentid)
         item.course_name = item.course_name ? item.course_name : '-'
         item.created_at = moment(item.created_at).format('DD/MM/YYYY hh:mm')
         item.updated_at = moment(item.updated_at).format('DD/MM/YYYY hh:mm')
