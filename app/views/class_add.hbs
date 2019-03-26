@@ -25,15 +25,18 @@
           </div>
           <!-- /.box-header -->
           <!-- form start -->
-          <form class="form-horizontal" action="{{ site_url 'classes/add' }}" method="post"
-            enctype="multipart/form-data">
+          <form class="form-horizontal" action="{{ site_url 'classes/add' }}" method="post">
+            <input type="hidden" name="cover" value="">
+            <input type="hidden" name="cover_medium" value="">
+            <input type="hidden" name="cover_thumb" value="">
             <div class="box-body">
               <div class="form-group">
                 <label for="teacherId" class="col-sm-2 control-label">Teacher</label>
 
                 <div class="col-sm-10">
-                  <input type="number" name="guruid" class="form-control" id="teacherId" placeholder="Teacher Id"
-                    value="{{ data.guruid }}">
+                    <select name="guruid" class="form-control">
+                      {{{ selectGuru }}}
+                    </select>
                 </div>
               </div>
               <div class="form-group">
@@ -48,19 +51,15 @@
                 <label for="Description" class="col-sm-2 control-label">Description</label>
 
                 <div class="col-sm-10">
-                  <input type="text" name="description" class="form-control" id="Description" placeholder="Description"
-                    value="{{ data.description }}">
+                    <textarea rows="4" class="form-control" id="description" name="description"></textarea>
                 </div>
               </div>
-              <div class="form-group">
-                <label for="Cover" class="col-sm-2 control-label">Cover</label>
-
-                <div class="col-sm-10">
-                  <input type="file" accept="image/*" name="file" class="form-control" id="Cover" placeholder="Cover"
-                    value="{{ data.cover }}">
-                  <input type="text" name="oldCover" value="{{ data.cover }}" hidden="true">
+                <div class="form-group">
+                  <label for="Nick" class="col-sm-2 control-label">Cover</label>
+                  <div class="col-sm-10"><input id="uploadPhoto" name="file" type="file" url-upload="/v1/upload/photo" accept="image/*" />
+                  <img id="imageUpload" style="width: 200px" />
+                  </div>
                 </div>
-              </div>
               <div class="form-group">
                 <label for="Priority" class="col-sm-2 control-label">Priority</label>
 

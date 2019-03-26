@@ -91,8 +91,8 @@ module.exports = (app) => {
   app.use(parallelMiddleware([
     xssFilter,
     nocache,
-    bodyParser.json({ limit: '2mb' }),
-    bodyParser.urlencoded({ extended: true, limit: '2mb', parameterLimit: 1000 }),
+    bodyParser.json({ limit: '5mb' }),
+    bodyParser.urlencoded({ extended: true, limit: '5mb', parameterLimit: 1000 }),
     compression,
     expressValidator({
       customValidators: {

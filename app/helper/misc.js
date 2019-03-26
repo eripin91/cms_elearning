@@ -97,6 +97,12 @@ module.exports = {
     action += ' <a href="' + urlPrefix + '/' + 'delete/' + id + '" onclick="return confirm(\'Are you sure you want to delete this item?\');"><i class="fa fa-times"></i></a>'
     return action
   },
+  getActionButtonAssessment: (urlPrefix, urlQuestion, id) => {
+    let action = '<a href="' + urlPrefix + '/' + 'update/' + id + '"><i class="fa fa-pencil"></i></a>'
+    action += ' <a href="' + urlPrefix + '/' + 'delete/' + id + '" onclick="return confirm(\'Are you sure you want to delete this item?\');"><i class="fa fa-times"></i></a>'
+    action += ` <a href="${urlPrefix}/${urlQuestion}/${id}" alt="Add Question"><i class="fa fa-clipboard"></i></a>`
+    return action
+  },
   getActionButtonCourse: (urlPrefix, urlThread, id) => {
     let action = '<a href="' + urlPrefix + '/' + 'update/' + id + '"><i class="fa fa-pencil"></i></a>'
     action += ' <a href="' + urlPrefix + '/' + 'delete/' + id + '" onclick="return confirm(\'Are you sure you want to delete this item?\');"><i class="fa fa-times"></i></a>'
@@ -125,6 +131,30 @@ module.exports = {
     let action = `<a href="${urlPrefix}/get/${id}">${course}</a>`
     return action
   },
+  getGuru: (data, guruId) => {
+    let res = '<option value=""></option>'
+    for (let i = 0; i < data.length; ++i) {
+      if (guruId === data[i].guruid) {
+        res += `<option value="${data[i].guruid}" selected>${data[i].fullname}</option>`
+      } else {
+        res += `<option value="${data[i].guruid}">${data[i].fullname}</option>`
+      }
+    }
+    return res
+  },
+  convertDuration: (duration) => {
+    let minutes = Math.floor(duration / 60)
+    let second = duration - (minutes * 60)
+    duration = minutes + ':' + second
+    return duration
+  },
+  sizeCount: (bytes) => {
+    var sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB']
+    if (bytes === 0) return 'n/a'
+    var i = parseInt(Math.floor(Math.log(bytes) / Math.log(1024)))
+    if (i === 0) return bytes + ' ' + sizes[i]
+    return (bytes / Math.pow(1024, i)).toFixed(1) + ' ' + sizes[i]
+  },
   get_error_msg: async (sesId) => {
     const data = await redisCache.v2_get(`__msg${sesId}`).catch(err => console.error(err))
     if (!data) return ''
@@ -140,7 +170,7 @@ module.exports = {
     return resE
   },
   getPhoto: (imgUrl) => {
-    let image = `<img src="${imgUrl}" height="42" width="42">`
+    let image = `<img src="${imgUrl}" height="150" width="150">`
     return image
   }
 }

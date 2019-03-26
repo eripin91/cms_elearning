@@ -178,3 +178,26 @@ exports.delete = async (req, res) => {
     })
   }
 }
+
+/*
+ * GET && POST : 'question-list/:assessmentId'
+ *
+ * @desc Get & Create question
+ *
+ * @param  {object} req - for request
+ * @param  {object} req.body.assessmentId - assessmentId for identifier
+ *
+ * @return {object} Request object
+ */
+exports.questionsList = async (req, res) => {
+  const errorMsg = await MiscHelper.get_error_msg(req.sessionId)
+  const assessmentId = req.params.assessmentId
+
+  if (_.isEmpty(req.body)) {
+    console.log('Empty Body with Assessment Id : ' + assessmentId)
+    res.render('question_add', { errorMsg: errorMsg, assessmentId: assessmentId })
+  } else {
+    console.log('Filled Body')
+    console.log(req.body)
+  }
+}

@@ -338,18 +338,11 @@ exports.insertSoal = (req, res) => {
           question_type: req.body.soal[i].question_type,
           question: req.body.soal[i].question,
           answer: req.body.soal[i].answer,
-          status: req.body.soal[i].status,
+          status: 1,
           options: req.body.soal[i].options,
           created_at: new Date(),
           updated_at: new Date()
         }
-
-        async.eachSeries(data.options, item => {
-          if (_.isEmpty(item.isAnswer)) {
-            item.isAnswer = false
-          }
-        })
-
         assessmentModel.insertDetailAssessment(req, data, (errAssessment, resultAssessment) => {
           if (errAssessment) console.error(errAssessment)
           redisCache.delwild('detail-assessment:*')
