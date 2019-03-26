@@ -1019,8 +1019,10 @@ function _init() {
       { data: 'courseid' },
       { data: 'classid' },
       { data: 'name' },
-      { data: 'preassessmentid' },
-      { data: 'finalassessmentid' },
+      { data: 'preassessment' },
+      { data: 'finalassessment' },
+      { data: 'avg_score'},
+      { data: 'discussion'},
       { data: 'status' },
       { data: 'created_at' },
       { data: 'action' }
