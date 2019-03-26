@@ -192,15 +192,17 @@ exports.update = async (req, res) => {
 exports.delete = async (req, res) => {
   const classId = 0 || req.params.classId
   if (!classId) {
+    console.log('ERROR CLASSID NOT FOUND!')
     MiscHelper.set_error_msg({ error: 'classId required !!!' }, req.sessionID)
     res.redirect('/classes')
   } else {
-    API_SERVICE.get('v1/classes/delete/' + classId, {}, (err, response) => {
+    console.log('DELETING CLASS')
+    API_SERVICE.delete('v1/classes/delete/' + classId, {}, (err, response) => {
       if (err) {
         MiscHelper.set_error_msg({ error: err }, req.sessionID)
         res.redirect('/classes')
       } else {
-        MiscHelper.set_error_msg({ info: 'Admin berhasil dihapus.' }, req.sessionID)
+        MiscHelper.set_error_msg({ info: 'Class berhasil dihapus.' }, req.sessionID)
         res.redirect('/classes')
       }
     })
