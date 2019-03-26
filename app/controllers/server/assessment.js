@@ -56,6 +56,42 @@ exports.getAssessment = (req, res) => {
   })
 }
 
+exports.getAssessmentSelect = (req, res) => {
+  const key = `assessment-select` + new Date().getTime()
+
+  async.waterfall([
+    (cb) => {
+      redisCache.get(key, assessment => {
+        if (assessment) {
+          return MiscHelper.responses(res, assessment)
+        } else {
+          cb(null)
+        }
+      })
+    },
+    (cb) => {
+      assessmentModel.getAssessmentSelect(req, (errAssessment, resultAssessmnet) => {
+        if (_.isEmpty(resultAssessmnet)) {
+          return MiscHelper.responses(res, resultAssessmnet)
+        } else {
+          cb(errAssessment, resultAssessmnet)
+        }
+      })
+    },
+    (dataAssessment, cb) => {
+      redisCache.setex(key, 600, dataAssessment)
+      console.log('data cached')
+      cb(null, dataAssessment)
+    }
+  ], (errAssessment, resultAssessmnet) => {
+    if (!errAssessment) {
+      return MiscHelper.responses(res, resultAssessmnet)
+    } else {
+      return MiscHelper.errorCustomStatus(res, errAssessment, 400)
+    }
+  })
+}
+
 exports.getAssessmentDetail = (req, res) => {
   req.checkParams('assessmentId', 'assessmentId is required').notEmpty().isInt()
 
