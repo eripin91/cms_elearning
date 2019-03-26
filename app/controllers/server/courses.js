@@ -230,9 +230,36 @@ exports.insertCourse = (req, res) => {
         created_at: new Date(),
         updated_at: new Date()
       }
+
       coursesModel.insertCourse(req, data, (errCourse, resultCourse) => {
         redisCache.delwild('courses-list:*')
         cb(errCourse, resultCourse)
+      })
+    },
+    (course, cb) => {
+      async.parallel([
+        (next) => {
+          const data = {
+            parentid: course.id,
+            updated_at: new Date()
+          }
+
+          assessmentModel.updateAssessment(req, req.body.preAssessmentId, data, errAssessment => {
+            next(errAssessment)
+          })
+        },
+        (next) => {
+          const data = {
+            parentid: course.id,
+            updated_at: new Date()
+          }
+
+          assessmentModel.updateAssessment(req, req.body.finalAssessmentId, data, errAssessment => {
+            next(errAssessment)
+          })
+        }
+      ], err => {
+        cb(err, course)
       })
     }
   ], (errCourse, resultCourse) => {
@@ -277,17 +304,44 @@ exports.updateCourse = (req, res) => {
       })
     },
     (cb) => {
-      let data = {
+      const data = {
+        name: req.body.name,
+        classid: req.body.classid,
+        preassessmentid: req.body.preassessmentid,
+        finalassessmentid: req.body.finalassessmentid,
         updated_at: new Date()
       }
-      for (let key in req.body) {
-        data[key] = req.body[key]
-      }
-      console.log(data)
+
       coursesModel.updateCourse(req, data, courseId, (errUpdateCourse, resultUpdateCourse) => {
         redisCache.delwild(`courses-list:*`)
         redisCache.del(`course-detail:${courseId}`)
         cb(errUpdateCourse, resultUpdateCourse)
+      })
+    },
+    (course, cb) => {
+      async.parallel([
+        (next) => {
+          const data = {
+            parentid: courseId,
+            updated_at: new Date()
+          }
+
+          assessmentModel.updateAssessment(req, req.body.preassessmentid, data, errAssessment => {
+            next(errAssessment)
+          })
+        },
+        (next) => {
+          const data = {
+            parentid: courseId,
+            updated_at: new Date()
+          }
+
+          assessmentModel.updateAssessment(req, req.body.finalassessmentid, data, errAssessment => {
+            next(errAssessment)
+          })
+        }
+      ], err => {
+        cb(err, course)
       })
     }
   ], (errUpdateCourse, resultUpdateCourse) => {
