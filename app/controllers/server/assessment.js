@@ -267,6 +267,7 @@ exports.updateAssessment = (req, res) => {
       })
     },
     (assessment, cb) => {
+      console.log(assessment)
       const questions = []
       for (let i = 0; i < _.size(req.body.question); i++) {
         let dataQuestion = {}

@@ -202,10 +202,7 @@ exports.delete = async (req, res) => {
         MiscHelper.set_error_msg({ error: err }, req.sessionID)
         res.redirect('/classes')
       } else {
-        MiscHelper.set_error_msg(
-          { info: 'Class berhasil dihapus.' },
-          req.sessionID
-        )
+        MiscHelper.set_error_msg({ info: 'Class berhasil dihapus.' }, req.sessionID)
         res.redirect('/classes')
       }
     })

@@ -270,7 +270,7 @@ exports.updateGuru = (req, res) => {
         if (_.isEmpty(resultCheck) || errCheck) {
           return MiscHelper.errorCustomStatus(res, { message: 'Class isn\'t Exist' })
         } else {
-          cb(null, resultCheck[0])
+          cb(null)
         }
       })
     },

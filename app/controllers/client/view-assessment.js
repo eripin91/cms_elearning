@@ -188,6 +188,7 @@ exports.update = async (req, res) => {
         }
 
         dataAssessment.question = dataQuestions
+
         API_SERVICE.post('v1/assessment/update/' + assessmentId, dataAssessment, (err, response) => {
           if (!err) {
             MiscHelper.set_error_msg({ info: 'Assessment berhasil diubah.' }, req.sessionID)
