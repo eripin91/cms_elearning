@@ -76,15 +76,21 @@ exports.ajaxGet = async (req, res) => {
 exports.add = async (req, res) => {
   if (_.isEmpty(req.body)) {
     const errorMsg = await MiscHelper.get_error_msg(req.sessionID)
-
-    API_SERVICE.get(
-      'v1/classes/get?keyword=&limit=50',
-      {},
-      (err, response) => {
-        if (err) console.error(err)
-        res.render('course_add', { errorMsg: errorMsg, classList: response.data })
+    async.parallel({
+      assessment: (callback) => {
+        API_SERVICE.get('v1/assessment/select', {}, (err, assessment) => {
+          callback(err, _.result(assessment, 'data'))
+        })
+      },
+      classes: (callback) => {
+        API_SERVICE.get('v1/classes/get?keyword=&limit=50', {}, (err, classes) => {
+          callback(err, _.result(classes, 'data'))
+        })
       }
-    )
+    }, (err, result) => {
+      if (err) console.error(err)
+      res.render('course_add', { errorMsg: errorMsg, classList: result.classes, selectData: MiscHelper.getSelect(result.assessment, 0) })
+    })
   } else {
     const classId = req.body.classId
     const name = req.body.name
@@ -135,16 +141,19 @@ exports.update = async (req, res) => {
         })
       },
       (classList, cb) => {
-        API_SERVICE.get(
-          'v1/courses/' + req.params.courseId,
-          {},
-          (err, response) => {
-            if (err) console.error(err)
-            res.render('course_update', { errorMsg: errorMsg, data: response.data, classList, prevClassId: response.data.classid })
-          }
-        )
+        API_SERVICE.get('v1/courses/' + req.params.courseId, {}, (err, courses) => {
+          cb(err, classList, _.result(courses, 'data'))
+        })
+      },
+      (classList, courses, cb) => {
+        API_SERVICE.get('v1/assessment/select', {}, (err, assessment) => {
+          cb(err, classList, courses, _.result(assessment, 'data'))
+        })
       }
-    ])
+    ], (err, classList, courses, assessment) => {
+      if (err) console.error(err)
+      res.render('course_update', { errorMsg: errorMsg, data: courses, classList, prevClassId: courses.classid, selectDataPre: MiscHelper.getSelect(assessment, courses.preassessmentid), selectDataFinal: MiscHelper.getSelect(assessment, courses.finalassessmentid) })
+    })
   } else {
     const courseId = req.body.courseid
     const classid = req.body.classid
@@ -267,11 +276,14 @@ exports.chapterGetAll = async (req, res) => {
  */
 exports.chapterAdd = async (req, res) => {
   if (_.isEmpty(req.body)) {
-    const errorMsg = await MiscHelper.get_error_msg(req.sessionID)
-    res.render('chapter_add', { errorMsg: errorMsg, courseId: req.params.courseId })
+    API_SERVICE.get('v1/assessment/select', {}, async (err, assessment) => {
+      if (err) console.error(err)
+      const errorMsg = await MiscHelper.get_error_msg(req.sessionID)
+      res.render('chapter_add', { errorMsg: errorMsg, selectData: MiscHelper.getSelect(assessment.data, 0), courseId: req.params.courseId })
+    })
   } else {
     const name = req.body.name
-    const assessmentid = req.body.assessmentid
+    const assessmentid = req.body.assesmentid
 
     if (!name || !assessmentid) {
       MiscHelper.set_error_msg({ error: 'Data yang anda masukkan tidak lengkap !!!' }, req.sessionID)
@@ -303,16 +315,26 @@ exports.chapterAdd = async (req, res) => {
 exports.chapterUpdate = async (req, res) => {
   if (_.isEmpty(req.body)) {
     const errorMsg = await MiscHelper.get_error_msg(req.sessionID)
-    API_SERVICE.get('v1/courses/chapter/detail/' + req.params.chapterId, {}, (err, response) => {
+    async.waterfall([
+      (cb) => {
+        API_SERVICE.get('v1/courses/chapter/detail/' + req.params.chapterId, {}, (err, response) => {
+          cb(err, response)
+        })
+      },
+      (courses, cb) => {
+        API_SERVICE.get('v1/assessment/select', {}, async (err, assessment) => {
+          cb(err, courses, assessment)
+        })
+      }
+    ], (err, response, assessmentSelect) => {
       if (err) console.error(err)
-      res.render('chapter_update', { errorMsg: errorMsg, data: response.data[0], courseId: req.params.courseId, chapterId: req.params.chapterid })
+      res.render('chapter_update', { errorMsg: errorMsg, selectData: MiscHelper.getSelect(assessmentSelect.data, _.result(response, 'data[0].assesmentid', 0)), data: response.data[0], courseId: req.params.courseId, chapterId: req.params.chapterid })
     })
   } else {
     const chapterId = req.body.detailid
     const courseId = req.params.courseId
     const name = req.body.name
     const assessmentid = req.body.assesmentid
-
     if (!chapterId) {
       MiscHelper.set_error_msg({ error: 'Kesalahan input data !!!' }, req.sessionID)
       res.redirect('/courses/chapter')
