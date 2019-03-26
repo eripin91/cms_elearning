@@ -3,6 +3,7 @@
 const ApiLibs = require('../../libs/API')
 const async = require('async')
 const moment = require('moment')
+const fs = require('fs')
 
 const API_SERVICE = ApiLibs.client({
   baseUrl: CONFIG.SERVER.BASE_WEBHOST,
@@ -33,53 +34,33 @@ exports.main = async (req, res) => {
  * @return {object} Request object
  */
 exports.ajaxGet = async (req, res) => {
-  API_SERVICE.get(
-    'v1/courses',
-    {
-      limit: _.result(req.query, 'length', 25),
-      offset: _.result(req.query, 'start', 0),
-      keyword: req.query.search['value']
-    },
-    (err, response) => {
-      const dataCourses = []
-      if (!err) {
-        async.eachSeries(
-          _.result(response.data, 'data', {}),
-          (item, next) => {
-            item.action = MiscHelper.getActionButtonCourse(
-              'courses',
-              'discussions',
-              item.courseid
-            )
-            item.name = `<a href="courses/chapter/${item.courseid}">${item.name}</a>`
-            item.status = MiscHelper.getStatus(item.status, 1)
-            item.created_at = moment(item.created_at).format('DD/MM/YYYY hh:mm')
-            dataCourses.push(item)
-            next()
-          },
-          err => {
-            if (!err) {
-              const data = {
-                draw: _.result(req.query, 'draw', 1),
-                recordsTotal: _.result(response, 'total', 0),
-                recordsFiltered: _.result(response, 'total', 0)
-              }
-
-              return MiscHelper.responses(res, dataCourses, 200, data)
-            } else {
-              return MiscHelper.errorCustomStatus(res, err, 400)
-            }
+  API_SERVICE.get('v1/courses', { limit: _.result(req.query, 'length', 25), offset: _.result(req.query, 'start', 0), keyword: req.query.search['value'] }, (err, response) => {
+    const dataCourses = []
+    if (!err) {
+      async.eachSeries(_.result(response.data, 'data', {}), (item, next) => {
+        item.action = MiscHelper.getActionButtonCourse('courses', 'discussions', item.courseid)
+        item.name = `<a href="/courses/chapter/${item.courseid}">${item.name}</a>`
+        item.status = MiscHelper.getStatus(item.status, 1)
+        item.created_at = moment(item.created_at).format('DD/MM/YYYY hh:mm')
+        dataCourses.push(item)
+        next()
+      }, err => {
+        if (!err) {
+          const data = {
+            draw: _.result(req.query, 'draw', 1),
+            recordsTotal: _.result(response, 'total', 0),
+            recordsFiltered: _.result(response, 'total', 0)
           }
-        )
-      } else {
-        return MiscHelper.errorCustomStatus(
-          res,
-          err,
-          _.result(err, 'status', 400)
-        )
-      }
+
+          return MiscHelper.responses(res, dataCourses, 200, data)
+        } else {
+          return MiscHelper.errorCustomStatus(res, err, 400)
+        }
+      })
+    } else {
+      return MiscHelper.errorCustomStatus(res, err, _.result(err, 'status', 400))
     }
-  )
+  })
 }
 
 /*
@@ -102,18 +83,12 @@ exports.add = async (req, res) => {
     const finalAssessmentId = req.body.finalAssessmentId
 
     if (!classId || !name || !preAssessmentId || !finalAssessmentId) {
-      MiscHelper.set_error_msg(
-        { error: 'Data yang anda masukkan tidak lengkap !!!' },
-        req.sessionID
-      )
+      MiscHelper.set_error_msg({ error: 'Data yang anda masukkan tidak lengkap !!!' }, req.sessionID)
       res.redirect('/courses/add')
     } else {
       API_SERVICE.post('v1/courses', req.body, (err, response) => {
         if (!err) {
-          MiscHelper.set_error_msg(
-            { info: 'Course berhasil ditambahkan.' },
-            req.sessionID
-          )
+          MiscHelper.set_error_msg({ info: 'Course berhasil ditambahkan.' }, req.sessionID)
           res.redirect('/courses')
         } else {
           MiscHelper.set_error_msg({ error: response.message }, req.sessionID)
@@ -137,14 +112,10 @@ exports.add = async (req, res) => {
 exports.update = async (req, res) => {
   if (_.isEmpty(req.body)) {
     const errorMsg = await MiscHelper.get_error_msg(req.sessionID)
-    API_SERVICE.get(
-      'v1/courses/' + req.params.courseId,
-      {},
-      (err, response) => {
-        if (err) console.error(err)
-        res.render('course_update', { errorMsg: errorMsg, data: response.data })
-      }
-    )
+    API_SERVICE.get('v1/courses/' + req.params.courseId, {}, (err, response) => {
+      if (err) console.error(err)
+      res.render('course_update', { errorMsg: errorMsg, data: response.data })
+    })
   } else {
     const courseId = req.body.courseid
     const classid = req.body.classid
@@ -153,53 +124,31 @@ exports.update = async (req, res) => {
     const finalassessmentid = req.body.finalassessmentid
 
     if (!courseId) {
-      MiscHelper.set_error_msg(
-        { error: 'Kesalahan input data !!!' },
-        req.sessionID
-      )
+      MiscHelper.set_error_msg({ error: 'Kesalahan input data !!!' }, req.sessionID)
       res.redirect('/courses')
     } else {
       if (!classid) {
-        MiscHelper.set_error_msg(
-          { error: 'Class Id wajib diisi !!!' },
-          req.sessionID
-        )
+        MiscHelper.set_error_msg({ error: 'Class Id wajib diisi !!!' }, req.sessionID)
         res.redirect('/courses/update/' + courseId)
       } else if (!name) {
-        MiscHelper.set_error_msg(
-          { error: 'Name wajib diisi !!!' },
-          req.sessionID
-        )
+        MiscHelper.set_error_msg({ error: 'Name wajib diisi !!!' }, req.sessionID)
         res.redirect('/courses/update/' + courseId)
       } else if (!preassessmentid) {
-        MiscHelper.set_error_msg(
-          { error: 'Pre Assessment Id wajib diisi !!!' },
-          req.sessionID
-        )
+        MiscHelper.set_error_msg({ error: 'Pre Assessment Id wajib diisi !!!' }, req.sessionID)
         res.redirect('/courses/update/' + courseId)
       } else if (!finalassessmentid) {
-        MiscHelper.set_error_msg(
-          { error: 'Final Assessment Id wajib diisi !!!' },
-          req.sessionID
-        )
+        MiscHelper.set_error_msg({ error: 'Final Assessment Id wajib diisi !!!' }, req.sessionID)
         res.redirect('/courses/update/' + courseId)
       } else {
-        API_SERVICE.patch(
-          'v1/courses/' + courseId,
-          req.body,
-          (err, response) => {
-            if (!err) {
-              MiscHelper.set_error_msg(
-                { info: 'Courses berhasil diubah.' },
-                req.sessionID
-              )
-              res.redirect('/courses')
-            } else {
-              MiscHelper.set_error_msg({ error: err.message }, req.sessionID)
-              res.redirect('/courses/update/' + courseId)
-            }
+        API_SERVICE.patch('v1/courses/' + courseId, req.body, (err, response) => {
+          if (!err) {
+            MiscHelper.set_error_msg({ info: 'Courses berhasil diubah.' }, req.sessionID)
+            res.redirect('/courses')
+          } else {
+            MiscHelper.set_error_msg({ error: err.message }, req.sessionID)
+            res.redirect('/courses/update/' + courseId)
           }
-        )
+        })
       }
     }
   }
@@ -225,10 +174,7 @@ exports.delete = async (req, res) => {
       if (err) {
         MiscHelper.set_error_msg({ error: err }, req.sessionID)
       } else {
-        MiscHelper.set_error_msg(
-          { info: 'Course berhasil dihapus.' },
-          req.sessionID
-        )
+        MiscHelper.set_error_msg({ info: 'Course berhasil dihapus.' }, req.sessionID)
         res.redirect(`/courses`)
       }
     })
@@ -252,49 +198,33 @@ exports.chapterMain = async (req, res) => {
  * @return {object} Request object
  */
 exports.chapterGetAll = async (req, res) => {
-  API_SERVICE.get(
-    'v1/courses/chapter/' + req.params.courseId,
-    {
-      limit: _.result(req.query, 'length', 25),
-      offset: _.result(req.query, 'start', 0),
-      keyword: req.query.search['value']
-    },
-    (err, response) => {
-      const dataChapters = []
-      if (!err) {
-        async.eachSeries(
-          _.result(response.data, 'data', {}),
-          (item, next) => {
-            item.action = `<a href="update/${req.params.courseId}/${item.detailid}"><i class="fa fa-pencil"></i></a>`
-            item.action += `  <a href="delete/${req.params.courseId}/${item.detailid}" onclick="return confirm('Are you sure you want to delete this item?');"><i class="fa fa-times"></i></a>`
-            item.name = `<a href="${item.detailid}/lecture">${item.name}</a>`
-            item.assessment_title = item.assessment_title === null ? 'Belum ada test' : item.assessment_title
-            dataChapters.push(item)
-            next()
-          },
-          err => {
-            if (!err) {
-              const data = {
-                draw: _.result(req.query, 'draw', 1),
-                recordsTotal: _.result(response, 'total', 0),
-                recordsFiltered: _.result(response, 'total', 0)
-              }
-
-              return MiscHelper.responses(res, dataChapters, 200, data)
-            } else {
-              return MiscHelper.errorCustomStatus(res, err, 400)
-            }
+  API_SERVICE.get('v1/courses/chapter/' + req.params.courseId, { limit: _.result(req.query, 'length', 25), offset: _.result(req.query, 'start', 0), keyword: req.query.search['value'] }, (err, response) => {
+    const dataChapters = []
+    if (!err) {
+      async.eachSeries(_.result(response.data, 'data', {}), (item, next) => {
+        item.action = `<a href="update/${req.params.courseId}/${item.detailid}"><i class="fa fa-pencil"></i></a>`
+        item.action += `  <a href="delete/${req.params.courseId}/${item.detailid}" onclick="return confirm('Are you sure you want to delete this item?');"><i class="fa fa-times"></i></a>`
+        item.name = `<a href="${item.detailid}/lecture">${item.name}</a>`
+        item.assessment_title = item.assessment_title === null ? 'Belum ada test' : item.assessment_title
+        dataChapters.push(item)
+        next()
+      }, err => {
+        if (!err) {
+          const data = {
+            draw: _.result(req.query, 'draw', 1),
+            recordsTotal: _.result(response, 'total', 0),
+            recordsFiltered: _.result(response, 'total', 0)
           }
-        )
-      } else {
-        return MiscHelper.errorCustomStatus(
-          res,
-          err,
-          _.result(err, 'status', 400)
-        )
-      }
+
+          return MiscHelper.responses(res, dataChapters, 200, data)
+        } else {
+          return MiscHelper.errorCustomStatus(res, err, 400)
+        }
+      })
+    } else {
+      return MiscHelper.errorCustomStatus(res, err, _.result(err, 'status', 400))
     }
-  )
+  })
 }
 
 /*
@@ -315,18 +245,12 @@ exports.chapterAdd = async (req, res) => {
     const assessmentid = req.body.assessmentid
 
     if (!name || !assessmentid) {
-      MiscHelper.set_error_msg(
-        { error: 'Data yang anda masukkan tidak lengkap !!!' },
-        req.sessionID
-      )
+      MiscHelper.set_error_msg({ error: 'Data yang anda masukkan tidak lengkap !!!' }, req.sessionID)
       res.redirect('/courses/chapter/add/' + req.params.courseId)
     } else {
       API_SERVICE.post(`v1/courses/chapter/${req.params.courseId}`, req.body, (err, response) => {
         if (!err) {
-          MiscHelper.set_error_msg(
-            { info: 'Chapter berhasil ditambahkan.' },
-            req.sessionID
-          )
+          MiscHelper.set_error_msg({ info: 'Chapter berhasil ditambahkan.' }, req.sessionID)
           res.redirect(`/courses/chapter/${req.params.courseId}`)
         } else {
           MiscHelper.set_error_msg({ error: response.message }, req.sessionID)
@@ -350,14 +274,10 @@ exports.chapterAdd = async (req, res) => {
 exports.chapterUpdate = async (req, res) => {
   if (_.isEmpty(req.body)) {
     const errorMsg = await MiscHelper.get_error_msg(req.sessionID)
-    API_SERVICE.get(
-      'v1/courses/chapter/detail/' + req.params.chapterId,
-      {},
-      (err, response) => {
-        if (err) console.error(err)
-        res.render('chapter_update', { errorMsg: errorMsg, data: response.data[0], courseId: req.params.courseId, chapterId: req.params.chapterid })
-      }
-    )
+    API_SERVICE.get('v1/courses/chapter/detail/' + req.params.chapterId, {}, (err, response) => {
+      if (err) console.error(err)
+      res.render('chapter_update', { errorMsg: errorMsg, data: response.data[0], courseId: req.params.courseId, chapterId: req.params.chapterid })
+    })
   } else {
     const chapterId = req.body.detailid
     const courseId = req.params.courseId
@@ -365,41 +285,25 @@ exports.chapterUpdate = async (req, res) => {
     const assessmentid = req.body.assesmentid
 
     if (!chapterId) {
-      MiscHelper.set_error_msg(
-        { error: 'Kesalahan input data !!!' },
-        req.sessionID
-      )
+      MiscHelper.set_error_msg({ error: 'Kesalahan input data !!!' }, req.sessionID)
       res.redirect('/courses/chapter')
     } else {
       if (!name) {
-        MiscHelper.set_error_msg(
-          { error: 'Name wajib diisi !!!' },
-          req.sessionID
-        )
+        MiscHelper.set_error_msg({ error: 'Name wajib diisi !!!' }, req.sessionID)
         res.redirect(`/courses/chapter/update/${courseId}/${chapterId}`)
       } else if (!assessmentid) {
-        MiscHelper.set_error_msg(
-          { error: 'Assessment Id wajib diisi !!!' },
-          req.sessionID
-        )
+        MiscHelper.set_error_msg({ error: 'Assessment Id wajib diisi !!!' }, req.sessionID)
         res.redirect(`/courses/chapter/update/${courseId}/${chapterId}`)
       } else {
-        API_SERVICE.patch(
-          `v1/courses/chapter/${courseId}/${chapterId}`,
-          req.body,
-          (err, response) => {
-            if (!err) {
-              MiscHelper.set_error_msg(
-                { info: 'Courses berhasil diubah.' },
-                req.sessionID
-              )
-              res.redirect(`/courses/chapter/${courseId}`)
-            } else {
-              MiscHelper.set_error_msg({ error: err.message }, req.sessionID)
-              res.redirect(`/courses/chapter/${courseId}/`)
-            }
+        API_SERVICE.patch(`v1/courses/chapter/${courseId}/${chapterId}`, req.body, (err, response) => {
+          if (!err) {
+            MiscHelper.set_error_msg({ info: 'Courses berhasil diubah.' }, req.sessionID)
+            res.redirect(`/courses/chapter/${courseId}`)
+          } else {
+            MiscHelper.set_error_msg({ error: err.message }, req.sessionID)
+            res.redirect(`/courses/chapter/${courseId}/`)
           }
-        )
+        })
       }
     }
   }
@@ -426,10 +330,7 @@ exports.chapterDelete = async (req, res) => {
       if (err) {
         MiscHelper.set_error_msg({ error: err }, req.sessionID)
       } else {
-        MiscHelper.set_error_msg(
-          { info: 'Chapter berhasil dihapus.' },
-          req.sessionID
-        )
+        MiscHelper.set_error_msg({ info: 'Chapter berhasil dihapus.' }, req.sessionID)
         res.redirect(`/courses/chapter/${courseId}`)
       }
     })
@@ -453,47 +354,34 @@ exports.lectureMain = async (req, res) => {
  * @return {object} Request object
  */
 exports.lectureGetAll = async (req, res) => {
-  API_SERVICE.get(
-    `v1/courses/chapter/${req.params.chapterId}/material  `,
-    {
-      limit: _.result(req.query, 'length', 25),
-      offset: _.result(req.query, 'start', 0),
-      keyword: req.query.search['value']
-    },
-    (err, response) => {
-      const dataLectures = []
-      if (!err) {
-        async.eachSeries(
-          _.result(response.data, 'data', {}),
-          (item, next) => {
-            item.action = `<a href="update/${item.materialid}"><i class="fa fa-pencil"></i></a>`
-            item.action += `  <a href="delete/${item.materialid}" onclick="return confirm('Are you sure you want to delete this item?');"><i class="fa fa-times"></i></a>`
-            dataLectures.push(item)
-            next()
-          },
-          err => {
-            if (!err) {
-              const data = {
-                draw: _.result(req.query, 'draw', 1),
-                recordsTotal: _.result(response, 'total', 0),
-                recordsFiltered: _.result(response, 'total', 0)
-              }
-
-              return MiscHelper.responses(res, dataLectures, 200, data)
-            } else {
-              return MiscHelper.errorCustomStatus(res, err, 400)
-            }
+  API_SERVICE.get(`v1/courses/chapter/${req.params.chapterId}/material`, { limit: _.result(req.query, 'length', 25), offset: _.result(req.query, 'start', 0), keyword: req.query.search['value'] }, (err, response) => {
+    const dataLectures = []
+    if (!err) {
+      async.eachSeries(_.result(response.data, 'data', {}), (item, next) => {
+        item.action = `<a href="update/${item.materialid}"><i class="fa fa-pencil"></i></a>`
+        item.action += `  <a href="delete/${item.materialid}" onclick="return confirm('Are you sure you want to delete this item?');"><i class="fa fa-times"></i></a>`
+        item.status = MiscHelper.getStatus(item.status, 1)
+        item.duration = MiscHelper.convertDuration(item.duration)
+        item.size = MiscHelper.sizeCount(item.size)
+        dataLectures.push(item)
+        next()
+      }, err => {
+        if (!err) {
+          const data = {
+            draw: _.result(req.query, 'draw', 1),
+            recordsTotal: _.result(response, 'total', 0),
+            recordsFiltered: _.result(response, 'total', 0)
           }
-        )
-      } else {
-        return MiscHelper.errorCustomStatus(
-          res,
-          err,
-          _.result(err, 'status', 400)
-        )
-      }
+
+          return MiscHelper.responses(res, dataLectures, 200, data)
+        } else {
+          return MiscHelper.errorCustomStatus(res, err, 400)
+        }
+      })
+    } else {
+      return MiscHelper.errorCustomStatus(res, err, _.result(err, 'status', 400))
     }
-  )
+  })
 }
 
 /*
@@ -513,21 +401,25 @@ exports.lectureAdd = async (req, res) => {
     const name = req.body.name
     const detailid = req.body.detailid
     const description = req.body.description
-    const file = req.body.file
 
-    if (!name || !detailid || !description || !file) {
-      MiscHelper.set_error_msg(
-        { error: 'Data yang anda masukkan tidak lengkap !!!' },
-        req.sessionID
-      )
+    if (!name || !detailid || !description) {
+      MiscHelper.set_error_msg({ error: 'Data yang anda masukkan tidak lengkap !!!' }, req.sessionID)
+      res.redirect('/courses/chapter/' + req.params.chapterId + '/add/')
+    } else if (!req.file) {
+      MiscHelper.set_error_msg({ error: 'Video harus di isi !!!' }, req.sessionID)
       res.redirect('/courses/chapter/' + req.params.chapterId + '/add/')
     } else {
-      API_SERVICE.post(`v1/courses/chapter/${req.params.chapterId}/material`, req.body, (err, response) => {
+      const formData = {
+        name: name,
+        detailid: detailid,
+        description: description,
+        file: fs.createReadStream(req.file.path)
+      }
+
+      API_SERVICE.postFormData(`v1/courses/chapter/${req.params.chapterId}/material`, formData, (err, response) => {
         if (!err) {
-          MiscHelper.set_error_msg(
-            { info: 'Lecture berhasil ditambahkan.' },
-            req.sessionID
-          )
+          console.log(response)
+          MiscHelper.set_error_msg({ info: 'Lecture berhasil ditambahkan.' }, req.sessionID)
           res.redirect('/courses/chapter/' + req.params.chapterId + '/lecture/')
         } else {
           MiscHelper.set_error_msg({ error: response.message }, req.sessionID)
@@ -551,70 +443,51 @@ exports.lectureAdd = async (req, res) => {
 exports.lectureUpdate = async (req, res) => {
   if (_.isEmpty(req.body)) {
     const errorMsg = await MiscHelper.get_error_msg(req.sessionID)
-    API_SERVICE.get(
-      `v1/courses/chapter/${req.params.chapterId}/material/${req.params.lectureId}`,
-      {},
-      (err, response) => {
-        if (err) console.error(err)
-        res.render('lecture_update', { errorMsg: errorMsg, data: response.data[0], chapterId: req.params.chapterId, lectureId: req.params.lectureId })
-      }
-    )
+    API_SERVICE.get(`v1/courses/chapter/${req.params.chapterId}/material/${req.params.lectureId}`, {}, (err, response) => {
+      if (err) console.error(err)
+      res.render('lecture_update', { errorMsg: errorMsg, data: response.data[0], chapterId: req.params.chapterId, lectureId: req.params.lectureId })
+    })
   } else {
     const chapterId = req.body.detailid
     const materialid = req.body.materialid
     const name = req.body.name
     const assessmentid = req.body.assessmentid
     const description = req.body.description
-    const file = req.body.file
 
     if (!chapterId || !materialid) {
-      MiscHelper.set_error_msg(
-        { error: 'Kesalahan input data !!!' },
-        req.sessionID
-      )
+      MiscHelper.set_error_msg({ error: 'Kesalahan input data !!!' }, req.sessionID)
       res.redirect(`/courses/chapter/${req.params.chapterId}/lecture`)
     } else {
       if (!name) {
-        MiscHelper.set_error_msg(
-          { error: 'Name wajib diisi !!!' },
-          req.sessionID
-        )
+        MiscHelper.set_error_msg({ error: 'Name wajib diisi !!!' }, req.sessionID)
         res.redirect(`/courses/chapter/${req.params.chapterId}/update/${req.params.lectureId}`)
       } else if (!assessmentid) {
-        MiscHelper.set_error_msg(
-          { error: 'Assessment Id wajib diisi !!!' },
-          req.sessionID
-        )
+        MiscHelper.set_error_msg({ error: 'Assessment Id wajib diisi !!!' }, req.sessionID)
         res.redirect(`/courses/chapter/${req.params.chapterId}/update/${req.params.lectureId}`)
       } else if (!description) {
-        MiscHelper.set_error_msg(
-          { error: 'Description wajib diisi !!!' },
-          req.sessionID
-        )
-        res.redirect(`/courses/chapter/${req.params.chapterId}/update/${req.params.lectureId}`)
-      } else if (!file) {
-        MiscHelper.set_error_msg(
-          { error: 'File wajib diisi !!!' },
-          req.sessionID
-        )
+        MiscHelper.set_error_msg({ error: 'Description wajib diisi !!!' }, req.sessionID)
         res.redirect(`/courses/chapter/${req.params.chapterId}/update/${req.params.lectureId}`)
       } else {
-        API_SERVICE.patch(
-          `v1/courses/chapter/${req.params.chapterId}/material/${req.params.lectureId}`,
-          req.body,
-          (err, response) => {
-            if (!err) {
-              MiscHelper.set_error_msg(
-                { info: 'Lecture berhasil diubah.' },
-                req.sessionID
-              )
-              res.redirect(`/courses/chapter/${req.params.chapterId}/lecture`)
-            } else {
-              MiscHelper.set_error_msg({ error: err.message }, req.sessionID)
-              res.redirect(`/courses/chapter/${req.params.chapterId}/lecture`)
-            }
+        const formData = {
+          name: name,
+          detailid: chapterId,
+          description: description,
+          assessmentid: assessmentid
+        }
+
+        if (req.file) {
+          formData.file = fs.createReadStream(req.file.path)
+        }
+
+        API_SERVICE.postFormData(`v1/courses/chapter/${req.params.chapterId}/material/${req.params.lectureId}`, formData, (err, response) => {
+          if (!err) {
+            MiscHelper.set_error_msg({ info: 'Lecture berhasil diubah.' }, req.sessionID)
+            res.redirect(`/courses/chapter/${req.params.chapterId}/lecture`)
+          } else {
+            MiscHelper.set_error_msg({ error: err.message }, req.sessionID)
+            res.redirect(`/courses/chapter/${req.params.chapterId}/lecture`)
           }
-        )
+        })
       }
     }
   }
@@ -641,10 +514,7 @@ exports.lectureDelete = async (req, res) => {
       if (err) {
         MiscHelper.set_error_msg({ error: err }, req.sessionID)
       } else {
-        MiscHelper.set_error_msg(
-          { info: 'Lecture berhasil dihapus.' },
-          req.sessionID
-        )
+        MiscHelper.set_error_msg({ info: 'Lecture berhasil dihapus.' }, req.sessionID)
         res.redirect(`/courses/chapter/${chapterId}/lecture`)
       }
     })
