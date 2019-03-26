@@ -1023,7 +1023,7 @@ $(document).ready(function() {
     ajax: url,
     columns: [
       { data: 'courseid' },
-      { data: 'classid' },
+      { data: 'class_name' },
       { data: 'name' },
       { data: 'preassessment' },
       { data: 'finalassessment' },

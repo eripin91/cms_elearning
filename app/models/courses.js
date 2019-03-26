@@ -5,7 +5,7 @@ module.exports = {
     conn.getConnection((errConnection, connection) => {
       if (errConnection) console.error(connection)
 
-      connection.query(`SELECT * FROM courses_tab WHERE status = 1 AND name LIKE '%${keyword}%' ORDER BY courseid DESC LIMIT ${offset}, ${limit}`, (err, rows) => {
+      connection.query(`SELECT a.*,b.name as class_name FROM courses_tab a LEFT JOIN classes_tab b ON a.classid=b.classid WHERE a.status=1 AND (a.name LIKE '%${keyword}%' OR b.name LIKE '%${keyword}%') ORDER BY a.courseid DESC LIMIT ${offset}, ${limit}`, (err, rows) => {
         callback(err, rows)
       })
     })
