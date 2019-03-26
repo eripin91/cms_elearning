@@ -26,7 +26,7 @@
                     <!-- /.box-header -->
                     <!-- form start -->
                     <form class="form-horizontal" action="{{ url_params_inside_string chapterId '/add' }}"
-                        method="post">
+                        method="post" enctype="multipart/form-data">
                         <input type="hidden" name="detailid" value="{{ chapterId }}">
                         <div class="box-body">
                             <div class="form-group">
@@ -40,8 +40,7 @@
                                 <label for="Description" class="col-sm-2 control-label">Description</label>
 
                                 <div class="col-sm-10">
-                                    <input type="text" name="description" class="form-control" id="Description"
-                                        placeholder="Description">
+                    <textarea rows="4" class="form-control" id="description" name="description"></textarea>
                                 </div>
                             </div>
                             <div class="form-group">

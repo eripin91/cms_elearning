@@ -830,6 +830,42 @@ function _init() {
   }
 })(jQuery)
 
+$(document).ready(function() {
+   $("#uploadPhoto").change(function(evt){
+    evt.stopPropagation();
+    $('#loading img').show()
+    var file = $(this)
+    setTimeout(function(){
+      var formData = new FormData();
+        formData.append('file', file.prop('files')[0]);
+       $.ajax({
+          beforeSend: function(xhr) {
+            xhr.setRequestHeader("Authorization", "X-COURSES-API");
+          },
+           url: file.attr('url-upload'),
+           type: 'POST',
+           data: formData,
+           async: false,
+           cache: false,
+           contentType: false,
+           enctype: 'multipart/form-data',
+           processData: false,
+           success: function (response) {
+            if (response.status === 200) {
+              $('input[name="profile_picture"], input[name="cover"]').val(response.data.original)
+              $('input[name="profile_picture_medium"], input[name="cover_medium"]').val(response.data.medium)
+              $('input[name="profile_picture_thumb"], input[name="cover_thumb"]').val(response.data.thumbnail)
+              $('#imageUpload').attr('src', response.data.original)
+              $('#loading img').hide()
+            } else {
+              alert('Failed upload file !!!')
+              $('#loading img').hide()
+            }
+           }
+       });
+      }, 3000);
+    });
+})
 // section: users
 ;(function($) {
   'use strict'

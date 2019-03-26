@@ -10,6 +10,15 @@ module.exports = {
       })
     })
   },
+  getAssessmentSelect: (conn, callback) => {
+    conn.getConnection((errConnection, connection) => {
+      if (errConnection) console.error(errConnection)
+
+      connection.query(`SELECT assessmentid as id, title FROM assessment_tab WHERE status=1 AND parentid=0`, (err, rows) => {
+        callback(err, rows)
+      })
+    })
+  },
   getTotalAssessment: (conn, keyword, callback) => {
     conn.getConnection((errConnection, connection) => {
       if (errConnection) console.error(errConnection)
@@ -40,9 +49,7 @@ module.exports = {
   insertAssessment: (conn, data, callback) => {
     conn.getConnection((errConnection, connection) => {
       if (errConnection) console.error(errConnection)
-      console.log(data)
       connection.query(`INSERT INTO assessment_tab SET ?`, [data], (err, rows) => {
-        console.log(rows)
         if (err) {
           callback(err)
         } else {
@@ -74,6 +81,15 @@ module.exports = {
       if (errConnection) console.error(errConnection)
 
       connection.query(`SELECT at.title, ad.* FROM assessment_detail_tab ad JOIN assessment_tab at ON ad.assessmentid = at.assessmentid WHERE ad.status = 1 AND at.assessmentid = ${assessmentId} AND (question_type LIKE '%${keyword}%' OR question LIKE '%${keyword}%') ORDER BY ad.detailid DESC LIMIT ${offset}, ${limit}`, (err, rows) => {
+        callback(err, rows)
+      })
+    })
+  },
+  getQuestions: (conn, assessmentId, callback) => {
+    conn.getConnection((errConnection, connection) => {
+      if (errConnection) console.error(errConnection)
+
+      connection.query(`SELECT * FROM assessment_detail_tab WHERE assessmentid = ${assessmentId} AND status=1`, (err, rows) => {
         callback(err, rows)
       })
     })

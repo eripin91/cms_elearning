@@ -395,7 +395,7 @@ exports.getDetail = (req, res) => {
   const offset = _.result(req.query, 'offset', 0)
   const keyword = _.result(req.query, 'keyword')
   const courseId = req.params.courseId
-  const key = `courses-detail-list:${limit}:${offset}:${keyword}`
+  const key = `courses-detail-list:${limit}:${offset}:${keyword}:${courseId}`
 
   async.waterfall([
     (cb) => {
@@ -573,10 +573,11 @@ exports.updateDetail = (req, res) => {
       let data = {
         updated_at: new Date()
       }
+
       for (let key in req.body) {
         data[key] = req.body[key]
       }
-
+      delete data.detailid
       coursesModel.updateDetail(req, data, detailId, (errUpdate, resultUpdate) => {
         redisCache.delwild(`courses-detail-list:*`)
         redisCache.del(`courses-details:${detailId}`)
@@ -670,7 +671,7 @@ exports.getMaterialList = (req, res) => {
   const offset = _.result(req.query, 'offset', 0)
   const keyword = _.result(req.query, 'keyword')
   const detailId = req.params.detailId
-  const key = `course-material-list:${limit}:${offset}:${keyword}`
+  const key = `course-material-list:${limit}:${offset}:${keyword}:${detailId}`
 
   async.waterfall([
     (cb) => {
@@ -828,6 +829,7 @@ exports.insertMaterialDetail = (req, res) => {
         created_at: new Date(),
         updated_at: new Date()
       }
+
       coursesModel.insertMaterial(req, data, (errMaterial, resultMaterial) => {
         const key = `course-material-list:*`
         redisCache.delwild(key)
@@ -878,12 +880,11 @@ exports.updateMaterial = (req, res) => {
       })
     },
     (cb) => {
-      let data = {
+      const data = {
+        name: req.body.name,
+        description: req.body.description,
+        assessmentid: req.body.assessmentid,
         updated_at: new Date()
-      }
-
-      for (let key in req.body) {
-        data[key] = req.body[key]
       }
 
       if (!_.isEmpty(dataUpload)) {
@@ -892,6 +893,7 @@ exports.updateMaterial = (req, res) => {
         data.duration = dataUpload.duration
         data.thumbnails = dataUpload.thumbnail
       }
+
       coursesModel.updateMaterial(req, data, materialId, (errUpdateMaterial, resultUpdateMaterial) => {
         redisCache.delwild(`course-material-list:*`)
         redisCache.del(`course-material-detail:${materialId}`)
