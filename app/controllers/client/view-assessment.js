@@ -89,7 +89,27 @@ exports.add = async (req, res) => {
         status: 1,
         parentId: 0
       }
+      const dataQuestions = []
+      for (let i = 0; i < _.size(req.body.question); ++i) {
+        if (!_.isEmpty(req.body.question[i])) {
+          let dataQu = {
+            question: req.body.question[i],
+            answer: req.body.answer[i],
+            options: []
+          }
 
+          for (let y = 0; y < _.size(req.body.options[i]); ++y) {
+            dataQu.options.push({
+              label: req.body.options[i][y],
+              _id: (y + 1),
+              isAnswer: parseInt(req.body.answer[i]) === (y + 1)
+            })
+          }
+          dataQu.options = JSON.stringify(dataQu.options)
+          dataQuestions.push(dataQu)
+        }
+      }
+      dataAssessment.question = dataQuestions
       API_SERVICE.post('v1/assessment/create', dataAssessment, (err, response) => {
         if (!err) {
           MiscHelper.set_error_msg({ info: 'Assessment berhasil ditambahkan.' }, req.sessionID)
@@ -117,8 +137,11 @@ exports.update = async (req, res) => {
   if (_.isEmpty(req.body)) {
     const errorMsg = await MiscHelper.get_error_msg(req.sessionID)
     API_SERVICE.get('v1/assessment/' + req.params.assessmentId, {}, (err, response) => {
+      for (let i = 0; i < _.size(_.result(response, 'data.question', [])); ++i) {
+        response.data.question[i].options = JSON.parse(response.data.question[i].options)
+      }
       if (err) console.error(err)
-      res.render('assessment_update', { errorMsg: errorMsg, data: response.data })
+      res.render('assessment_update', { errorMsg: errorMsg, totalIncQuestion: _.size(_.result(response, 'data.question', [])), data: _.result(response, 'data', {}) })
     })
   } else {
     const assessmentId = req.body.id
@@ -135,13 +158,38 @@ exports.update = async (req, res) => {
       } else {
         const dataAssessment = {
           title: title,
-          duration: duration
+          duration: duration,
+          status: 1,
+          parentId: 0
         }
+        const dataQuestions = []
+        for (let i = 0; i < _.size(req.body.question); ++i) {
+          if (!_.isEmpty(req.body.question[i])) {
+            let dataQu = {
+              detailid: parseInt(_.result(req.body, 'detailid[' + i + ']', 0)),
+              question: req.body.question[i],
+              answer: parseInt(_.result(req.body, 'answer[' + i + ']', 0)),
+              options: []
+            }
+
+            for (let y = 0; y < _.size(req.body.options[i]); ++y) {
+              dataQu.options.push({
+                label: req.body.options[i][y],
+                _id: (y + 1),
+                isAnswer: parseInt(req.body.answer[i]) === (y + 1)
+              })
+            }
+            dataQu.options = JSON.stringify(dataQu.options)
+            dataQuestions.push(dataQu)
+          }
+        }
+
+        dataAssessment.question = dataQuestions
 
         API_SERVICE.post('v1/assessment/update/' + assessmentId, dataAssessment, (err, response) => {
           if (!err) {
             MiscHelper.set_error_msg({ info: 'Assessment berhasil diubah.' }, req.sessionID)
-            res.redirect('/assessment')
+            // res.redirect('/assessment')
           } else {
             MiscHelper.set_error_msg({ error: err.message }, req.sessionID)
             res.redirect('/assessment/update/' + assessmentId)
@@ -174,6 +222,36 @@ exports.delete = async (req, res) => {
       } else {
         MiscHelper.set_error_msg({ info: 'Assessment berhasil dihapus.' }, req.sessionID)
         res.redirect('/assessment')
+      }
+    })
+  }
+}
+
+/*
+ * GET : '/delete/question/:assessmentId/:detailId'
+ *
+ * @desc Get dashboard home
+ *
+ * @param  {object} req - Parameters for request
+ * @param  {object} req.params.assessmentId - Parameters assessmentId for identifier
+ * @param  {object} req.params.detailId - Parameters detailId for identifier
+ *
+ * @return {object} Request object
+ */
+exports.deleteQuestion = async (req, res) => {
+  const detailId = 0 || req.params.detailId
+  const assessmentId = 0 || req.params.assessmentId
+  if (!detailId || !assessmentId) {
+    MiscHelper.set_error_msg({ error: 'detailId required !!!' }, req.sessionID)
+    res.redirect('/assessment')
+  } else {
+    API_SERVICE.get('v1/assessment/question/delete/' + detailId, {}, (err, response) => {
+      if (err) {
+        MiscHelper.set_error_msg({ error: err }, req.sessionID)
+        res.redirect('/assessment')
+      } else {
+        MiscHelper.set_error_msg({ info: 'Assessment berhasil dihapus.' }, req.sessionID)
+        res.redirect('/assessment/update/' + assessmentId)
       }
     })
   }
