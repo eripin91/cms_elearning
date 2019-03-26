@@ -343,6 +343,19 @@ exports.insertSoal = (req, res) => {
           created_at: new Date(),
           updated_at: new Date()
         }
+
+        let answer = 0
+        async.eachSeries(data.options, item => {
+          // if (_.isEmpty(item.isAnswer)) {
+          //   item.isAnswer = false
+          // }
+          if (item.isAnswer) {
+            answer = item._id
+          }
+        })
+
+        data.answer = answer
+
         assessmentModel.insertDetailAssessment(req, data, (errAssessment, resultAssessment) => {
           if (errAssessment) console.error(errAssessment)
           redisCache.delwild('detail-assessment:*')
