@@ -138,8 +138,11 @@ exports.update = async (req, res) => {
     const errorMsg = await MiscHelper.get_error_msg(req.sessionID)
     API_SERVICE.get('v1/assessment/' + req.params.assessmentId, {}, (err, response) => {
       for (let i = 0; i < _.size(_.result(response, 'data.question', [])); ++i) {
-        response.data.question[i].options = JSON.parse(response.data.question[i].options)
+        if (_.result(response.data, 'question[' + i + '].options', '[]')) {
+          response.data.question[i].options = JSON.parse(_.result(response.data, 'question[' + i + '].options', '[]'))
+        }
       }
+
       if (err) console.error(err)
       res.render('assessment_update', { errorMsg: errorMsg, totalIncQuestion: _.size(_.result(response, 'data.question', [])), data: _.result(response, 'data', {}) })
     })
