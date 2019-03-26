@@ -43,7 +43,7 @@
                   </div>
                 </div>
                 <div class="form-group">
-                  <label for="Duration" class="col-sm-2 control-label">Duration</label>
+                  <label for="Duration" class="col-sm-2 control-label">Duration (seconds)</label>
 
                   <div class="col-sm-2">
                     <input type="number" name="duration" class="form-control" id="Duration" placeholder="Duration" value="{{ data.duration }}">
@@ -55,72 +55,38 @@
                 <div class="form-group">
                   <label for="Duration" class="col-sm-2 control-label"><h3>Questions</h3></label>
                 </div>
-
                 <div class="questions">
+                  {{#each data.question as |parent parentIndex|}}
+                  <input type="hidden" name="detailid[{{inc @parentIndex}}]" value="{{ detailid }}">
                   <div class="question">
                     <div class="form-group">
-                      <label class="col-sm-2 control-label">#1</label>
-                      <div class="col-sm-10">
+                      <label class="col-sm-2 control-label">#{{inc @parentIndex}}</label>
+                      <div class="col-sm-10" style="padding-top: 7px">
+                      <a href="{{ site_url 'assessment/delete/question/' }}{{ assessmentid }}/{{ detailid }}"><i class="fa fa-times"></i></a>
                       </div>
                     </div>
                     <div class="form-group">
                       <label class="col-sm-2 control-label">Question</label>
-
                       <div class="col-sm-10">
-                        <input type="text" name="question[1]" class="form-control" placeholder="Question">
+                        <input type="text" name="question[{{inc @parentIndex}}]" value="{{ question }}" class="form-control" placeholder="Question">
                       </div>
                     </div>
-                    <div class="form-group">
-                      <label class="col-sm-2 control-label">Options</label>
-
-                      <div class="col-sm-6">
-                        <div class="col-sm-9" style="padding-left: 0">
-                          <input type="text" name="options[1][]" class="form-control" placeholder="Options">
-                        </div>
-                        <div class="col-sm-3">
-                          <input type="radio" name="answer[1]"> is answer
-                        </div>
-                      </div>
-                    </div>
-                    <div class="form-group">
-                      <label class="col-sm-2 control-label"></label>
-
-                      <div class="col-sm-6">
-                        <div class="col-sm-9" style="padding-left: 0">
-                          <input type="text" name="options[1][]" class="form-control" placeholder="Options">
-                        </div>
-                        <div class="col-sm-3">
-                          <input type="radio" name="answer[1]"> is answer
+                    {{#each options}}
+                      <div class="form-group">
+                        <label class="col-sm-2 control-label">Options</label>
+                        <div class="col-sm-6">
+                          <div class="col-sm-9" style="padding-left: 0">
+                            <input type="text" value="{{ label }}" name="options[{{inc @parentIndex}}][]" class="form-control" placeholder="Options">
+                          </div>
+                          <div class="col-sm-3">
+                            <input type="radio" name="answer[{{inc @parentIndex}}]" {{ checkRadioAnswer isAnswer }} value="{{inc @index}}"> is answer {{ isAnswer }}
+                          </div>
                         </div>
                       </div>
-                    </div>
-                    <div class="form-group">
-                      <label class="col-sm-2 control-label"></label>
-
-                      <div class="col-sm-6">
-                        <div class="col-sm-9" style="padding-left: 0">
-                          <input type="text" name="options[1][]" class="form-control" placeholder="Options">
-                        </div>
-                        <div class="col-sm-3">
-                          <input type="radio" name="answer[1]"> is answer
-                        </div>
-                      </div>
-                    </div>
-                    <div class="form-group">
-                      <label class="col-sm-2 control-label"></label>
-
-                      <div class="col-sm-6">
-                        <div class="col-sm-9" style="padding-left: 0">
-                          <input type="text" name="options[1][]" class="form-control" placeholder="Options">
-                        </div>
-                        <div class="col-sm-3">
-                          <input type="radio" name="answer[1]"> is answer
-                        </div>
-                      </div>
-                    </div>
+                    {{/each}}
                   </div>
+                  {{/each}}
                 </div>
-
                   <hr />
                   <div class="form-group">
                     <label class="col-sm-2 control-label"></label>
@@ -148,11 +114,13 @@
 </div>
 
 <script>
-var no = 1
+var no = {{ totalIncQuestion }}
 $('.add-question').click(function() {
-  var domQuestion = '<div class="form-group">';
+  var domQuestion = '<div class="question-'+(no+1)+'">';
+      domQuestion += '<div class="form-group">';
       domQuestion += '<label class="col-sm-2 control-label">#'+(no+1)+'</label>';
-      domQuestion += '<div class="col-sm-10">';
+      domQuestion += '<div class="col-sm-10" style="padding-top: 7px">';
+      domQuestion += '<a data-id="'+(no+1)+'" class="delete-question-dom"><i class="fa fa-times"></i></a>';
       domQuestion += '</div>';
       domQuestion += '</div>';
       domQuestion += '<div class="form-group">';
@@ -168,7 +136,7 @@ $('.add-question').click(function() {
       domQuestion += '<input type="text" name="options['+(no+1)+'][]" class="form-control" placeholder="Options">'
       domQuestion += '</div>'
       domQuestion += '<div class="col-sm-3">'
-      domQuestion += '<input type="radio" name="answer['+(no+1)+']"> is answer'
+      domQuestion += '<input type="radio" name="answer['+(no+1)+']" value="1"> is answer'
       domQuestion += '</div>'
       domQuestion += '</div>'
       domQuestion += '</div>'
@@ -179,7 +147,7 @@ $('.add-question').click(function() {
       domQuestion += '<input type="text" name="options['+(no+1)+'][]" class="form-control" placeholder="Options">'
       domQuestion += '</div>'
       domQuestion += '<div class="col-sm-3">'
-      domQuestion += '<input type="radio" name="answer['+(no+1)+']"> is answer'
+      domQuestion += '<input type="radio" name="answer['+(no+1)+']" value="2"> is answer'
       domQuestion += '</div>'
       domQuestion += '</div>'
       domQuestion += '</div>'
@@ -190,7 +158,7 @@ $('.add-question').click(function() {
       domQuestion += '<input type="text" name="options['+(no+1)+'][]" class="form-control" placeholder="Options">'
       domQuestion += '</div>'
       domQuestion += '<div class="col-sm-3">'
-      domQuestion += '<input type="radio" name="answer['+(no+1)+']"> is answer'
+      domQuestion += '<input type="radio" name="answer['+(no+1)+']" value="3"> is answer'
       domQuestion += '</div>'
       domQuestion += '</div>'
       domQuestion += '</div>'
@@ -201,12 +169,16 @@ $('.add-question').click(function() {
       domQuestion += '<input type="text" name="options['+(no+1)+'][]" class="form-control" placeholder="Options">'
       domQuestion += '</div>'
       domQuestion += '<div class="col-sm-3">'
-      domQuestion += '<input type="radio" name="answer['+(no+1)+']"> is answer'
+      domQuestion += '<input type="radio" name="answer['+(no+1)+']" value="4"> is answer'
       domQuestion += '</div>'
       domQuestion += '</div>'
       domQuestion += '</div>'
       domQuestion += '</div>'
       no++
       $('.questions').append(domQuestion)
+
+      $('.delete-question-dom').click(function() {
+        $('.question-' + $(this).attr('data-id')).remove()
+      })
 })
 </script>
