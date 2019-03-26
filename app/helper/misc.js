@@ -136,6 +136,17 @@ module.exports = {
     }
     return res
   },
+  getSelect: (data, id) => {
+    let res = '<option value=""></option>'
+    for (let i = 0; i < data.length; ++i) {
+      if (id === data[i].id) {
+        res += `<option value="${data[i].id}" selected>${data[i].title}</option>`
+      } else {
+        res += `<option value="${data[i].id}">${data[i].title}</option>`
+      }
+    }
+    return res
+  },
   convertDuration: (duration) => {
     let minutes = Math.floor(duration / 60)
     let second = duration - (minutes * 60)

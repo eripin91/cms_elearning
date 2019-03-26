@@ -561,10 +561,11 @@ exports.updateDetail = (req, res) => {
       let data = {
         updated_at: new Date()
       }
+
       for (let key in req.body) {
         data[key] = req.body[key]
       }
-
+      delete data.detailid
       coursesModel.updateDetail(req, data, detailId, (errUpdate, resultUpdate) => {
         redisCache.delwild(`courses-detail-list:*`)
         redisCache.del(`courses-details:${detailId}`)

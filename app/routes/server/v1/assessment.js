@@ -7,6 +7,7 @@ var Route = express.Router()
 Route
   .all('/*', AuthHelper.requiresAuthorization)
   .get('/', AssessmentControllers.getAssessment)
+  .get('/select', AssessmentControllers.getAssessmentSelect)
   .get('/:assessmentId', AssessmentControllers.getAssessmentDetail)
   .get('/course/:courseId', AssessmentControllers.getAssessmentCourse)
   .post('/create', AssessmentControllers.insertAssessment)

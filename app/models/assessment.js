@@ -10,6 +10,15 @@ module.exports = {
       })
     })
   },
+  getAssessmentSelect: (conn, callback) => {
+    conn.getConnection((errConnection, connection) => {
+      if (errConnection) console.error(errConnection)
+
+      connection.query(`SELECT assessmentid as id, title FROM assessment_tab WHERE status=1 AND parentid=0`, (err, rows) => {
+        callback(err, rows)
+      })
+    })
+  },
   getTotalAssessment: (conn, keyword, callback) => {
     conn.getConnection((errConnection, connection) => {
       if (errConnection) console.error(errConnection)
