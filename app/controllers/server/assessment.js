@@ -64,7 +64,7 @@ exports.getAssessmentDetail = (req, res) => {
   }
 
   const assessmentId = req.params.assessmentId
-  const key = `assessment-detail${assessmentId}`
+  const key = `assessment-detail${assessmentId}` + new Date().getTime()
 
   async.waterfall([
     (cb) => {
@@ -83,6 +83,12 @@ exports.getAssessmentDetail = (req, res) => {
         } else {
           cb(errAssessment, _.result(resultAssessment, '[0]', {}))
         }
+      })
+    },
+    (resultAssessment, cb) => {
+      assessmentModel.getQuestions(req, resultAssessment.assessmentid, (errQuestion, questions) => {
+        resultAssessment.question = JSON.parse(JSON.stringify(questions))
+        cb(errQuestion, resultAssessment)
       })
     },
     (dataAssessment, cb) => {
@@ -161,11 +167,35 @@ exports.insertAssessment = (req, res) => {
         created_at: new Date(),
         updated_at: new Date()
       }
-      console.log(req.body)
+
       assessmentModel.insertAssessment(req, data, (errAssessment, resultAssessment) => {
         redisCache.delwild('assessment-list:*')
         cb(errAssessment, resultAssessment)
       })
+    },
+    (assessment, cb) => {
+      const questions = []
+      for (let i = 0; i < _.size(req.body.question); i++) {
+        let dataQuestion = {
+          assessmentid: assessment.id,
+          question_type: 'single-choice',
+          question: req.body.question[i].question,
+          answer: req.body.question[i].answer,
+          status: 1,
+          options: req.body.question[i].options,
+          created_at: new Date(),
+          updated_at: new Date()
+        }
+
+        questions.push(dataQuestion)
+        assessmentModel.insertDetailAssessment(req, dataQuestion, errAssessment => {
+          if (errAssessment) console.error(errAssessment)
+        })
+      }
+
+      assessment.questions = questions
+      redisCache.delwild('detail-assessment:*')
+      cb(null, assessment)
     }
   ], (errAssessment, resultAssessment) => {
     if (!errAssessment) {
@@ -187,12 +217,11 @@ exports.updateAssessment = (req, res) => {
 
   async.waterfall([
     (cb) => {
-      let data = {
+      const data = {
+        parentid: req.body.parentId,
+        title: req.body.title,
+        duration: req.body.duration,
         updated_at: new Date()
-      }
-
-      for (let key in req.body) {
-        data[key] = req.body[key]
       }
 
       assessmentModel.updateAssessment(req, assessmentId, data, (errAssessment, resultAssessment) => {
@@ -200,6 +229,48 @@ exports.updateAssessment = (req, res) => {
         redisCache.del(`assessment-detail${assessmentId}`)
         cb(errAssessment, resultAssessment)
       })
+    },
+    (assessment, cb) => {
+      const questions = []
+      for (let i = 0; i < _.size(req.body.question); i++) {
+        let dataQuestion = {}
+        if (!_.result(req.body, 'question[' + i + '].detailid', 0)) {
+          dataQuestion = {
+            assessmentid: assessment.assessmentid,
+            question_type: 'single-choice',
+            question: req.body.question[i].question,
+            answer: req.body.question[i].answer,
+            status: 1,
+            options: req.body.question[i].options,
+            created_at: new Date(),
+            updated_at: new Date()
+          }
+
+          assessmentModel.insertDetailAssessment(req, dataQuestion, errAssessment => {
+            if (errAssessment) console.error(errAssessment)
+          })
+        } else {
+          dataQuestion = {
+            assessmentid: assessment.assessmentid,
+            question_type: 'single-choice',
+            question: req.body.question[i].question,
+            answer: req.body.question[i].answer,
+            status: 1,
+            options: req.body.question[i].options,
+            updated_at: new Date()
+          }
+
+          assessmentModel.updateDetailAssessment(req, req.body.question[i].detailid, dataQuestion, errAssessment => {
+            if (errAssessment) console.error(errAssessment)
+          })
+        }
+
+        questions.push(dataQuestion)
+      }
+
+      assessment.questions = questions
+      redisCache.delwild('detail-assessment:*')
+      cb(null, assessment)
     }
   ], (errAssessment, resultAssessment) => {
     if (!errAssessment) {
@@ -246,7 +317,7 @@ exports.getDetailAssessment = (req, res) => {
   const limit = _.result(req.query, 'limit', 10)
   const offset = _.result(req.query, 'offset', 0)
   const keyword = _.result(req.query, 'keyword')
-  const key = `assessment-detail:${limit}:${offset}:${keyword}`
+  const key = `assessment-detail:${limit}:${offset}:${keyword}` + new Date().getTime()
 
   async.waterfall([
     (cb) => {
@@ -335,7 +406,7 @@ exports.insertSoal = (req, res) => {
       for (let i = 0; i < req.body.soal.length; i++) {
         let data = {
           assessmentid: req.params.assessmentId,
-          question_type: req.body.soal[i].question_type,
+          question_type: 'single-choice',
           question: req.body.soal[i].question,
           answer: req.body.soal[i].answer,
           status: 1,
@@ -343,19 +414,6 @@ exports.insertSoal = (req, res) => {
           created_at: new Date(),
           updated_at: new Date()
         }
-
-        let answer = 0
-        async.eachSeries(data.options, item => {
-          // if (_.isEmpty(item.isAnswer)) {
-          //   item.isAnswer = false
-          // }
-          if (item.isAnswer) {
-            answer = item._id
-          }
-        })
-
-        data.answer = answer
-
         assessmentModel.insertDetailAssessment(req, data, (errAssessment, resultAssessment) => {
           if (errAssessment) console.error(errAssessment)
           redisCache.delwild('detail-assessment:*')
@@ -395,15 +453,34 @@ exports.updateSoal = (req, res) => {
       let data = {
         updated_at: new Date()
       }
+      let option = []
       for (let key in req.body) {
         data[key] = req.body[key]
       }
 
-      async.eachSeries(data.options, item => {
-        if (_.isEmpty(item.isAnswer)) {
-          item.isAnswer = false
+      for (let i = 1; i < 5; i++) {
+        let _id = _.result(data, '_id' + i)
+        let isAnswer = _.result(data, 'isAnswer' + i)
+        let label = _.result(data, 'label' + i)
+
+        if (!_.isEmpty(_id) && !_.isEmpty(isAnswer) && !_.isEmpty(label)) {
+          if (isAnswer === 'false') {
+            isAnswer = undefined
+          }
+
+          let answer = {
+            _id: Number(_id),
+            isAnswer: Boolean(isAnswer),
+            label: label
+          }
+
+          option.push(answer)
         }
-      })
+      }
+      data = _.pick(data, ['question', 'answer', 'status', 'question_type', 'updated_at'])
+      if (!_.isEmpty(option)) {
+        data.options = JSON.stringify(option, null, 4)
+      }
 
       assessmentModel.updateDetailAssessment(req, detailId, data, (err, result) => {
         redisCache.delwild('detail-assessment:*')

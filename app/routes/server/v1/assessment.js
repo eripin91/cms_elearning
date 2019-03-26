@@ -16,6 +16,6 @@ Route
   .get('/question/:detailId', AssessmentControllers.getSoal)
   .post('/question/:assessmentId', AssessmentControllers.insertSoal)
   .patch('/question/:detailId', AssessmentControllers.updateSoal)
-  .delete('/question/:detailId', AssessmentControllers.deleteSoal)
+  .get('/question/delete/:detailId', AssessmentControllers.deleteSoal)
 
 module.exports = Route
