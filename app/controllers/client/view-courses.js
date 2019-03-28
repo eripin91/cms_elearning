@@ -276,7 +276,7 @@ exports.chapterAdd = async (req, res) => {
     })
   } else {
     const name = req.body.name
-    const assessmentid = req.body.assesmentid
+    const assessmentid = req.body.assessmentid
 
     if (!name || !assessmentid) {
       MiscHelper.set_error_msg({ error: 'Data yang anda masukkan tidak lengkap !!!' }, req.sessionID)
