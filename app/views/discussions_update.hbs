@@ -1,0 +1,60 @@
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper">
+  <!-- Content Header (Page header) -->
+  <section class="content-header">
+    <h1>
+      Discussion
+      <small>Update Discussion</small>
+    </h1>
+    <ol class="breadcrumb">
+      <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
+      <li><a href="#">Discussion</a></li>
+      <li class="active"><a href="#">Update Discussion</a></li>
+    </ol>
+  </section>
+  <!-- Main content -->
+  <section class="content">
+    <div class="row">
+      <div class="col-xs-12">
+        {{{ errorMsg }}}
+        <div class="box box-info">
+          <div class="box-header with-border">
+            <h3 class="box-title">Update Discussion</h3>
+          </div>
+          <!-- /.box-header -->
+          <!-- form start -->
+          <form class="form-horizontal" action="{{ site_url 'discussions/update' }}" method="post">
+            <input type="hidden" name="parent" value="{{ data.parent }}">
+            <input type="hidden" name="id" value="{{ data.discussionid }}">
+            <div class="box-body">
+              <div class="form-group">
+                <label for="User" class="col-sm-2 control-label">User</label>
+                <div class="col-sm-10"><h5>{{ data.email }}</h5></div>
+              </div>
+              <div class="form-group">
+                <label for="User" class="col-sm-2 control-label">Fullname</label>
+                <div class="col-sm-10"><h5>{{ data.fullname }}</h5></div>
+              </div>
+              <div class="form-group">
+                <label for="Title" class="col-sm-2 control-label">Content</label>
+                <div class="col-sm-10">
+                  <textarea name="content" class="form-control">{{ data.post_content }}</textarea>
+                </div>
+              </div>
+            </div>
+            <!-- /.box-body -->
+            <div class="box-footer">
+              <button type="button" onclick="javascript:history.go(-1);" class="btn btn-default">Cancel</button>
+              <button type="submit" class="btn btn-info pull-right">Submit</button>
+            </div>
+            <!-- /.box-footer -->
+          </form>
+        </div>
+        <!-- /.box -->
+      </div>
+      <!-- /.col -->
+    </div>
+    <!-- /.row -->
+  </section>
+  <!-- /.content -->
+</div>
