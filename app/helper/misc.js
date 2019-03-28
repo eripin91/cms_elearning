@@ -84,7 +84,8 @@ module.exports = {
     return action
   },
   getActionButtonDiscussion: (urlPrefix, id) => {
-    let action = '<a href="' + urlPrefix + '/' + 'delete/' + id + '" onclick="return confirm(\'Are you sure you want to delete this item?\');"><i class="fa fa-times"></i></a>'
+    let action = '<a href="' + urlPrefix + '/' + 'update/' + id + '"><i class="fa fa-pencil"></i></a>'
+    action += ' <a href="' + urlPrefix + '/' + 'delete/' + id + '" onclick="return confirm(\'Are you sure you want to delete this item?\');"><i class="fa fa-times"></i></a>'
     action += ' <a href="' + urlPrefix + '/' + 'detail/' + id + '"><i class="fa fa-comments"></i></a>'
     return action
   },

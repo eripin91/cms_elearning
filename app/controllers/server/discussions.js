@@ -125,6 +125,40 @@ exports.getThreadCourse = (req, res) => {
   })
 }
 
+exports.getDiscussion = (req, res) => {
+  req.checkParams('discussionId', 'discussionId is required').notEmpty().isInt()
+
+  if (req.validationErrors()) {
+    return MiscHelper.errorCustomStatus(res, req.validationErrors(true))
+  }
+
+  const key = `get-thread-detail-${req.params.discussionId}` + new Date().getTime()
+
+  async.waterfall([
+    (cb) => {
+      redisCache.get(key, thread => {
+        if (thread) {
+          return MiscHelper.responses(res, thread)
+        } else {
+          cb(null)
+        }
+      })
+    },
+    (cb) => {
+      discussionsModel.getDiscussionOnly(req, req.params.discussionId, (errThread, resultThread) => {
+        redisCache.setex(key, 600, resultThread)
+        cb(errThread, resultThread[0])
+      })
+    }
+  ], (errThreads, resultThreads) => {
+    if (!errThreads) {
+      return MiscHelper.responses(res, resultThreads)
+    } else {
+      return MiscHelper.errorCustomStatus(res, errThreads)
+    }
+  })
+}
+
 exports.getDetail = (req, res) => {
   req.checkParams('discussionId', 'discussionId is required').notEmpty().isInt()
 
@@ -132,7 +166,7 @@ exports.getDetail = (req, res) => {
     return MiscHelper.errorCustomStatus(res, req.validationErrors(true))
   }
 
-  const key = `get-thread-detail-${req.params.discussionId}`
+  const key = `get-thread-detail-with-reply-${req.params.discussionId}` + new Date().getTime()
 
   async.waterfall([
     (cb) => {
@@ -146,6 +180,8 @@ exports.getDetail = (req, res) => {
     },
     (cb) => {
       discussionsModel.getQuestion(req, req.params.discussionId, (errThread, resultThread) => {
+        console.log(resultThread)
+        console.log(errThread)
         cb(errThread, resultThread[0])
       })
     },
@@ -219,6 +255,40 @@ exports.deleteThread = (req, res) => {
       return MiscHelper.responses(res, resultDel)
     } else {
       return MiscHelper.errorCustomStatus(res, errDel)
+    }
+  })
+}
+
+/*
+ * POST : '/discussion/update/:discussionId'
+ *
+ * @desc Update discussion
+ *
+ * @param  {object} req - Parameters for request
+ * @param  {integer} req.params.discussionId - discussionId for admin
+ *
+ * @return {object} Request object
+ */
+
+exports.update = (req, res) => {
+  req.checkParams('discussionId', 'discussionId is required').notEmpty()
+  req.checkBody('post_content', 'content is required').notEmpty()
+
+  if (req.validationErrors()) {
+    return MiscHelper.errorCustomStatus(res, req.validationErrors(true))
+  }
+
+  const dataUpdate = {
+    post_content: req.body.post_content
+  }
+
+  discussionsModel.update(req, req.params.discussionId, dataUpdate, (errDiscussion, resultDiscussion) => {
+    console.log(errDiscussion)
+    if (!errDiscussion) {
+      redisCache.delwild('get-thread:*')
+      return MiscHelper.responses(res, resultDiscussion)
+    } else {
+      return MiscHelper.errorCustomStatus(res, errDiscussion, 400)
     }
   })
 }

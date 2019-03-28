@@ -223,3 +223,35 @@ exports.insertClassUltimate = (req, res) => {
     }
   })
 }
+
+exports.getClassesSelect = (req, res) => {
+  const key = `get-class-select` + new Date().getTime()
+
+  async.waterfall([
+    (cb) => {
+      redisCache.get(key, assessment => {
+        if (assessment) {
+          return MiscHelper.responses(res, assessment)
+        } else {
+          cb(null)
+        }
+      })
+    },
+    (cb) => {
+      classesModel.getClassesSelect(req, (errClasses, resultClasses) => {
+        if (_.isEmpty(resultClasses)) {
+          return MiscHelper.responses(res, resultClasses)
+        } else {
+          redisCache.setex(key, 600, resultClasses)
+          cb(errClasses, resultClasses)
+        }
+      })
+    }
+  ], (errClasses, resultClasses) => {
+    if (!errClasses) {
+      return MiscHelper.responses(res, resultClasses)
+    } else {
+      return MiscHelper.errorCustomStatus(res, errClasses, 400)
+    }
+  })
+}

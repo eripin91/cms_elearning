@@ -966,12 +966,7 @@ $(document).ready(function() {
       { data: 'guru' },
       { data: 'class_name' },
       { data: 'description' },
-      {
-        data: 'cover',
-        render: function(data) {
-          return '<img src="' + data + '" width="150px" />'
-        }
-      },
+      { data: 'cover' },
       { data: 'priority' },
       { data: 'rating' },
       { data: 'created_at' },
@@ -1029,7 +1024,6 @@ $(document).ready(function() {
       { data: 'finalassessment' },
       { data: 'avg_score'},
       { data: 'discussion'},
-      { data: 'status' },
       { data: 'created_at' },
       { data: 'action' }
     ]

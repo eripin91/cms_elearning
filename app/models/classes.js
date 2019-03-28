@@ -10,6 +10,15 @@ module.exports = {
       })
     })
   },
+  getClassesSelect: (conn, callback) => {
+    conn.getConnection((errConnection, connection) => {
+      if (errConnection) console.error(errConnection)
+
+      connection.query(`SELECT classid as id, name as title FROM classes_tab WHERE status = 1 ORDER BY name ASC`, (err, rows) => {
+        callback(err, rows)
+      })
+    })
+  },
   getTotalClass: (conn, keyword, callback) => {
     conn.getConnection((errConnection, connection) => {
       if (errConnection) console.error(errConnection)

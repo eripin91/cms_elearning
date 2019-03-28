@@ -54,7 +54,16 @@ module.exports = {
     conn.getConnection((errConnection, connection) => {
       if (errConnection) console.error(errConnection)
 
-      connection.query(`SELECT a.discussionid, a.userid, a.courseid, c.fullname, b.name AS course, a.post_content, a.created_at, a.updated_at FROM discussion_tab a JOIN courses_tab b ON a.courseid=b.courseid JOIN users_tab c ON a.userid = c.userid WHERE a.status = 1 AND a.parent = 0 AND a.discussionid = ?`, discussionId, (err, rows) => {
+      connection.query(`SELECT a.discussionid, a.userid, a.courseid, c.fullname, c.email, b.name AS course, a.post_content, a.created_at, a.updated_at FROM discussion_tab a JOIN courses_tab b ON a.courseid=b.courseid JOIN users_tab c ON a.userid = c.userid WHERE a.status = 1 AND a.parent = 0 AND a.discussionid = ?`, discussionId, (err, rows) => {
+        callback(err, rows)
+      })
+    })
+  },
+  getDiscussionOnly: (conn, discussionId, callback) => {
+    conn.getConnection((errConnection, connection) => {
+      if (errConnection) console.error(errConnection)
+
+      connection.query(`SELECT a.discussionid, a.parent, c.fullname, c.email, a.post_content FROM discussion_tab a JOIN users_tab c ON a.userid = c.userid WHERE a.status = 1 AND a.discussionid = ?`, discussionId, (err, rows) => {
         callback(err, rows)
       })
     })
@@ -92,6 +101,14 @@ module.exports = {
         callback(err, { message: 'Data Thread and reply has been deleted' })
       })
     })
-  }
+  },
+  update: (conn, id, data, callback) => {
+    conn.getConnection((errConnection, connection) => {
+      if (errConnection) console.error(errConnection)
 
+      connection.query('UPDATE discussion_tab SET ? WHERE discussionid = ? ', [data, id], (errUpdate, resultUpdate) => {
+        callback(errUpdate, resultUpdate.affectedRows > 0 ? _.merge(data, { discussionid: id }) : [])
+      })
+    })
+  }
 }
