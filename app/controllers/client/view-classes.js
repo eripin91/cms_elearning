@@ -39,6 +39,7 @@ exports.ajaxGet = async (req, res) => {
       async.eachSeries(_.result(response, 'data', {}), (item, next) => {
         item.action = MiscHelper.getActionButtonClasses('classes', 'users', item.classid)
         item.created_at = moment(item.created_at).format('DD/MM/YYYY hh:mm')
+        item.cover = `<img src="${item.cover}" width="150px" />`
         dataClasses.push(item)
         next()
       }, err => {

@@ -4,8 +4,8 @@
 
 var Route = express.Router()
 
-// Route.all('/*')
-Route.all('/*', AuthHelper.requiresAuthorization)
+Route
+  .all('/*', AuthHelper.requiresAuthorization)
   .get('/get', PagesControllers.get)
   .get('/get/:pageId', PagesControllers.getDetail)
   .post('/update/:pageId', PagesControllers.update)

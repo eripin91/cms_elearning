@@ -3,7 +3,6 @@
 const ApiLibs = require('../../libs/API')
 const async = require('async')
 const moment = require('moment')
-const request = require('request')
 const fs = require('fs')
 
 const API_SERVICE = ApiLibs.client({
@@ -83,13 +82,13 @@ exports.add = async (req, res) => {
         })
       },
       classes: (callback) => {
-        API_SERVICE.get('v1/classes/get?keyword=&limit=50', {}, (err, classes) => {
+        API_SERVICE.get('v1/classes/select', {}, (err, classes) => {
           callback(err, _.result(classes, 'data'))
         })
       }
     }, (err, result) => {
       if (err) console.error(err)
-      res.render('course_add', { errorMsg: errorMsg, classList: result.classes, selectData: MiscHelper.getSelect(result.assessment, 0) })
+      res.render('course_add', { errorMsg: errorMsg, selectClasses: MiscHelper.getSelect(result.classes, 0), selectData: MiscHelper.getSelect(result.assessment, 0) })
     })
   } else {
     const classId = req.body.classId
@@ -127,32 +126,26 @@ exports.add = async (req, res) => {
 exports.update = async (req, res) => {
   if (_.isEmpty(req.body)) {
     const errorMsg = await MiscHelper.get_error_msg(req.sessionID)
-    const options = {
-      url: CONFIG.SERVER.BASE_WEBHOST + 'v1/classes/get?keyword=&limit=50',
-      headers: CONFIG.REQUEST_HEADERS
-    }
-    async.waterfall([
-      cb => {
-        request(options, function (error, response, body) {
-          if (error) {
-            console.log('ERROR GET SINGLE COURSE')
-          }
-          cb(null, JSON.parse(body).data)
+
+    async.parallel({
+      classes: (callback) => {
+        API_SERVICE.get('v1/classes/select', {}, (err, classes) => {
+          callback(err, _.result(classes, 'data'))
         })
       },
-      (classList, cb) => {
+      courses: (callback) => {
         API_SERVICE.get('v1/courses/' + req.params.courseId, {}, (err, courses) => {
-          cb(err, classList, _.result(courses, 'data'))
+          callback(err, _.result(courses, 'data'))
         })
       },
-      (classList, courses, cb) => {
+      assessment: (callback) => {
         API_SERVICE.get('v1/assessment/select', {}, (err, assessment) => {
-          cb(err, classList, courses, _.result(assessment, 'data'))
+          callback(err, _.result(assessment, 'data'))
         })
       }
-    ], (err, classList, courses, assessment) => {
+    }, (err, result) => {
       if (err) console.error(err)
-      res.render('course_update', { errorMsg: errorMsg, data: courses, classList, prevClassId: courses.classid, selectDataPre: MiscHelper.getSelect(assessment, courses.preassessmentid), selectDataFinal: MiscHelper.getSelect(assessment, courses.finalassessmentid) })
+      res.render('course_update', { errorMsg: errorMsg, data: result.courses, selectClasses: MiscHelper.getSelect(result.classes, result.courses.classid), selectDataPre: MiscHelper.getSelect(result.assessment, result.courses.preassessmentid), selectDataFinal: MiscHelper.getSelect(result.assessment, result.courses.finalassessmentid) })
     })
   } else {
     const courseId = req.body.courseid

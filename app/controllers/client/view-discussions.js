@@ -15,7 +15,7 @@ const API_SERVICE = ApiLibs.client({
 *   @desc Get Discussion
 */
 exports.main = async (req, res) => {
-  const errorMsg = await MiscHelper.get_error_msg(req.sessionId)
+  const errorMsg = await MiscHelper.get_error_msg(req.sessionID)
   res.render('discussions', { errorMsg: errorMsg })
 }
 
@@ -26,9 +26,10 @@ exports.main = async (req, res) => {
 */
 exports.detail = async (req, res) => {
   const discussionId = req.params.discussionId
-  API_SERVICE.get('v1/discussions/get/detail/' + discussionId, { }, (err, response) => {
+  API_SERVICE.get('v1/discussions/get/detail/' + discussionId, { }, async (err, response) => {
     if (err) console.error(err)
-    res.render('discussions_detail', { discussionId: discussionId, dataDiscussions: _.result(response, 'data', {}) })
+    const errorMsg = await MiscHelper.get_error_msg(req.sessionID)
+    res.render('discussions_detail', { errorMsg: errorMsg, discussionId: discussionId, dataDiscussions: _.result(response, 'data', {}) })
   })
 }
 
@@ -42,7 +43,6 @@ exports.detail = async (req, res) => {
 * @return {object} Request object
 *
 */
-
 exports.ajaxGet = async (req, res) => {
   const limit = parseFloat(_.result(req.query, 'length')) === -1 ? 1000 : _.result(req.query, 'length', 25)
 
@@ -51,7 +51,7 @@ exports.ajaxGet = async (req, res) => {
       const dataDiscussions = []
       async.eachSeries(_.result(response, 'data', []), (item, next) => {
         if (limit === 1000) {
-          item.action = MiscHelper.getActionButton('discussions', item.discussionid)
+          item.action = MiscHelper.getActionButtonFull('/discussions', item.discussionid)
         } else {
           item.action = MiscHelper.getActionButtonDiscussion('discussions', item.discussionid)
         }
@@ -77,9 +77,60 @@ exports.ajaxGet = async (req, res) => {
   })
 }
 
+/*
+ * GET && POST : '/update'
+ *
+ * @desc Update discussion
+ *
+ * @param  {object} req - for request
+ * @param  {object} req.body.discussionId - discussionId for identifier
+ *
+ * @return {object} Request object
+ */
+exports.update = async (req, res) => {
+  if (_.isEmpty(req.body)) {
+    const errorMsg = await MiscHelper.get_error_msg(req.sessionID)
+    API_SERVICE.get('v1/discussions/get/discussion/' + req.params.discussionId, {}, (err, response) => {
+      if (err) console.error(err)
+      res.render('discussions_update', { errorMsg: errorMsg, data: _.result(response, 'data', {}) })
+    })
+  } else {
+    const content = req.body.content
+    const id = req.body.id
+    const parent = parseInt(req.body.parent)
+
+    if (!id) {
+      MiscHelper.set_error_msg({ error: 'Kesalahan input data !!!' }, req.sessionID)
+      res.redirect('/discussions')
+    } else if (!content) {
+      MiscHelper.set_error_msg({ error: 'Content harus di isi !!!' }, req.sessionID)
+      res.redirect('/discussions/update/' + id)
+    } else {
+      API_SERVICE.post('v1/discussions/update/' + id, { post_content: content }, (err, response) => {
+        if (!err) {
+          MiscHelper.set_error_msg({ info: 'Discussion berhasil diubah.' }, req.sessionID)
+          res.redirect(parent === 0 ? '/discussions' : '/discussions/detail/' + parent)
+        } else {
+          MiscHelper.set_error_msg({ error: err.message }, req.sessionID)
+          res.redirect('/discussions/update/' + id)
+        }
+      })
+    }
+  }
+}
+
+/*
+ * GET '/delete/:discussionId'
+ *
+ * @desc delete discussion
+ *
+ * @param  {object} req - for request
+ * @param  {object} req.body.discussionId - discussionId for identifier
+ *
+ * @return {object} Request object
+ */
 exports.delete = async (req, res) => {
   const discussionId = req.params.discussionId
-  console.log(discussionId)
   if (!discussionId) {
     MiscHelper.set_error_msg({ error: 'Discussion ID required !!!' }, req.sessionID)
     res.redirect('/discussions')
