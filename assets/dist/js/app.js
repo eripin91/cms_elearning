@@ -831,6 +831,14 @@ function _init() {
 })(jQuery)
 
 $(document).ready(function() {
+  var path = window.location.pathname.split('/')[1]
+  var url = SITE_URL
+
+  if (path !== '') {
+    url = SITE_URL + path
+  }
+
+  $('.sidebar-menu > li').find('a[href="'+url+'"]').parent().addClass('active')
    $("#uploadPhoto").change(function(evt){
     evt.stopPropagation();
     $('#loading img').show()
