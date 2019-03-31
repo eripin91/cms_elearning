@@ -156,7 +156,9 @@ module.exports = {
   },
   convertDuration: (duration) => {
     let minutes = Math.floor(duration / 60)
+    minutes = minutes > 9 ? minutes : `0${minutes}`
     let second = duration - (minutes * 60)
+    second = second > 9 ? second : `0${second}`
     duration = minutes + ':' + second
     return duration
   },
