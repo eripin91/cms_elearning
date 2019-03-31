@@ -1083,12 +1083,7 @@ $(document).ready(function() {
       { data: 'name' },
       { data: 'description' },
       { data: 'video_url' },
-      {
-        data: 'thumbnails',
-        render: function(data) {
-          return '<img src="' + data + '" width="150px" />'
-        }
-      },
+      { data: 'thumbnails' },
       { data: 'size' },
       { data: 'duration' },
       { data: 'action' }

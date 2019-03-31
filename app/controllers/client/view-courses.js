@@ -406,6 +406,7 @@ exports.lectureGetAll = async (req, res) => {
         item.status = MiscHelper.getStatus(item.status, 1)
         item.duration = MiscHelper.convertDuration(item.duration)
         item.size = MiscHelper.sizeCount(item.size)
+        item.thumbnails = `<img src="${item.thumbnails}" style="width: 150px">`
         dataLectures.push(item)
         next()
       }, err => {
