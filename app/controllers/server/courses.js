@@ -850,9 +850,6 @@ exports.getMaterialDetail = (req, res) => {
 
 exports.insertMaterialDetail = (req, res) => {
   req.checkParams('detailId', 'detailid is required').notEmpty().isInt()
-  // req.Body('name', 'name is required').notEmpty()
-  // req.Body('description', 'description is required').notEmpty()
-  // req.Body('video_url', 'video_url is required').notEmpty()
 
   if (req.validationErrors()) {
     return MiscHelper.errorCustomStatus(res, req.validationErrors(true))
@@ -860,7 +857,6 @@ exports.insertMaterialDetail = (req, res) => {
 
   const detailId = req.params.detailId
   let dataUpload = req.dataUpload
-
   async.waterfall([
     (cb) => {
       if (_.isEmpty(dataUpload)) {
@@ -877,7 +873,6 @@ exports.insertMaterialDetail = (req, res) => {
         video_url: dataUpload.fileUrl,
         thumbnails: dataUpload.thumbnail,
         size: dataUpload.size,
-        assessmentid: 0,
         duration: dataUpload.duration,
         status: 1,
         created_at: new Date(),
@@ -937,7 +932,6 @@ exports.updateMaterial = (req, res) => {
       const data = {
         name: req.body.name,
         description: req.body.description,
-        assessmentid: req.body.assessmentid,
         updated_at: new Date()
       }
 

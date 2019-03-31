@@ -1091,7 +1091,6 @@ $(document).ready(function() {
       },
       { data: 'size' },
       { data: 'duration' },
-      { data: 'status' },
       { data: 'action' }
     ]
   })
