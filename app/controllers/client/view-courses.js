@@ -40,7 +40,6 @@ exports.ajaxGet = async (req, res) => {
       async.eachSeries(_.result(response.data, 'data', {}), (item, next) => {
         item.action = MiscHelper.getActionButtonCourse('courses', 'discussions', item.courseid)
         item.name = `<a href="/courses/chapter/${item.courseid}">${item.name}</a>`
-        item.status = MiscHelper.getStatus(item.status, 1)
         item.created_at = moment(item.created_at).format('DD/MM/YYYY hh:mm')
         dataCourses.push(item)
         next()
@@ -407,6 +406,7 @@ exports.lectureGetAll = async (req, res) => {
         item.status = MiscHelper.getStatus(item.status, 1)
         item.duration = MiscHelper.convertDuration(item.duration)
         item.size = MiscHelper.sizeCount(item.size)
+        item.thumbnails = `<img src="${item.thumbnails}" style="width: 150px">`
         dataLectures.push(item)
         next()
       }, err => {
@@ -462,11 +462,10 @@ exports.lectureAdd = async (req, res) => {
 
       API_SERVICE.postFormData(`v1/courses/chapter/${req.params.chapterId}/material`, formData, (err, response) => {
         if (!err) {
-          console.log(response)
           MiscHelper.set_error_msg({ info: 'Lecture berhasil ditambahkan.' }, req.sessionID)
           res.redirect('/courses/chapter/' + req.params.chapterId + '/lecture/')
         } else {
-          MiscHelper.set_error_msg({ error: response.message }, req.sessionID)
+          MiscHelper.set_error_msg({ error: _.result(response, 'message') }, req.sessionID)
           res.redirect('/courses/chapter/' + req.params.chapterId + '/lecture/')
         }
       })
@@ -495,7 +494,6 @@ exports.lectureUpdate = async (req, res) => {
     const chapterId = req.body.detailid
     const materialid = req.body.materialid
     const name = req.body.name
-    const assessmentid = req.body.assessmentid
     const description = req.body.description
 
     if (!chapterId || !materialid) {
@@ -505,9 +503,6 @@ exports.lectureUpdate = async (req, res) => {
       if (!name) {
         MiscHelper.set_error_msg({ error: 'Name wajib diisi !!!' }, req.sessionID)
         res.redirect(`/courses/chapter/${req.params.chapterId}/update/${req.params.lectureId}`)
-      } else if (!assessmentid) {
-        MiscHelper.set_error_msg({ error: 'Assessment Id wajib diisi !!!' }, req.sessionID)
-        res.redirect(`/courses/chapter/${req.params.chapterId}/update/${req.params.lectureId}`)
       } else if (!description) {
         MiscHelper.set_error_msg({ error: 'Description wajib diisi !!!' }, req.sessionID)
         res.redirect(`/courses/chapter/${req.params.chapterId}/update/${req.params.lectureId}`)
@@ -515,8 +510,7 @@ exports.lectureUpdate = async (req, res) => {
         const formData = {
           name: name,
           detailid: chapterId,
-          description: description,
-          assessmentid: assessmentid
+          description: description
         }
 
         if (req.file) {
@@ -548,8 +542,9 @@ exports.lectureUpdate = async (req, res) => {
  * @return {object} Request object
  */
 exports.lectureDelete = async (req, res) => {
-  const chapterId = 0 || req.params.chapterId
-  const lectureId = 0 || req.params.lectureId
+  const chapterId = _.result(req.params, 'chapterId', 0)
+  const lectureId = _.result(req.params, 'lectureId', 0)
+
   if (!chapterId || !lectureId) {
     MiscHelper.set_error_msg({ error: 'chapterId & lectureId required !!!' }, req.sessionID)
     res.redirect(`/courses/chapter/${chapterId}/lecture`)
