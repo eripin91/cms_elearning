@@ -1,26 +1,26 @@
 {
-  "name": "e-learning-backoffice",
+  "name": "Courses",
   "version": "1.0.0",
-  "description": "E-learning Backoffice Telkom",
+  "description": "Courses E-Learning",
   "main": "app.js",
   "scripts": {
     "test": "npm run standard && NODE_PATH=./config:./app/controllers NODE_ENV=testing ./node_modules/.bin/mocha --exit --reporter spec --timeout 10000 test/*.js",
     "start": "nodemon app.js",
-    "start-production": "pm2 start app.js -i 0 --name 'cms-e-learning' --node-args='--max-old-space-size=2048' --max-memory-restart 1500M --log-date-format 'YYYY-MM-DD HH:mm Z' --no-pmx",
+    "start-production": "pm2 start app.js -i 0 --name 'e-learning' --node-args='--max-old-space-size=2048' --max-memory-restart 1500M --log-date-format 'YYYY-MM-DD HH:mm Z' --no-pmx",
     "standard": "./node_modules/.bin/standard",
     "deploy-production": "npm test && pm2 deploy ecosystem.json production",
     "deploy-staging": "npm test && pm2 deploy ecosystem.json staging"
   },
   "repository": {
     "type": "git",
-    "url": "git+ssh://git@github.com/arkelearning/cms_e-learning.git"
+    "url": "git+ssh://git@github.com/sigmatech-eripin/e-learning.git"
   },
   "author": "Dev Team",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/arkelearning/cms_e-learning/issues"
+    "url": "https://github.com/sigmatech-eripin/e-learning/issues"
   },
-  "homepage": "https://github.com/arkelearning/cms_e-learning#readme",
+  "homepage": "https://github.com/sigmatech-eripin/e-learning#readme",
   "pre-commit": [
     "standard",
     "test"
@@ -31,62 +31,54 @@
       "CONFIG",
       "_",
       "env",
-      "MiscHelper",
-      "sauth",
-      "helpers"
+      "MiscHelper"
     ],
     "ignore": [
       "/test/*.js",
-      "/test/*/*.js",
-      "/api/test/*.js",
-      "/api/test/*/*.js",
-      "/assets/**/*.js"
+      "/test/*/*.js"
     ]
   },
   "dependencies": {
-    "async": "^2.6.2",
-    "aws-sdk": "^2.422.0",
+    "assert": "^1.4.1",
+    "async": "^2.6.1",
+    "aws-sdk": "^2.418.0",
     "body-parser": "^1.18.3",
     "compression": "^1.7.3",
-    "connect-redis": "^3.4.0",
-    "cors": "^2.8.5",
     "dotenv": "^6.2.0",
+    "ejs": "^2.6.1",
+    "email-templates": "^5.0.4",
     "errorhandler": "^1.5.0",
     "express": "^4.16.4",
-    "express-handlebars": "^3.0.1",
     "express-module-loader": "^1.0.0",
     "express-myconnection": "^1.0.4",
-    "express-session": "^1.15.6",
-    "express-validator": "^5.3.1",
+    "express-validator": "^5.3.0",
     "fast-json-parse": "^1.0.3",
     "fast-safe-stringify": "^2.0.6",
-    "ffmpeg": "0.0.4",
-    "fluent-ffmpeg": "^2.1.2",
-    "form-data": "^2.3.3",
-    "gm": "^1.23.1",
-    "handlebars": "^4.1.0",
+    "jsonwebtoken": "^8.4.0",
     "lodash": "^4.17.11",
+    "mailchecker": "^3.2.17",
+    "mailgun-js": "^0.22.0",
     "moment": "^2.24.0",
     "multer": "^1.4.1",
     "multer-s3": "^2.9.0",
-    "multiparty": "^4.2.1",
     "mysql": "^2.16.0",
     "nested-beautifier": "^1.0.12",
     "nocache": "^2.0.0",
+    "node-mysql-nesting": "0.0.3",
+    "nodemailer": "^5.1.1",
     "redis-pool-connection": "^1.4.0",
-    "request": "^2.88.0",
     "response-time": "^2.3.2",
     "uuid": "^3.3.2",
     "x-xss-protection": "^1.1.0"
   },
   "devDependencies": {
-    "chai": "^4.2.0",
-    "mocha": "^6.0.2",
     "morgan": "^1.9.1",
-    "nodemon": "^1.18.10",
-    "pre-commit": "^1.2.2",
+    "chai": "^4.2.0",
     "should": "^13.2.3",
+    "supertest": "^3.3.0",
     "standard": "^12.0.1",
-    "supertest": "^3.4.2"
+    "mocha": "^5.2.0",
+    "pre-commit": "^1.2.2",
+    "nodemon": "^1.18.9"
   }
 }
